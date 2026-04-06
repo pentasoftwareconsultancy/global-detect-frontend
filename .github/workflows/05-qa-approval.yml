@@ -1,0 +1,60 @@
+name: 05 - QA Approval
+
+# Manual trigger only - QA must approve to proceed
+on:
+  workflow_dispatch:
+    inputs:
+      approval:
+        description: 'Type APPROVE to promote to staging'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  qa-approval:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Validate approval input
+      - name: Validate approval
+        run: |
+          if [ "${{ github.event.inputs.approval }}" != "APPROVE" ]; then
+            echo "❌ Invalid approval input. Please type APPROVE exactly."
+            exit 1
+          fi
+          echo "✅ QA approval received"
+
+      # Step 2: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: testing
+          fetch-depth: 0
+
+      # Step 3: Configure Git
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Step 4: Fetch and ensure staging branch exists
+      - name: Ensure staging branch exists
+        run: |
+          git fetch origin
+          git checkout staging 2>/dev/null || git checkout -b staging
+          git push -u origin staging || true
+
+      # Step 5: Merge testing to staging
+      - name: Merge testing to staging
+        run: |
+          git checkout staging
+          git merge origin/testing --no-ff -m "QA approved: testing → staging [skip ci]"
+          git push origin staging
+
+      # Step 6: Notify promotion
+      - name: Notify promotion to staging
+        run: |
+          echo "✅ QA approved - promoted to staging"
+          echo "🚀 Workflow 06 will trigger automatically"

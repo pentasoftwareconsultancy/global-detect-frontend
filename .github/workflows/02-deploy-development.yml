@@ -1,0 +1,90 @@
+name: 02 - Deploy to Development
+
+# Manual trigger only - Team Leader must approve deployment
+on:
+  workflow_dispatch:
+    inputs:
+      approval:
+        description: 'Type DEPLOY to deploy to development'
+        required: true
+        type: string
+
+jobs:
+  deploy-development:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Validate deployment approval
+      - name: Validate approval
+        run: |
+          if [ "${{ github.event.inputs.approval }}" != "DEPLOY" ]; then
+            echo "❌ Invalid approval input. Please type DEPLOY exactly."
+            exit 1
+          fi
+          echo "✅ Team Leader approved deployment to development"
+
+      # Step 2: Checkout development branch explicitly
+      - name: Checkout development branch
+        uses: actions/checkout@v4
+        with:
+          ref: development
+          fetch-depth: 0
+
+      # Step 3: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # Step 4: Install frontend dependencies
+      - name: Install frontend dependencies
+        run: npm install
+
+      # Step 5: Run frontend tests
+      - name: Run frontend tests
+        run: npm test -- --watchAll=false
+
+      # Step 6: Login to Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 7: Build and push Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          build-args: |
+            REACT_APP_API_URL=${{ secrets.DEV_API_URL }}
+          tags: |
+            ghcr.io/${{ github.repository }}:development
+            ghcr.io/${{ github.repository }}:dev-${{ github.sha }}
+
+      # Step 8: Deploy to server
+      - name: Deploy to Development Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_SERVER_HOST }}
+          username: ${{ secrets.DEV_SERVER_USER }}
+          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+          script: |
+            docker pull ghcr.io/${{ github.repository }}:development
+            docker stop frontend-dev || true
+            docker rm frontend-dev || true
+            docker run -d \
+              --name frontend-dev \
+              -p 3000:80 \
+              --restart unless-stopped \
+              ghcr.io/${{ github.repository }}:development
+
+      # Step 9: Deployment summary
+      - name: Deployment summary
+        run: |
+          echo "✅ Development deployment completed successfully"
+          echo "Frontend: ${{ secrets.DEV_FRONTEND_URL }}"
+          echo "Docker Image: ghcr.io/${{ github.repository }}:development"
+          echo "🚀 Workflow 03 will trigger automatically"

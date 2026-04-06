@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Imperial+Script&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mozilla+Headline:wght@200..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Rubik+80s+Fade&family=Sora:wght@100..800&family=Stack+Sans+Headline:wght@200..700&display=swap');
+@import "tailwindcss";
+/*colours*/
+/* ---------------- THEME ---------------- */
+@theme {
+    /* FONTS */
+    --font-montserrat: "Montserrat";
+
+    /* COLORS */
+    --color-skin: #F2D1B3;
+    --color-red: #D92B3A;
+    --color-semidark-red: #590202;
+    --color-dark-red: #40080C;
+    --color-white: #FFF2EF;
+    --color-light-gray: #909090;
+    --color-gray: #575757;
+    --color-dark-gray: #140000;
+}
+
+/* ------------- UTILITIES ------------- */
+@utility montserrat {
+  font-family: var(--font-montserrat);
+}
+
+@utility skin {
+  color: var(--color-skin);
+}
+
+@utility red {
+  color: var(--color-red);
+}
+
+@utility semidarkRed {
+  color: var(--color-semidark-red);
+}
+
+@utility darkRed {
+  color: var(--color-dark-red);
+}
+
+@utility white {
+  color: var(--color-white);
+}
+
+@utility lightGray {
+  color: var(--color-light-gray);
+}
+
+@utility gray {
+  color: var(--color-gray);
+}
+
+@utility darkGray {
+  color: var(--color-dark-gray);
+}
+
+/* -------- BASE GLOBAL STYLES -------- */
+/* @layer base {
+  body {
+    @apply px-4 md:px-8 lg:px-12;
+  }
+} */
+
+
+/* 🔥 HIDE SCROLLBAR BUT KEEP SCROLL */
+/* 🔥 Hide scrollbar but keep scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes verticalScroll {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-verticalScroll {
+  animation: verticalScroll 5s linear infinite;
+}

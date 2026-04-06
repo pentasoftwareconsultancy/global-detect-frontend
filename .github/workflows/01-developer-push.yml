@@ -1,0 +1,107 @@
+name: 01 - Developer Push
+
+on:
+  push:
+    branches:
+      - 'dev-*'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test-and-create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # Step 3: Install frontend dependencies
+      - name: Install frontend dependencies
+        run: npm install
+
+      # Step 4: Run frontend tests
+      - name: Run frontend tests
+        run: npm test -- --watchAll=false
+
+      # Step 5: Test build
+      - name: Test build
+        env:
+          REACT_APP_API_URL: http://localhost:5000
+        run: npm run build
+
+      # Step 6: Install GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install gh -y
+
+      # Step 7: Check if PR already exists
+      - name: Check for existing PR
+        id: check_pr
+        run: |
+          PR_EXISTS=$(gh pr list --head ${{ github.ref_name }} --base development --json number --jq '.[0].number')
+          if [ -z "$PR_EXISTS" ]; then
+            echo "pr_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "pr_exists=true" >> $GITHUB_OUTPUT
+            echo "pr_number=$PR_EXISTS" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 8: Create Pull Request if it doesn't exist
+      - name: Create Pull Request
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        id: create_pr
+        run: |
+          gh pr create \
+            --base development \
+            --head ${{ github.ref_name }} \
+            --title "Code Review: ${{ github.ref_name }} to development" \
+            --body "## Developer Push - Awaiting Team Leader Approval
+          
+          **Branch:** ${{ github.ref_name }}
+          **Target:** development
+          **Tests:** Passed
+          
+          ### Next Steps for Team Leader
+          1. Review the code changes
+          2. Merge this PR manually using the Merge button
+          3. Go to Actions tab
+          4. Run workflow: 02 - Deploy to Development
+          5. Type: DEPLOY
+          6. Click Run workflow
+          
+          Once deployed, the pipeline will automatically promote to Testing."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 9: Update existing PR if it exists
+      - name: Update existing PR
+        if: steps.check_pr.outputs.pr_exists == 'true'
+        run: |
+          gh pr comment ${{ steps.check_pr.outputs.pr_number }} --body "✅ Tests passed for latest commit"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 10: Success notification
+      - name: Notify success
+        run: |
+          echo "✅ Tests passed for ${{ github.ref_name }}"
+          if [ "${{ steps.check_pr.outputs.pr_exists }}" == "false" ]; then
+            echo "📝 Pull Request created for Team Leader review"
+          else
+            echo "📝 Existing Pull Request updated (#${{ steps.check_pr.outputs.pr_number }})"
+          fi
+          echo "⏸️  Waiting for Team Leader to merge PR and run Workflow 02"
