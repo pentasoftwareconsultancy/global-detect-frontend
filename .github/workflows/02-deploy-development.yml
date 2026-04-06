@@ -44,47 +44,20 @@ jobs:
       - name: Run frontend tests
         run: npm test -- --watchAll=false
 
-      # Step 6: Login to Container Registry
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # Step 6: Deploy to Vercel (Development)
+      - name: Deploy to Vercel Development
+        run: |
+          npm install -g vercel
+          vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DEV }}
 
-      # Step 7: Build and push Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          build-args: |
-            REACT_APP_API_URL=${{ secrets.DEV_API_URL }}
-          tags: |
-            ghcr.io/${{ github.repository }}:development
-            ghcr.io/${{ github.repository }}:dev-${{ github.sha }}
-
-      # Step 8: Deploy to server
-      - name: Deploy to Development Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEV_SERVER_HOST }}
-          username: ${{ secrets.DEV_SERVER_USER }}
-          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/${{ github.repository }}:development
-            docker stop frontend-dev || true
-            docker rm frontend-dev || true
-            docker run -d \
-              --name frontend-dev \
-              -p 3000:80 \
-              --restart unless-stopped \
-              ghcr.io/${{ github.repository }}:development
-
-      # Step 9: Deployment summary
+      # Step 7: Deployment summary
       - name: Deployment summary
         run: |
           echo "✅ Development deployment completed successfully"
-          echo "Frontend: ${{ secrets.DEV_FRONTEND_URL }}"
-          echo "Docker Image: ghcr.io/${{ github.repository }}:development"
+          echo "Frontend: Deployed to Vercel (Development environment)"
           echo "🚀 Workflow 03 will trigger automatically"

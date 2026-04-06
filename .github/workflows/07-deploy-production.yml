@@ -60,62 +60,33 @@ jobs:
       - name: Run frontend tests
         run: npm test -- --watchAll=false
       
-      # Step 7: Login to Container Registry
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 8: Build and push production Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          build-args: |
-            REACT_APP_API_URL=${{ secrets.PROD_API_URL }}
-          tags: |
-            ghcr.io/${{ github.repository }}:production
-            ghcr.io/${{ github.repository }}:prod-${{ github.sha }}
-            ghcr.io/${{ github.repository }}:latest
-
-      # Step 9: Deploy to production server
-      - name: Deploy to Production Server
+      # Step 7: Deploy to Vercel (Production)
+      - name: Deploy to Vercel Production
         id: deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PROD_SERVER_HOST }}
-          username: ${{ secrets.PROD_SERVER_USER }}
-          key: ${{ secrets.PROD_SERVER_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/${{ github.repository }}:production
-            docker stop frontend-prod || true
-            docker rm frontend-prod || true
-            docker run -d \
-              --name frontend-prod \
-              -p 80:80 \
-              --restart unless-stopped \
-              ghcr.io/${{ github.repository }}:production
+        run: |
+          npm install -g vercel
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_PROD }}
       
-      # Step 10: Rollback on failure (optional)
+      # Step 8: Rollback on failure (optional)
       - name: Rollback on failure
         if: failure()
         run: |
           echo "❌ Production deployment failed"
-          echo "🔄 Initiating rollback procedure"
-          echo "Reverting to previous stable version"
+          echo "🔄 Use Vercel dashboard to rollback to previous deployment"
           echo "Please check logs and contact DevOps team"
       
-      # Step 11: Success notification
+      # Step 9: Success notification
       - name: Notify successful deployment
         if: success()
         run: |
           echo "✅ Production deployment completed successfully"
           echo ""
-          echo "Production URL: ${{ secrets.PROD_FRONTEND_URL }}"
-          echo "Docker Image: ghcr.io/${{ github.repository }}:production"
+          echo "Production URL: Check Vercel dashboard for deployment URL"
           echo ""
           echo "📊 Deployment Summary:"
           echo "  Environment: Production (main branch)"
