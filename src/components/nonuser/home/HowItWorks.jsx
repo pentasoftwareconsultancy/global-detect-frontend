@@ -45,7 +45,7 @@ const HowItWorks = () => {
     
     <section className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
       
-      <div className="w-full h-[400px] max-w-7xl mx-auto bg-[#2a343c]/80 backdrop-blur-xl border border-white/10 rounded-[30px] px-10 md:px-16 py-24 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
+      <div className="w-full h-[400px] max-w-8xl mx-auto bg-[#2a343c]/80 backdrop-blur-xl border border-white/10 rounded-[30px] px-10 md:px-16 py-24 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
 
         {/* DESKTOP */}
         <div className="hidden lg:block relative mt-24 z-10">

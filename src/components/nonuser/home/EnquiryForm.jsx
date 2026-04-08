@@ -4,7 +4,7 @@ import { ArrowRight, Instagram, Facebook, Twitter } from 'lucide-react';
 const EnquiryForm = () => {
   return (
     <section className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 max-w-2xl">
           Get in touch with us. <br />
           We are here to assist you

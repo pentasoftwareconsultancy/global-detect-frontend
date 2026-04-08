@@ -1,84 +1,237 @@
 import React from 'react';
-import { Building2, Search, Globe, Home, Shield, UserCheck, Scale, FileText } from 'lucide-react';
+import {
+  Building2,
+  Search,
+  Globe,
+  Shield,
+  UserCheck,
+  Scale,
+  FileText
+} from 'lucide-react';
 
 const Services = () => {
   const serviceCategories = [
     {
-      title: 'Corporate Investigation Services',
-      icons: [<Building2 size={24} />, <Shield size={24} />, <FileText size={24} />],
-      items: [
-        'Employee background verification',
-        'Corporate fraud detection',
-        'Internal policy violation investigations',
-        'Due diligence & risk assessment'
+      cards: [
+        {
+          title: 'Private Investigation Services',
+          icon: UserCheck,
+          items: [
+            'Personal background verification',
+            'Matrimonial & relationship investigations',
+            'Missing person tracing',
+            'Surveillance and evidence collection'
+          ]
+        },
+        {
+          title: 'Security & Risk Assessment',
+          icon: Shield,
+          items: [
+            'Threat assessment',
+            'Personal security analysis',
+            'Corporate risk evaluation',
+            'Vulnerability audits'
+          ]
+        },
+        {
+          title: 'Corporate Investigation Services',
+          icon: Building2,
+          items: [
+            'Employee background verification',
+            'Corporate fraud detection',
+            'Internal policy violation investigations',
+            'Due diligence & risk assessment'
+          ]
+        }
       ]
     },
+
     {
-      title: 'Intelligence & Monitoring Services',
-      icons: [<Search size={24} />, <Shield size={24} />, <UserCheck size={24} />],
-      items: [
-        'Ongoing case monitoring',
-        'Incident tracking',
-        'Activity pattern analysis',
-        'Periodic intelligence reports'
+      cards: [
+        {
+          title: 'Cyber & Digital Investigation',
+          icon: Globe,
+          items: [
+            'Online fraud investigation',
+            'Email & communication analysis',
+            'Digital identity verification',
+            'Data trail analysis'
+          ]
+        },
+        {
+          title: 'Field Investigation Services',
+          icon: Search,
+          items: [
+            'On-ground verification',
+            'Site visits & inspections',
+            'Surveillance operations',
+            'Evidence collection'
+          ]
+        },
+        {
+          title: 'Intelligence & Monitoring Services',
+          icon: UserCheck,
+          items: [
+            'Ongoing case monitoring',
+            'Incident tracking',
+            'Activity pattern analysis',
+            'Periodic intelligence reports'
+          ]
+        }
       ]
     },
+
     {
-      title: 'OSINT (Open-Source Intelligence)',
-      icons: [<Scale size={24} />, <Globe size={24} />, <FileText size={24} />],
-      items: [
-        'Digital footprint analysis',
-        'Social media investigations',
-        'Online reputation assessment',
-        'Public data intelligence gathering'
+      cards: [
+        {
+          title: 'Litigation & Legal Support',
+          icon: Scale,
+          items: [
+            'Evidence collection for cases',
+            'Pre-litigation investigations',
+            'Witness verification',
+            'Court-admissible documentation'
+          ]
+        },
+        {
+          title: 'Background Verification',
+          icon: Shield,
+          items: [
+            'Employment verification',
+            'Education checks',
+            'Address verification',
+            'Criminal record checks'
+          ]
+        },
+        {
+          title: 'OSINT (Open-Source Intelligence)',
+          icon: FileText,
+          items: [
+            'Digital footprint analysis',
+            'Social media investigations',
+            'Online reputation assessment',
+            'Public data intelligence gathering'
+          ]
+        }
       ]
     },
+
     {
-      title: 'Property services',
-      icons: [<Home size={24} />, <Shield size={24} />],
-      items: [
-        'Housing services',
-        'Ploting services',
-        'Society services'
+      cards: [
+        {
+          title: 'Court Disputes',
+          icon: Scale,
+          items: [
+            'Investigation & evidence support',
+            'Legal compliance findings',
+            'Accurate reporting',
+            'Case strengthening insights'
+          ]
+        },
+        {
+          title: 'Property Services',
+          icon: Building2,
+          items: [
+            'Ownership verification',
+            'Site validation',
+            'Risk assessment',
+            'Property investigation'
+          ]
+        }
       ]
     }
   ];
 
   return (
-    <section id="services" className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
-    <section className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4">Services</h2>
-        <p className="text-gray-400 mb-12 max-w-2xl">
-          Our services include private and corporate investigations, background verification, litigation support, OSINT, and on-field investigations. Each case is handled through a secure digital workflow, ensuring confidentiality, verified professionals, and accurate, evidence-based reporting.
-        </p>
+    <section
+    id="services"
+    className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
+      <div className="max-w-6xl">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* TITLE */}
+        <h2 className="text-4xl font-bold mb-4">Services</h2>
+        <p className="text-gray-400 mb-16 max-w-3xl">
+          Our services include private and corporate investigations, background verification, litigation support, 
+          OSINT, and on-field investigations. Each case is handled through a secure digital workflow, ensuring confidentiality,
+           verified professionals, and accurate, evidence-based reporting.</p>
+
+        <div className="flex flex-col gap-20">
+
           {serviceCategories.map((category, idx) => (
-            <div key={idx} className="bg-[#1a2333]/50 border border-white/10 rounded-2xl p-8 hover:border-red/50 transition-colors group">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex gap-2">
-                  {category.icons.map((icon, i) => (
-                    <div key={i} className="p-2 bg-red/10 rounded-lg text-red group-hover:bg-red group-hover:text-white transition-colors">
-                      {icon}
+            <div key={idx} className="relative h-[160px] group">
+
+              {category.cards.map((card, i) => {
+                const Icon = card.icon;
+                const isTop = i === category.cards.length - 1;
+
+                return (
+                  <div
+                    key={i}
+                    className={`
+                      absolute top-0 left-0
+                      rounded-2xl border border-white/20
+                      bg-[#1a2333]/60 backdrop-blur
+                      flex items-center px-6 py-5
+                      transition-all duration-500 ease-out
+                      cursor-pointer
+
+                      hover:bg-red-600
+                      hover:shadow-[0_0_40px_rgba(255,0,0,0.6)]
+                    `}
+                    style={{
+                      width: '420px', // ✅ same width for all cards
+                      transform: `translateX(${i * 75}px)`, // ✅ more spacing → icons fully visible
+                      zIndex: i + 1
+                    }}
+                  >
+
+                    {/* ICON */}
+                    <div className="p-3 bg-white rounded-lg text-red-600 mr-4 shrink-0">
+                      <Icon size={20} />
                     </div>
-                  ))}
-                </div>
-              </div>
-              <h3 className="text-xl font-bold mb-4">{category.title}</h3>
-              <ul className="space-y-2">
-                {category.items.map((item, i) => (
-                  <li key={i} className="text-gray-400 flex items-center gap-2 text-sm">
-                    <div className="w-1.5 h-1.5 bg-red rounded-full"></div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+
+                    {/* CONTENT */}
+                    <div
+                      className={`
+                        transition-all duration-500
+                        ${isTop ? 'opacity-100' : 'opacity-0'}
+                        group-hover:opacity-100
+                      `}
+                    >
+                      <h3 className="text-lg font-semibold mb-2 whitespace-nowrap">
+                        {card.title}
+                      </h3>
+
+                      <ul className="text-sm text-gray-300 space-y-1">
+                        {card.items.map((item, index) => (
+                          <li key={index}>• {item}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                  </div>
+                );
+              })}
+
+              <style>
+                {`
+                  .group:hover > div:nth-child(1) {
+                  transform: translateX(0px) !important;
+                }
+                  .group:hover > div:nth-child(2) {
+                  transform: translateX(450px) !important;
+                }
+                  .group:hover > div:nth-child(3) {
+                  transform: translateX(900px) !important;
+                }
+                `}
+              </style>
+
             </div>
           ))}
+
         </div>
       </div>
-    </section>
     </section>
   );
 };
