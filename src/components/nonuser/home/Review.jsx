@@ -33,10 +33,9 @@ const Review = () => {
   const loopReviews = [...reviews, ...reviews];
 
   return (
-    <section className="bg-[#0b1120] text-white py-20 overflow-hidden">
-
+    <section className="bg-[#121F27] text-white py-14 md:py-16 overflow-hidden">
       {/* TITLE (WITH PADDING) */}
-      <div className="max-w-8xl mx-auto px-6 md:px-12 lg:px-24">
+      <div className="max-w-8xl mx-auto px-6 md:px-12 lg:px-20">
         <h2 className="text-3xl md:text-4xl font-bold mb-12">
           Reviews
         </h2>
@@ -44,13 +43,11 @@ const Review = () => {
 
       {/* SLIDER */}
       <div className="relative">
-        
-        {/* LEFT MASK (this hides slider inside padding area) */}
-        <div className="absolute left-0 top-0 h-full w-6 md:w-12 lg:w-24 bg-[#0b1120] z-10"></div>
 
+        {/* LEFT MASK (this hides slider inside padding area) */}
+        <div className="absolute left-0 top-0 h-full w-6 md:w-12 lg:w-20 bg-[#121F27] z-10"></div>
         {/* TRACK */}
-        <div className="flex gap-8 animate-slide pl-6 md:pl-12 lg:pl-24">
-          
+        <div className="flex gap-6 animate-slide pl-6 md:pl-12 lg:pl-20">
           {loopReviews.map((review, index) => (
             <div
               key={index}

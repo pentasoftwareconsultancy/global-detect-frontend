@@ -85,3 +85,7 @@
 .animate-verticalScroll {
   animation: verticalScroll 5s linear infinite;
 }
+
+body {
+  background-color: #121F27;
+}

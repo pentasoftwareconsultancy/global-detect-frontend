@@ -144,18 +144,19 @@ const Services = () => {
 
   return (
     <section
-    id="services"
-    className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
+      id="services"
+      className="bg-[#121F27] text-white py-14 md:py-16 px-6 md:px-12 lg:px-20 "
+    >
       <div className="max-w-6xl">
 
         {/* TITLE */}
         <h2 className="text-4xl font-bold mb-4">Services</h2>
-        <p className="text-gray-400 mb-16 max-w-3xl">
-          Our services include private and corporate investigations, background verification, litigation support, 
+        <p className="text-gray-400 mb-10 max-w-3xl">
+          Our services include private and corporate investigations, background verification, litigation support,
           OSINT, and on-field investigations. Each case is handled through a secure digital workflow, ensuring confidentiality,
-           verified professionals, and accurate, evidence-based reporting.</p>
+          verified professionals, and accurate, evidence-based reporting.</p>
 
-        <div className="flex flex-col gap-20">
+        <div className="flex flex-col gap-14">
 
           {serviceCategories.map((category, idx) => (
             <div key={idx} className="relative h-[160px] group">

@@ -4,16 +4,16 @@ const ContactInfo = () => {
   return (
     <section
       id="contact"
-      className="bg-[#f5f5f5] text-black py-20 px-6 md:px-12 lg:px-24 relative overflow-hidden"
+      className="bg-[#f5f5f5] text-black py-20 px-6 md:px-12 lg:px-20 relative overflow-hidden"
     >
       {/* subtle pattern effect */}
       <div className="absolute inset-0 opacity-[0.04] bg-[url('https://www.transparenttextures.com/patterns/topography.png')]"></div>
 
       <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-16">
-        
+
         {/* LEFT */}
         <div className="flex-1">
-          <p className="text-gray-500 mb-4 font-medium text-sm">
+          <p className="text-gray-500 mb-4 text-sm">
             Contact Info
           </p>
 
@@ -24,7 +24,7 @@ const ContactInfo = () => {
 
         {/* RIGHT */}
         <div className="flex flex-col md:flex-row gap-16 md:gap-24">
-          
+
           {/* EMAIL */}
           <div>
             <p className="font-semibold text-sm mb-2">Email Address</p>

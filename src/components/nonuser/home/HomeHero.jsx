@@ -11,7 +11,7 @@ const HomeHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen bg-[#07121a] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
+    <div className="relative min-h-screen bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
 
       {/* RIGHT SIDE (DESKTOP) */}
 
@@ -24,7 +24,7 @@ const HomeHero = () => {
         />
 
         {/* CURVED BOTTOM SHAPE */}
-        <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 w-[160%] h-[360px] bg-[#07121a] rounded-full z-10"></div>
+        <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 w-[160%] h-[360px] bg-[#121F27] rounded-full z-10"></div>
 
         {/* DETECTIVE IMAGE */}
         <img
@@ -39,7 +39,7 @@ const HomeHero = () => {
       </div>
 
       {/* LEFT GRADIENT */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#07121a] via-[#07121a]/95 to-transparent z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#121F27] via-[#121F27]/95 to-transparent z-0"></div>
 
       {/* CONTENT */}
       <div className="relative z-30  pb-16 lg:pb-20">
@@ -80,34 +80,48 @@ const HomeHero = () => {
           </button>
         </div>
 
-        {/* FEATURES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-x-10 sm:gap-y-6 max-w-[520px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[520px]">
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#F2D1B3] text-black text-[9px] px-2 py-[1px]">01</span>
-            <Lock size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Encrypted Reports”</span>
-          </div>
+  {[
+    { id: "01", icon: <Lock size={14} className="text-red-500" />, text: "Encrypted Reports" },
+    { id: "02", icon: <CheckCircle size={14} className="text-red-500" />, text: "Verified Detectives" },
+    { id: "03", icon: <Shield size={14} className="text-red-500" />, text: "Icons + short labels" },
+    { id: "04", icon: <Gavel size={14} className="text-red-500" />, text: "Legal & Ethical Compliance" },
+  ].map((item, index) => (
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#F2D1B3] text-black text-[9px] px-2 py-[1px]">02</span>
-            <CheckCircle size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Verified Detectives”</span>
-          </div>
+    <div key={index} className="relative">
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#F2D1B3] text-black text-[9px] px-2 py-[1px]">03</span>
-            <Shield size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Icons + short labels”</span>
-          </div>
-
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#F2D1B3] text-black text-[9px] px-2 py-[1px]">04</span>
-            <Gavel size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Legal & Ethical Compliance”</span>
-          </div>
-
+      {/* NUMBER (BEHIND) */}
+      <div className="absolute top-0 left-0 translate-x-[-40%] translate-y-[-60%] z-2">
+        <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold">
+          {item.id}
         </div>
+      </div>
+
+      {/* CARD */}
+      <div className="relative z-10">
+
+        
+
+        <div className="border border-white/10 
+          bg-white/[0.06] backdrop-blur-md 
+          px-5 py-3 flex items-center gap-3 
+          shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
+
+          {item.icon}
+
+          <span className="text-[13px] text-gray-200">
+            “{item.text}”
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  ))}
+
+</div>
       </div>
 
       {/* FLOATING BUTTONS */}
@@ -120,7 +134,7 @@ const HomeHero = () => {
         <button className="bg-[#D92B3A] p-3 rounded-full shadow-lg">
           <BiSolidMessageAlt className="w-6 h-6 " />
         </button>
-        
+
       </div>
 
     </div>

@@ -28,10 +28,9 @@ const AboutUs = () => {
   }, []);
 
   return (
-    <section id="about" className="bg-[#0b1120] text-white py-16 sm:py-20 px-4 sm:px-6 md:px-12 lg:px-24">
+    <section id="about" className="bg-[#121F27] text-white py-8 md:py-10 px-6 md:px-12 lg:px-20">
 
-
-      <div className="flex flex-col lg:flex-row gap-12 items-center">
+      <div className="flex flex-col lg:flex-row gap-10 items-center">
         {/* LEFT CONTENT */}
         <div className="max-w-2xl">
           <h2 className="text-gray-400 text-lg sm:text-5xl font-medium mb-2 ">
