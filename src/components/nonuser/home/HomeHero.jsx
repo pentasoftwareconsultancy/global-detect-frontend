@@ -11,7 +11,7 @@ const HomeHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-[90vh] lg:min-h-screen bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
+    <div className="relative min-h-[80vh] lg:min-h-[87vh] bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
       {/* RIGHT SIDE (DESKTOP) */}
 
       <div className="absolute top-0 right-[90px] h-full w-[22%] hidden lg:block overflow-hidden">
@@ -28,7 +28,7 @@ const HomeHero = () => {
         {/* DETECTIVE IMAGE */}
         <img
           src={se}
-          className="absolute bottom-[-50px] left-1/2 -translate-x-1/2 h-[80%] object-contain z-20"
+          className="absolute bottom-[-50px] left-1/2 -translate-x-1/2 h-[80%] w object-contain z-20"
         />
       </div>
 
@@ -41,7 +41,7 @@ const HomeHero = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-[#121F27] via-[#121F27]/95 to-transparent z-0"></div>
 
       {/* CONTENT */}
-      <div className="relative z-30  pb-16 lg:pb-20">
+      <div className="relative z-30  pb-6 lg:pb-10">
 
         {/* HEADING */}
         <h1 className="text-[26px] sm:text-[34px] md:text-[54px] lg:text-[64px] leading-[1.2] font-light mb-6">

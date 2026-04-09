@@ -33,7 +33,7 @@ const Review = () => {
   const loopReviews = [...reviews, ...reviews];
 
   return (
-    <section className="bg-[#121F27] text-white py-14 md:py-16 overflow-hidden">
+    <section className="bg-[#121F27] text-white py-10 md:py-2 overflow-hidden">
       {/* TITLE (WITH PADDING) */}
       <div className="max-w-8xl mx-auto px-6 md:px-12 lg:px-20">
         <h2 className="text-3xl md:text-4xl font-bold mb-12">

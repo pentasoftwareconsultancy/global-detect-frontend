@@ -45,10 +45,10 @@ const HowItWorks = () => {
     
     <section className="bg-[#121F27] text-white py-14 md:py-16 px-6 md:px-12 lg:px-20">
       
-      <div className="w-full h-[400px] max-w-8xl mx-auto bg-[#2a343c]/80 backdrop-blur-xl border border-white/10 rounded-[30px] px-10 md:px-16 py-24 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
+      <div className="w-full min-h-[400px]  max-w-8xl mx-auto bg-[#2a343c]/80 backdrop-blur-xl border border-white/10 rounded-[30px] px-10 md:px-16 py-24 shadow-[0_0_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
 
         {/* DESKTOP */}
-        <div className="hidden lg:block relative mt-24 z-10">
+        <div className="hidden lg:block relative mt-24 z-10 ">
 
           {/* RED TIMELINE */}
           <div className="absolute top-1/2 left-0 w-full h-14 -translate-y-1/2 rounded-full overflow-hidden">

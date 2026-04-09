@@ -78,7 +78,7 @@ const Blogs = () => {
   ];
 
   return (
-    <section className="bg-[#121F27] text-white py-20 px-4 md:px-8 lg:px-20">
+    <section id="blog" className="bg-[#121F27] text-white py-14 px-4 md:px-8 lg:px-20">
 
       <div className="max-w-8xl mx-auto">
 

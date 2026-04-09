@@ -145,7 +145,7 @@ const Services = () => {
   return (
     <section
       id="services"
-      className="bg-[#121F27] text-white py-14 md:py-16 px-6 md:px-12 lg:px-20 "
+      className="bg-[#121F27] text-white py-8 md:py-2 px-6 md:px-12 lg:px-20 "
     >
       <div className="max-w-6xl">
 
