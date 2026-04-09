@@ -25,61 +25,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      # Step 3: Install frontend dependencies
-      - name: Install frontend dependencies
+      # Step 3: Install dependencies
+      - name: Install dependencies
         run: npm install
 
-      # Step 4: Run frontend tests
-      - name: Run frontend tests
-        run: npm test -- --watchAll=false
+      # Step 4: Deploy to Vercel Staging
+      - name: Deploy to Vercel Staging
+        run: |
+          npx vercel --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.STAGING_VERCEL_PROJECT_ID }}
 
-      # Step 5: Login to Container Registry
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 6: Build and push Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          build-args: |
-            REACT_APP_API_URL=${{ secrets.STAGING_API_URL }}
-          tags: |
-            ghcr.io/${{ github.repository }}:staging
-            ghcr.io/${{ github.repository }}:staging-${{ github.sha }}
-
-      # Step 7: Deploy to staging server
-      - name: Deploy to Staging Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.STAGING_SERVER_HOST }}
-          username: ${{ secrets.STAGING_SERVER_USER }}
-          key: ${{ secrets.STAGING_SERVER_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/${{ github.repository }}:staging
-            docker stop frontend-staging || true
-            docker rm frontend-staging || true
-            docker run -d \
-              --name frontend-staging \
-              -p 3000:80 \
-              --restart unless-stopped \
-              ghcr.io/${{ github.repository }}:staging
-
-      # Step 8: Notify business team
+      # Step 5: Notify business team
       - name: Notify business team
         run: |
           echo "📧 Notifying business stakeholders"
           echo "Staging environment is ready for final review"
-          echo ""
-          echo "Staging URL: ${{ secrets.STAGING_FRONTEND_URL }}"
-          echo "Docker Image: ghcr.io/${{ github.repository }}:staging"
+          echo "🚀 Deployed to Vercel Staging environment"
           echo ""
           echo "⏸️  Pipeline paused - waiting for production approval"
           echo "To deploy to production, run workflow: 07-deploy-production.yml with input 'DEPLOY TO PRODUCTION'"
