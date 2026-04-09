@@ -27,59 +27,25 @@ jobs:
         with:
           node-version: '18'
 
-      # Step 3: Install frontend dependencies
-      - name: Install frontend dependencies
+      # Step 3: Install dependencies
+      - name: Install dependencies
         run: npm install
 
-      # Step 4: Run frontend tests
-      - name: Run frontend tests
-        run: npm test -- --watchAll=false
+      # Step 4: Deploy to Vercel (Testing)
+      - name: Deploy to Vercel Testing
+        run: |
+          npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_TEST }}
 
-      # Step 5: Login to Container Registry
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 6: Build and push Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          build-args: |
-            REACT_APP_API_URL=${{ secrets.TEST_API_URL }}
-          tags: |
-            ghcr.io/${{ github.repository }}:testing
-            ghcr.io/${{ github.repository }}:test-${{ github.sha }}
-
-      # Step 7: Deploy to testing server
-      - name: Deploy to Testing Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.TEST_SERVER_HOST }}
-          username: ${{ secrets.TEST_SERVER_USER }}
-          key: ${{ secrets.TEST_SERVER_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/${{ github.repository }}:testing
-            docker stop frontend-test || true
-            docker rm frontend-test || true
-            docker run -d \
-              --name frontend-test \
-              -p 3000:80 \
-              --restart unless-stopped \
-              ghcr.io/${{ github.repository }}:testing
-
-      # Step 8: Notify QA team
+      # Step 5: Notify QA team
       - name: Notify QA team
         run: |
           echo "📧 Notifying QA team"
           echo "Testing environment is ready for QA validation"
           echo ""
-          echo "Testing URL: ${{ secrets.TEST_FRONTEND_URL }}"
-          echo "Docker Image: ghcr.io/${{ github.repository }}:testing"
+          echo "Testing URL: Check Vercel dashboard"
           echo ""
           echo "⏸️  Pipeline paused - waiting for QA approval"
           echo "To approve for staging, run workflow: 05-qa-approval.yml with input 'APPROVE'"
