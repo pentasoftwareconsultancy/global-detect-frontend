@@ -4,6 +4,8 @@ This folder contains all the GitHub Actions workflow files for the frontend repo
 
 ## Workflow Structure
 
+
+
 ```
 dev-* → development → testing → staging → main (production)
 ```
@@ -99,3 +101,4 @@ Each environment uses different API URLs:
 - Production: PROD_API_URL
 
 These are baked into the Docker image at build time.
+//001
