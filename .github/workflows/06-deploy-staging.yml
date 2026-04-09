@@ -25,27 +25,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Deploy to Vercel (Staging)
+      # Step 4: Deploy to Vercel Staging
       - name: Deploy to Vercel Staging
         run: |
-          npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --yes
+          npx vercel --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_STAGING }}
+          VERCEL_PROJECT_ID: ${{ secrets.STAGING_VERCEL_PROJECT_ID }}
 
       # Step 5: Notify business team
       - name: Notify business team
         run: |
           echo "📧 Notifying business stakeholders"
           echo "Staging environment is ready for final review"
-          echo ""
-          echo "Staging URL: Check Vercel dashboard"
+          echo "🚀 Deployed to Vercel Staging environment"
           echo ""
           echo "⏸️  Pipeline paused - waiting for production approval"
           echo "To deploy to production, run workflow: 07-deploy-production.yml with input 'DEPLOY TO PRODUCTION'"
