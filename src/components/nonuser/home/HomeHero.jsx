@@ -11,8 +11,7 @@ const HomeHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
-
+    <div className="relative min-h-[90vh] lg:min-h-screen bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
       {/* RIGHT SIDE (DESKTOP) */}
 
       <div className="absolute top-0 right-[90px] h-full w-[22%] hidden lg:block overflow-hidden">
@@ -45,7 +44,7 @@ const HomeHero = () => {
       <div className="relative z-30  pb-16 lg:pb-20">
 
         {/* HEADING */}
-        <h1 className="text-[32px] sm:text-[40px] md:text-[54px] lg:text-[64px] leading-[1.1] font-light mb-6">
+        <h1 className="text-[26px] sm:text-[34px] md:text-[54px] lg:text-[64px] leading-[1.2] font-light mb-6">
           <span className="font-semibold">“Professional</span> Private <br />
           <span className="whitespace-nowrap">
             Investigation & <span className="font-semibold">Security</span>
@@ -80,48 +79,47 @@ const HomeHero = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[520px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-[520px]">
+          {[
+            { id: "01", icon: <Lock size={14} className="text-red-500" />, text: "Encrypted Reports" },
+            { id: "02", icon: <CheckCircle size={14} className="text-red-500" />, text: "Verified Detectives" },
+            { id: "03", icon: <Shield size={14} className="text-red-500" />, text: "Icons + short labels" },
+            { id: "04", icon: <Gavel size={14} className="text-red-500" />, text: "Legal & Ethical Compliance" },
+          ].map((item, index) => (
 
-  {[
-    { id: "01", icon: <Lock size={14} className="text-red-500" />, text: "Encrypted Reports" },
-    { id: "02", icon: <CheckCircle size={14} className="text-red-500" />, text: "Verified Detectives" },
-    { id: "03", icon: <Shield size={14} className="text-red-500" />, text: "Icons + short labels" },
-    { id: "04", icon: <Gavel size={14} className="text-red-500" />, text: "Legal & Ethical Compliance" },
-  ].map((item, index) => (
+            <div key={index} className="relative">
 
-    <div key={index} className="relative">
+              {/* NUMBER (BEHIND) */}
+              <div className="absolute top-0 left-0 translate-x-[-40%] translate-y-[-60%] z-2">
+                <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold">
+                  {item.id}
+                </div>
+              </div>
 
-      {/* NUMBER (BEHIND) */}
-      <div className="absolute top-0 left-0 translate-x-[-40%] translate-y-[-60%] z-2">
-        <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold">
-          {item.id}
-        </div>
-      </div>
+              {/* CARD */}
+              <div className="relative z-10">
 
-      {/* CARD */}
-      <div className="relative z-10">
 
-        
 
-        <div className="border border-white/10 
+                <div className="border border-white/10 
           bg-white/[0.06] backdrop-blur-md 
           px-5 py-3 flex items-center gap-3 
           shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
 
-          {item.icon}
+                  {item.icon}
 
-          <span className="text-[13px] text-gray-200">
-            “{item.text}”
-          </span>
+                  <span className="text-[13px] text-gray-200">
+                    “{item.text}”
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
+
         </div>
-
-      </div>
-
-    </div>
-
-  ))}
-
-</div>
       </div>
 
       {/* FLOATING BUTTONS */}

@@ -77,8 +77,7 @@ const AboutUs = () => {
 
 
         {/* RIGHT SIDE CARDS */}
-        <div className="lg:w-1/2 w-full overflow-hidden h-[320px] relative flex justify-end">
-
+<div className="lg:w-1/2 w-full overflow-hidden h-auto lg:h-[320px] relative flex justify-center lg:justify-end">
           <div className="flex flex-col gap-6 animate-verticalScroll w-[80%] lg:w-[60%] absolute" ref={scrollRef}>
 
             {/* CARD 1 */}
