@@ -25,27 +25,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Deploy to Vercel (Testing)
+      # Step 4: Deploy to Vercel Testing
       - name: Deploy to Vercel Testing
         run: |
-          npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --yes
+          npx vercel --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_TEST }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST_VERCEL_PROJECT_ID }}
 
       # Step 5: Notify QA team
       - name: Notify QA team
         run: |
           echo "📧 Notifying QA team"
           echo "Testing environment is ready for QA validation"
-          echo ""
-          echo "Testing URL: Check Vercel dashboard"
+          echo "🚀 Deployed to Vercel Testing environment"
           echo ""
           echo "⏸️  Pipeline paused - waiting for QA approval"
           echo "To approve for staging, run workflow: 05-qa-approval.yml with input 'APPROVE'"

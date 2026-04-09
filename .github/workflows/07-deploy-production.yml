@@ -51,19 +51,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       # Step 6: Install dependencies
       - name: Install dependencies
         run: npm install
       
-      # Step 7: Deploy to Vercel (Production)
+      # Step 7: Deploy to Vercel Production
       - name: Deploy to Vercel Production
+        id: deploy
         run: |
-          npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --yes
+          npx vercel --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_PROD }}
+          VERCEL_PROJECT_ID: ${{ secrets.PROD_VERCEL_PROJECT_ID }}
       
       # Step 8: Rollback on failure (optional)
       - name: Rollback on failure
@@ -78,8 +81,7 @@ jobs:
         if: success()
         run: |
           echo "✅ Production deployment completed successfully"
-          echo ""
-          echo "Production URL: Check Vercel dashboard"
+          echo "🚀 Deployed to Vercel Production environment"
           echo ""
           echo "📊 Deployment Summary:"
           echo "  Environment: Production (main branch)"
