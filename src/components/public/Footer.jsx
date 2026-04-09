@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     // Page wrapper — dark blue-black background like Figma
-    <div style={{ backgroundColor: "#0b1120", minHeight: "100vh", padding: "16px" }}>
+    <div style={{ backgroundColor: "#121F27", minHeight: "100vh", padding: "16px" }}>
       {/* Footer card — red rounded */}
       <div
         style={{ backgroundColor: "#c0392b", borderRadius: "24px" }}
