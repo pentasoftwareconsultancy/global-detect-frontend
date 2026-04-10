@@ -7,7 +7,7 @@ import { BiSolidMessageAlt } from "react-icons/bi";
 import se from "../../../assets/image 4.png";
 import rect from "../../../assets/Rectangle.png";
 
-const HomeHero = () => {
+const HomeHero = () =>{
   const navigate = useNavigate();
 
   return (
