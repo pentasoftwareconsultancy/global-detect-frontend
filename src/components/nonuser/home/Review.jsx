@@ -33,7 +33,7 @@ const Review = () => {
   const loopReviews = [...reviews, ...reviews];
 
   return (
-    <section className="bg-[#121F27] text-white py-14 md:py-16 overflow-hidden">
+    <section className="bg-[#121F27] text-white py-10 md:py-2 overflow-hidden">
       {/* TITLE (WITH PADDING) */}
       <div className="max-w-8xl mx-auto px-6 md:px-12 lg:px-20">
         <h2 className="text-3xl md:text-4xl font-bold mb-12">
@@ -72,17 +72,27 @@ const Review = () => {
                   <h4 className="font-semibold text-lg">{review.name}</h4>
                   <p className="text-sm text-gray-400">{review.role}</p>
 
-                  <div className="flex gap-1 mt-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} className="fill-red-500 text-red-500" />
-                    ))}
+                  {/* ⭐ + VERIFIED SAME ROW */}
+                  <div className="flex items-center justify-between mt-1">
+
+                    {/* STARS */}
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={14} className="fill-red-500 text-red-500" />
+                      ))}
+                    </div>
+
+                    {/* VERIFIED */}
+                    <div className="flex items-center gap-1 text-red-500 text-xs whitespace-nowrap ">
+                      <RiVerifiedBadgeFill  />
+                      Verified user
+                    </div>
+
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-red-500 text-xs whitespace-nowrap">
-                  <RiVerifiedBadgeFill />
-                  Verified user
-                </div>
+
+
               </div>
             </div>
           ))}

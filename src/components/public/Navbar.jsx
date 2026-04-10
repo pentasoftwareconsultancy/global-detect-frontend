@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import logo from "../../assets/Global.png";
+import logo from "../../assets/Global-logo.png";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,12 +21,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-[999] w-full px-6 md:px-12 lg:px-20 py-3 transition-all duration-300
-      ${
-        scrolled
-          ? "bg-[#121F27]/60 backdrop-blur-md "
-          : "bg-transparent- "
-      }`}
+      className={`sticky top-0 z-[999] w-full px-4 sm:px-6 md:px-12 lg:px-20 py-3 transition-all duration-300 ${scrolled ? "bg-[#121F27]/60 backdrop-blur-md" : ""
+        }`}
     >
       <div className="flex items-center justify-between">
 
@@ -62,11 +58,10 @@ const Navbar = () => {
                       ?.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className={`px-5 py-1.5 rounded-full text-sm font-medium transition ${
-                  active === item
-                    ? "bg-[#e7dfd7] text-black"
-                    : "text-white/80 hover:text-white"
-                }`}
+                className={`px-5 py-1.5 rounded-full text-sm font-medium transition ${active === item
+                  ? "bg-[#e7dfd7] text-black"
+                  : "text-white/80 hover:text-white"
+                  }`}
               >
                 {item === "home"
                   ? "Home"

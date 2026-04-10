@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../../assets/Global-logo.png";
 
 const Footer = () => {
   return (
@@ -20,7 +21,7 @@ const Footer = () => {
             {/* Logo + name */}
             <div className="flex items-center gap-3 mb-1">
               <img
-                src="/logo.png"
+                src={logo}
                 alt="Universal Detective"
                 className="w-[60px] h-[60px] rounded-full object-cover flex-shrink-0"
                 onError={(e) => {
@@ -43,7 +44,7 @@ const Footer = () => {
                   flexShrink: 0,
                 }}
               >
-                🔍
+                
               </div>
               <h2 className="font-semibold text-[15px] leading-snug">
                 Universal<br />Detective pvt ltd

@@ -28,7 +28,7 @@ const AboutUs = () => {
   }, []);
 
   return (
-    <section id="about" className="bg-[#121F27] text-white py-8 md:py-10 px-6 md:px-12 lg:px-20">
+    <section id="about" className="bg-[#121F27] text-white py-4 md:py-6 px-6 md:px-12 lg:px-20">
 
       <div className="flex flex-col lg:flex-row gap-10 items-center">
         {/* LEFT CONTENT */}
@@ -77,8 +77,7 @@ const AboutUs = () => {
 
 
         {/* RIGHT SIDE CARDS */}
-        <div className="lg:w-1/2 w-full overflow-hidden h-[320px] relative flex justify-end">
-
+        <div className="lg:w-1/2 w-full overflow-hidden h-auto lg:h-[320px] relative flex justify-center lg:justify-end">
           <div className="flex flex-col gap-6 animate-verticalScroll w-[80%] lg:w-[60%] absolute" ref={scrollRef}>
 
             {/* CARD 1 */}

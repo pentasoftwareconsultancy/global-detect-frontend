@@ -13,7 +13,9 @@ const EnquiryForm = () => {
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Form */}
           <div className="flex-1">
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+              {/* NAME */}
               <div className="flex flex-col gap-2">
                 <label className="text-gray-400 text-sm">Your Name</label>
                 <input
@@ -22,6 +24,8 @@ const EnquiryForm = () => {
                   placeholder="Enter your name"
                 />
               </div>
+
+              {/* EMAIL */}
               <div className="flex flex-col gap-2">
                 <label className="text-gray-400 text-sm">Email Address</label>
                 <input
@@ -30,7 +34,9 @@ const EnquiryForm = () => {
                   placeholder="Enter your email"
                 />
               </div>
-              <div className="flex flex-col gap-2 md:col-span-2">
+
+              {/* PHONE */}
+              <div className="flex flex-col gap-2">
                 <label className="text-gray-400 text-sm">Phone Number (optional)</label>
                 <input
                   type="tel"
@@ -38,7 +44,9 @@ const EnquiryForm = () => {
                   placeholder="Enter your phone number"
                 />
               </div>
-              <div className="flex flex-col gap-2 md:col-span-2">
+
+              {/* MESSAGE */}
+              <div className="flex flex-col gap-2 md:col-span-3">
                 <label className="text-gray-400 text-sm">Message</label>
                 <textarea
                   rows="4"
@@ -47,26 +55,35 @@ const EnquiryForm = () => {
                 ></textarea>
               </div>
 
-              <div className="md:col-span-2 flex flex-col md:flex-row justify-between items-center gap-8 mt-8">
-                <button className="w-full md:w-auto bg-red px-8 py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:bg-[#b0222f] transition-colors group">
-                  Leave a message to us
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                {/* Social Icons */}
-                <div className="flex gap-6">
-                  <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-red hover:text-red transition-all">
-                    <Instagram size={20} />
-                  </a>
-                  <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-red hover:text-red transition-all">
-                    <Facebook size={20} />
-                  </a>
-                  <a href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-red hover:text-red transition-all">
-                    <Twitter size={20} />
-                  </a>
-                </div>
-              </div>
             </form>
+
+            {/* CTA + SOCIALS */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-10 gap-6">
+
+              {/* BUTTON */}
+              <button className="flex items-center gap-2 bg-[#e53935] hover:bg-[#c62828] px-6 py-3 rounded-md text-sm font-medium transition">
+                Leave a message to us
+                <ArrowRight size={16} />
+              </button>
+
+              {/* SOCIAL ICONS */}
+              <div className="flex items-center gap-4">
+
+                <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition cursor-pointer">
+                  <Instagram size={18} />
+                </div>
+
+                <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition cursor-pointer">
+                  <Facebook size={18} />
+                </div>
+
+                <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition cursor-pointer">
+                  <Twitter size={18} />
+                </div>
+
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
