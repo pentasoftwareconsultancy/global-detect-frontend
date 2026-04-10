@@ -2,7 +2,8 @@ import React from 'react';
 import { Shield, CheckCircle, Lock, Gavel } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../core/constants/routes.constant';
-
+import { RiWhatsappFill } from "react-icons/ri";
+import { BiSolidMessageAlt } from "react-icons/bi";
 import se from "../../../assets/image 4.png";
 import rect from "../../../assets/Rectangle.png";
 
@@ -10,18 +11,24 @@ const HomeHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen bg-[#07121a] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
-
+    <div className="relative min-h-[80vh] lg:min-h-[87vh] bg-[#121F27] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
       {/* RIGHT SIDE (DESKTOP) */}
-      <div className="absolute right-0 top-0 h-full w-[30%] hidden lg:block overflow-hidden">
 
-        <img src={rect} className="absolute top-0 right-0 w-full h-full object-cover" />
+      <div className="absolute top-0 right-[90px] h-full w-[22%] hidden lg:block overflow-hidden">
 
-        <div className="absolute bottom-[-120px] left-1/2 -translate-x-1/2 w-[140%] h-[320px] bg-[#07121a] rounded-full z-10"></div>
+        {/* RED BACKGROUND */}
+        <img
+          src={rect}
+          className="absolute top-0 right-0 w-full h-full object-cover saturate-170"
+        />
 
+        {/* CURVED BOTTOM SHAPE */}
+        <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 w-[160%] h-[360px] bg-[#121F27] rounded-full z-10"></div>
+
+        {/* DETECTIVE IMAGE */}
         <img
           src={se}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[92%] object-contain z-20"
+          className="absolute bottom-[-50px] left-1/2 -translate-x-1/2 h-[80%] w object-contain z-20"
         />
       </div>
 
@@ -31,13 +38,13 @@ const HomeHero = () => {
       </div>
 
       {/* LEFT GRADIENT */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#07121a] via-[#07121a]/95 to-transparent z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#121F27] via-[#121F27]/95 to-transparent z-0"></div>
 
       {/* CONTENT */}
-      <div className="relative z-30 max-w-[620px] pt-16 sm:pt-20">
+      <div className="relative z-30  pb-6 lg:pb-10">
 
         {/* HEADING */}
-        <h1 className="text-[32px] sm:text-[40px] md:text-[54px] lg:text-[64px] leading-[1.1] font-light mb-6">
+        <h1 className="text-[26px] sm:text-[34px] md:text-[54px] lg:text-[64px] leading-[1.2] font-light mb-6">
           <span className="font-semibold">“Professional</span> Private <br />
           <span className="whitespace-nowrap">
             Investigation & <span className="font-semibold">Security</span>
@@ -46,10 +53,12 @@ const HomeHero = () => {
         </h1>
 
         {/* TEXT */}
-        <p className="text-gray-400 text-sm sm:text-[15px] leading-[1.7] mb-8 sm:mb-10">
+        <p className="text-gray-400 text-sm sm:text-[15px] leading-[1.7] mb-8 sm:mb-10 max-w-[700px]">
           Delivering confidential private investigations powered by verified professionals,
           ethical practices, and advanced digital technology—ensuring accuracy, accountability,
-          and complete discretion at every stage.
+          and complete discretion at every stage. From background verification to litigation support,
+          our platform ensures secure case handling, verified professionals,
+          and structured workflows that meet corporate and legal standards.
         </p>
 
         {/* BUTTONS */}
@@ -64,52 +73,66 @@ const HomeHero = () => {
 
           <button
             onClick={() => navigate('/login')}
-            className="border border-white/30 px-6 sm:px-7 py-3 rounded-md font-medium hover:bg-white/10 w-full sm:w-auto"
+            className="border-[1.6px] border-white px-6 sm:px-7 py-3 rounded-md font-medium hover:bg-white/10 w-full sm:w-auto"
           >
             Join as Detective
           </button>
-
         </div>
 
-        {/* FEATURES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-x-10 sm:gap-y-6 max-w-[520px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-[520px]">
+          {[
+            { id: "01", icon: <Lock size={14} className="text-red-500" />, text: "Encrypted Reports" },
+            { id: "02", icon: <CheckCircle size={14} className="text-red-500" />, text: "Verified Detectives" },
+            { id: "03", icon: <Shield size={14} className="text-red-500" />, text: "Icons + short labels" },
+            { id: "04", icon: <Gavel size={14} className="text-red-500" />, text: "Legal & Ethical Compliance" },
+          ].map((item, index) => (
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">01</span>
-            <Lock size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Encrypted Reports”</span>
-          </div>
+            <div key={index} className="relative">
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">02</span>
-            <CheckCircle size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Verified Detectives”</span>
-          </div>
+              {/* NUMBER (BEHIND) */}
+              <div className="absolute top-0 left-0 translate-x-[-40%] translate-y-[-60%] z-2">
+                <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold">
+                  {item.id}
+                </div>
+              </div>
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">03</span>
-            <Shield size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Icons + short labels”</span>
-          </div>
+              {/* CARD */}
+              <div className="relative z-10">
 
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">04</span>
-            <Gavel size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Legal & Ethical Compliance”</span>
-          </div>
+
+
+                <div className="border border-white/10 
+          bg-white/[0.06] backdrop-blur-md 
+          px-5 py-3 flex items-center gap-3 
+          shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
+
+                  {item.icon}
+
+                  <span className="text-[13px] text-gray-200">
+                    “{item.text}”
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
 
         </div>
       </div>
 
       {/* FLOATING BUTTONS */}
       <div className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 flex flex-col gap-3 z-50">
-        <button className="bg-[#25D366] p-3 rounded-full shadow-lg">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" className="w-5 h-5" />
+
+        <button className="bg-[#D92B3A] p-3 rounded-full shadow-lg">
+          <RiWhatsappFill className="w-6 h-6" />
         </button>
 
-        <button className="bg-[#e53935] p-3 rounded-full shadow-lg">
-          <img src="https://www.svgrepo.com/show/521104/chat-bubble.svg" className="w-5 h-5 invert" />
+        <button className="bg-[#D92B3A] p-3 rounded-full shadow-lg">
+          <BiSolidMessageAlt className="w-6 h-6 " />
         </button>
+
       </div>
 
     </div>

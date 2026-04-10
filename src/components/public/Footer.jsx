@@ -1,9 +1,10 @@
 import React from "react";
+import logo from "../../assets/Global-logo.png";
 
 const Footer = () => {
   return (
     // Page wrapper — dark blue-black background like Figma
-    <div style={{ backgroundColor: "#0b1120", minHeight: "100vh", padding: "16px" }}>
+    <div style={{ backgroundColor: "#121F27", minHeight: "100vh", padding: "16px" }}>
       {/* Footer card — red rounded */}
       <div
         style={{ backgroundColor: "#c0392b", borderRadius: "24px" }}
@@ -20,7 +21,7 @@ const Footer = () => {
             {/* Logo + name */}
             <div className="flex items-center gap-3 mb-1">
               <img
-                src="/logo.png"
+                src={logo}
                 alt="Universal Detective"
                 className="w-[60px] h-[60px] rounded-full object-cover flex-shrink-0"
                 onError={(e) => {
@@ -43,7 +44,7 @@ const Footer = () => {
                   flexShrink: 0,
                 }}
               >
-                🔍
+                
               </div>
               <h2 className="font-semibold text-[15px] leading-snug">
                 Universal<br />Detective pvt ltd
