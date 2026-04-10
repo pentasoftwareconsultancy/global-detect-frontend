@@ -1,134 +1,69 @@
 import React from 'react';
 import { User, Mail, Phone, MapPin } from 'lucide-react';
 
+const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
+const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
+const inputClass = "w-full bg-transparent border border-white/20 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors";
+
 const Step3SubjectDetails = ({ formData, handleInputChange }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Entity Name */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Entity Name</label>
+        <label style={labelStyle}>Entity Name</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <User size={18} />
-          </span>
-          <input
-            type="text"
-            name="subjectEntityName"
-            placeholder="Enter Name"
-            className="w-full bg-transparent border border-white/20 rounded-lg py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors"
-            value={formData.subjectEntityName || ''}
-            onChange={handleInputChange}
-          />
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <input type="text" name="subjectEntityName" placeholder="Enter Name" style={inputStyle} className={inputClass} value={formData.subjectEntityName || ''} onChange={handleInputChange} />
         </div>
       </div>
 
-      {/* Known Contact Information */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Known Contact Information (if any)</label>
+        <label style={labelStyle}>Known Contact Information (if any)</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <Phone size={18} />
-          </span>
-          <input
-            type="tel"
-            name="subjectContact"
-            placeholder="Phone number"
-            className="w-full bg-transparent border border-white/20 rounded-lg py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors"
-            value={formData.subjectContact || ''}
-            onChange={handleInputChange}
-          />
+          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <input type="tel" name="subjectContact" placeholder="Phone number" style={inputStyle} className={inputClass} value={formData.subjectContact || ''} onChange={handleInputChange} />
         </div>
       </div>
 
-      {/* Email Address */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Email Address</label>
+        <label style={labelStyle}>Email Address</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <Mail size={18} />
-          </span>
-          <input
-            type="email"
-            name="subjectEmail"
-            placeholder="Enter Email ID"
-            className="w-full bg-transparent border border-white/20 rounded-lg py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors"
-            value={formData.subjectEmail || ''}
-            onChange={handleInputChange}
-          />
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <input type="email" name="subjectEmail" placeholder="Enter Email ID" style={inputStyle} className={inputClass} value={formData.subjectEmail || ''} onChange={handleInputChange} />
         </div>
       </div>
 
-      {/* Pincode */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">Pincode</label>
-        <input
-          type="text"
-          name="subjectPincode"
-          placeholder="Enter Pincode"
-          className="w-full bg-transparent border border-white/20 rounded-lg py-3 px-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors"
-          value={formData.subjectPincode || ''}
-          onChange={handleInputChange}
-        />
+        <label style={labelStyle}>Pincode</label>
+        <input type="text" name="subjectPincode" placeholder="Enter Pincode" style={{ ...inputStyle, paddingLeft: '16px' }} className={inputClass} value={formData.subjectPincode || ''} onChange={handleInputChange} />
       </div>
 
-      {/* City/ Village */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">City/ Village</label>
+        <label style={labelStyle}>City / Village</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <MapPin size={18} />
-          </span>
-          <select
-            name="subjectCity"
-            className="w-full bg-[#0b1120] border border-white/20 rounded-lg py-3 pl-12 pr-10 text-white focus:outline-none focus:border-white transition-colors appearance-none"
-            value={formData.subjectCity || ''}
-            onChange={handleInputChange}
-          >
-            <option value="">Select City/ Village</option>
+          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" size={16} />
+          <select name="subjectCity" style={inputStyle} className="w-full bg-[#0b1120] border border-white/20 pr-4 text-white focus:outline-none focus:border-white appearance-none" value={formData.subjectCity || ''} onChange={handleInputChange}>
+            <option value="">Select City / Village</option>
             <option value="City1">City 1</option>
           </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
         </div>
       </div>
 
-      {/* State */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-300">State</label>
+        <label style={labelStyle}>State</label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <MapPin size={18} />
-          </span>
-          <select
-            name="subjectState"
-            className="w-full bg-[#0b1120] border border-white/20 rounded-lg py-3 pl-12 pr-10 text-white focus:outline-none focus:border-white transition-colors appearance-none"
-            value={formData.subjectState || ''}
-            onChange={handleInputChange}
-          >
+          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" size={16} />
+          <select name="subjectState" style={inputStyle} className="w-full bg-[#0b1120] border border-white/20 pr-4 text-white focus:outline-none focus:border-white appearance-none" value={formData.subjectState || ''} onChange={handleInputChange}>
             <option value="">Select State</option>
             <option value="State1">State 1</option>
           </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
         </div>
       </div>
 
-      {/* Relationship to Subject */}
-      <div className="space-y-2 lg:col-span-2">
-        <label className="text-sm font-medium text-gray-300">Relationship to Subject (Self / Employee / Client / Other)</label>
-        <select
-          name="relationshipToSubject"
-          className="w-full bg-[#0b1120] border border-white/20 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-white transition-colors appearance-none"
-          value={formData.relationshipToSubject || ''}
-          onChange={handleInputChange}
-        >
-          <option value="">Select subject</option>
+      <div className="space-y-2 md:col-span-2 lg:col-span-3">
+        <label style={labelStyle}>Relationship to Subject</label>
+        <select name="relationshipToSubject" style={{ ...inputStyle, paddingLeft: '16px' }} className="w-full bg-[#0b1120] border border-white/20 pr-4 text-white focus:outline-none focus:border-white appearance-none" value={formData.relationshipToSubject || ''} onChange={handleInputChange}>
+          <option value="">Select (Self / Employee / Client / Other)</option>
           <option value="Self">Self</option>
           <option value="Employee">Employee</option>
           <option value="Client">Client</option>
@@ -136,22 +71,17 @@ const Step3SubjectDetails = ({ formData, handleInputChange }) => {
         </select>
       </div>
 
-      {/* Subject Type */}
-      <div className="space-y-2 lg:col-span-2">
-        <label className="text-sm font-medium text-gray-300">Subject Type (Individual / Company / Property / Digital Identity)</label>
-        <select
-          name="subjectType"
-          className="w-full bg-[#0b1120] border border-white/20 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-white transition-colors appearance-none"
-          value={formData.subjectType || ''}
-          onChange={handleInputChange}
-        >
-          <option value="">Select type</option>
+      <div className="space-y-2 md:col-span-2 lg:col-span-3">
+        <label style={labelStyle}>Subject Type</label>
+        <select name="subjectType" style={{ ...inputStyle, paddingLeft: '16px' }} className="w-full bg-[#0b1120] border border-white/20 pr-4 text-white focus:outline-none focus:border-white appearance-none" value={formData.subjectType || ''} onChange={handleInputChange}>
+          <option value="">Select (Individual / Company / Property / Digital Identity)</option>
           <option value="Individual">Individual</option>
           <option value="Company">Company</option>
           <option value="Property">Property</option>
           <option value="Digital Identity">Digital Identity</option>
         </select>
       </div>
+
     </div>
   );
 };
