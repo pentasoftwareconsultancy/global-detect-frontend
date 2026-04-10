@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../assets/Global.png";
+import logo from "../../assets/Global-logo.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
