@@ -12,6 +12,7 @@ const ContactInfo = () => {
       <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-16">
 
         {/* LEFT */}
+        
         <div className="flex-1">
           <p className="text-gray-500 mb-4 text-sm">
             Contact Info
