@@ -4,7 +4,8 @@ const Blogs = () => {
   const blogs = [
     {
       id: 1,
-      title: 'Private and Personal Investigation Case Insights',
+      line1: 'Private and Personal',
+      line2: 'Investigation Case Insights',
       author: 'Tracey Wilson',
       date: 'August 20, 2022',
       image: "/image 11.png",
@@ -12,7 +13,8 @@ const Blogs = () => {
     },
     {
       id: 2,
-      title: 'Corporate Fraud and Internal Risk Investigations',
+      line1: 'Corporate Fraud and Internal',
+      line2: 'Risk Investigations',
       author: 'Jason Francisco',
       date: 'August 20, 2022',
       image: "/image 12.png",
@@ -20,7 +22,8 @@ const Blogs = () => {
     },
     {
       id: 3,
-      title: 'Comprehensive Background Verification and Screening Processes',
+      line1: 'Comprehensive Background Verification',
+      line2: 'and Screening Processes',
       author: 'Elizabeth Slavin',
       date: 'August 20, 2022',
       image: "/image 14.png",
@@ -28,7 +31,8 @@ const Blogs = () => {
     },
     {
       id: 4,
-      title: 'Cybercrime and Digital Forensic Investigations',
+      line1: 'Cybercrime and Digital Forensic',
+      line2: 'Investigations',
       author: 'Ernie Smith',
       date: 'August 20, 2022',
       image: "/image 10.png",
@@ -36,7 +40,8 @@ const Blogs = () => {
     },
     {
       id: 5,
-      title: 'Property Ownership and Asset Verification Investigations',
+      line1: 'Property Ownership and Asset',
+      line2: 'Verification Investigations',
       author: 'Eric Smith',
       date: 'August 20, 2022',
       image: "/image 9.png",
@@ -44,7 +49,8 @@ const Blogs = () => {
     },
     {
       id: 6,
-      title: 'Litigation Support and Court Dispute Investigations',
+      line1: 'Litigation Support and Court',
+      line2: 'Dispute Investigations',
       author: 'Tracey Wilson',
       date: 'August 20, 2022',
       image: "/image 15.png",
@@ -52,7 +58,8 @@ const Blogs = () => {
     },
     {
       id: 7,
-      title: 'OSINT Based Intelligence and Online Investigations',
+      line1: 'OSINT Based Intelligence',
+      line2: 'and Online Investigations',
       author: 'Jason Francisco',
       date: 'August 20, 2022',
       image: "/image 16.png",
@@ -60,7 +67,8 @@ const Blogs = () => {
     },
     {
       id: 8,
-      title: 'Field Surveillance and On-Ground Verification Operations',
+      line1: 'Field Surveillance and',
+      line2: 'On-Ground Verification Operations',
       author: 'Elizabeth Slavin',
       date: 'August 20, 2022',
       image: "/image 17.png",
@@ -68,21 +76,20 @@ const Blogs = () => {
     },
     {
       id: 9,
-      title: 'Security Threat Analysis and Risk Assessment Investigations',
+      line1: 'Security Threat Analysis and',
+      line2: 'Risk Assessment Investigations',
       author: 'Ernie Smith',
       date: 'August 20, 2022',
       image: "/image 18.png",
       profile: "/profile4.png"
     }
-
   ];
 
   return (
-    <section id="blog" className="bg-[#121F27] text-white py-14 px-4 md:px-8 lg:px-20">
+    <section id="blog" className="bg-[#121F27] text-white pt-25 py-14 px-4 md:px-8 lg:px-20">
 
       <div className="max-w-8xl mx-auto">
 
-        {/* TITLE */}
         <h2 className="text-4xl md:text-5xl font-bold mb-4">Blogs</h2>
 
         <p className="text-gray-400 mb-10 max-w-3xl leading-relaxed">
@@ -91,42 +98,33 @@ const Blogs = () => {
 
         <h3 className="text-xl font-semibold mb-8">Latest Post</h3>
 
-        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
           {blogs.map((blog) => (
             <div key={blog.id}>
 
-              {/* IMAGE */}
               <div className="h-[220px] overflow-hidden rounded-m mb-4">
                 <img
                   src={blog.image}
-                  alt={blog.title}
+                  alt={blog.line1}
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              <h4 className="text-lg font-semibold mb-4 leading-snug h-[3.6rem] overflow-hidden">
-                {blog.title}
+              <h4 className="text-lg font-semibold mb-4 leading-snug ">
+                {blog.line1}<br />{blog.line2}
               </h4>
 
-              {/* AUTHOR ROW */}
               <div className="flex items-center gap-3 text-sm text-gray-400">
-
-                {/* PROFILE IMAGE */}
                 <img
                   src={blog.profile}
                   alt={blog.author}
                   className="w-8 h-8 rounded-full object-cover"
                 />
-
-                {/* NAME + DATE SAME ROW */}
                 <div className="flex items-center gap-3">
                   <p className="text-white font-medium pr-2">{blog.author}</p>
-                  
                   <p className="text-gray-500">{blog.date}</p>
                 </div>
-
               </div>
 
             </div>
