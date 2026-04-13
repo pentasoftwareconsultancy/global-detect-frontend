@@ -89,6 +89,11 @@ const AppRoutes = () => {
              <Route path={ROUTES.CONTACT} element={<ContactInfo />} />
         </Route>
 
+        {/* ================= REQUEST INVESTIGATION (public - no auth required) ================= */}
+        <Route element={<UserLayout />}>
+          <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
+        </Route>
+
         {/* ================= USER ROUTES ================= */}
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
           <Route element={<UserLayout />}>
@@ -98,7 +103,6 @@ const AppRoutes = () => {
             <Route path={ROUTES.USER_NOTIFICATION} element={<UserNotificationPage />} />
             <Route path={ROUTES.USER_PROFILE} element={<UserProfilePage />} />
             <Route path={ROUTES.USER_SETTINGS} element={<UserSettingsPage />} />
-            <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
           </Route>
         </Route>
 
