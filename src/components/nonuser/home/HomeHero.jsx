@@ -66,7 +66,7 @@ const HomeHero = () => {
 
           <button
             onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-            className="bg-[#e53935] hover:bg-[#c62828] px-6 sm:px-7 py-3 rounded-md font-medium w-full sm:w-auto"
+            className="bg-[#D92B3A] hover:bg-[#c62828] px-6 sm:px-7 py-3 rounded-md font-medium w-full sm:w-auto"
           >
             Request Investigation
           </button>
@@ -90,14 +90,14 @@ const HomeHero = () => {
             <div key={index} className="relative">
 
               {/* NUMBER (BEHIND) */}
-              <div className="absolute top-0 left-0 translate-x-[-40%] translate-y-[-60%] z-2">
-                <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold">
+              <div className="absolute  translate-x-[-40%] translate-y-[-60%] z-2 -top-1 -left-1">
+                <div className="bg-[#F2D1B3] text-black text-[10px] px-3 py-1 rounded-sm shadow-md font-bold ">
                   {item.id}
                 </div>
               </div>
 
               {/* CARD */}
-              <div className="relative z-10">
+              <div className="relative z-10 left-1">
 
 
 

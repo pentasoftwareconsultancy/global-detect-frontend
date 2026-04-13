@@ -3,8 +3,8 @@ import { ArrowRight, Instagram, Facebook, Twitter } from 'lucide-react';
 
 const EnquiryForm = () => {
   return (
-    <section className="bg-[#121F27] text-white py-14 md:py-16 px-6 md:px-12 lg:px-20">
-      <div className="max-w-8xl mx-auto">
+    <section className="bg-[#121F27] text-white  py-14 md:py-16 px-6 md:px-12 lg:px-20">
+      <div className="max-w-8xl pt-16 mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold mb-10 max-w-2xl">
           Get in touch with us. <br />
           We are here to assist you
@@ -55,13 +55,14 @@ const EnquiryForm = () => {
                 ></textarea>
               </div>
 
+
             </form>
 
             {/* CTA + SOCIALS */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-10 gap-6">
 
               {/* BUTTON */}
-              <button className="flex items-center gap-2 bg-[#e53935] hover:bg-[#c62828] px-6 py-3 rounded-md text-sm font-medium transition">
+              <button className="flex items-center gap-2 bg-[#D92B3A] hover:bg-[#c62828] px-6 py-3 rounded-md text-sm font-medium transition">
                 Leave a message to us
                 <ArrowRight size={16} />
               </button>
