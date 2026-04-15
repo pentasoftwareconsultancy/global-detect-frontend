@@ -35,6 +35,7 @@ export const ROUTES = {
   USER_NOTIFICATION: "/user-notification", // user notification
   USER_SETTINGS: "/user-settings", // user settings
   REQUEST_INVESTIGATION: "/request-investigation", // request investigation form
+  USER_BLOG_DETAIL: "/blog-detail",
 
   // admin Pages
 ADMIN_ALL_CASE_MANAGEMENT: "/admin-all-case-management",
