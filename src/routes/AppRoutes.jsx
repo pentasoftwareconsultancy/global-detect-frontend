@@ -25,6 +25,7 @@ const DetectiveForm = lazy(() => import("../pages/auth/DetectiveForm"));
 /* ======================= USER PAGES ======================= */
 const UserDashboardPage = lazy(() => import("../pages/user/UserDashboardPage"));
 const UserDetailsPage = lazy(() => import("../pages/user/UserDetailsPage"));
+const UserBlogDetailPage = lazy(() => import("../pages/user/UserBlogDetailPage"));
 const UserNotificationPage = lazy(() => import("../pages/user/UserNotificationPage"));
 const UserProfilePage = lazy(() => import("../pages/user/UserProfilePage"));
 const UserSettingsPage = lazy(() => import("../pages/user/UserSettingsPage"));
@@ -87,6 +88,12 @@ const AppRoutes = () => {
           
             <Route path={ROUTES.BLOG} element={<Blogs />} />
              <Route path={ROUTES.CONTACT} element={<ContactInfo />} />
+            <Route path={ROUTES.USER_BLOG_DETAIL} element={<UserBlogDetailPage />} />
+        </Route>
+
+        {/* ================= REQUEST INVESTIGATION (public - no auth required) ================= */}
+        <Route element={<UserLayout />}>
+          <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
         </Route>
 
         {/* ================= USER ROUTES ================= */}
@@ -98,7 +105,6 @@ const AppRoutes = () => {
             <Route path={ROUTES.USER_NOTIFICATION} element={<UserNotificationPage />} />
             <Route path={ROUTES.USER_PROFILE} element={<UserProfilePage />} />
             <Route path={ROUTES.USER_SETTINGS} element={<UserSettingsPage />} />
-            <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
           </Route>
         </Route>
 

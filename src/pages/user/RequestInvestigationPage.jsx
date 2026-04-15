@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import GlobalLogo from '../../assets/Global-logo.png';
 
-// Import step components
 import Step1BasicContactInformation from '../../components/user/request-investigation/Step1BasicContactInformation';
 import Step2InvestigationTypeSelection from '../../components/user/request-investigation/Step2InvestigationTypeSelection';
 import Step3SubjectDetails from '../../components/user/request-investigation/Step3SubjectDetails';
@@ -13,7 +11,6 @@ import Step6EvidenceSupportingInformation from '../../components/user/request-in
 import Step7LegalConsentDeclaration from '../../components/user/request-investigation/Step7LegalConsentDeclaration';
 import Step8ReviewSubmit from '../../components/user/request-investigation/Step8ReviewSubmit';
 import SuccessScreen from '../../components/user/request-investigation/SuccessScreen';
-
 
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -75,12 +72,11 @@ const RequestInvestigationPage = () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Save form data to localStorage before submitting
       const uploadedImages = [
         ...(formData.uploadedFiles1 || []),
         ...(formData.uploadedFiles2 || [])
       ];
-      
+
       const newCase = {
         id: `CASE-${Math.floor(1000 + Math.random() * 9000)}`,
         title: formData.investigationType || 'New Investigation',
@@ -95,11 +91,11 @@ const RequestInvestigationPage = () => {
         })),
         submittedDate: new Date().toISOString()
       };
-      
+
       const existingCases = JSON.parse(localStorage.getItem('userCases') || '[]');
       existingCases.unshift(newCase);
       localStorage.setItem('userCases', JSON.stringify(existingCases));
-      
+
       setSubmitted(true);
     }
   };
@@ -139,8 +135,7 @@ const RequestInvestigationPage = () => {
   <div className="hidden md:flex flex-shrink-0" style={{ width: '374px' }}>
     <div className="bg-[#111827] rounded-[24px] m-6 flex flex-col relative" style={{ width: '374px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
 
-      {/* Background line (unfilled) */}
-      <div className="absolute" style={{ left: '63px', top: '79px', width: '6px', bottom: '79px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
+          <div className="absolute" style={{ left: '63px', top: '79px', width: '6px', bottom: '79px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
 
       {/* Filled progress line */}
       <div className="absolute transition-all duration-500" style={{
@@ -154,22 +149,27 @@ const RequestInvestigationPage = () => {
         borderRadius: '3px'
       }}></div>
 
-      <div className="flex flex-col justify-between h-full relative z-10">
-        {steps.map((step) => (
-          <div key={step.id} className="relative flex items-center gap-4">
-            {/* Circle - 30x30 at left:19px */}
-            <div className="flex-shrink-0" style={{ width: '30px', height: '30px', marginLeft: '19px' }}>
-              <div className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-300 ${
-                currentStep > step.id ? 'bg-green-500 text-white'
-                : currentStep === step.id ? 'bg-white text-[#0b1120]'
-                : 'bg-[#111827] text-gray-500 border-2 border-white/20'
-              }`}>
-                {currentStep > step.id
-                  ? <CheckCircle2 size={14} />
-                  : <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: '12px', lineHeight: '21px', letterSpacing: '0px', textAlign: 'center' }}>
-                      {String(step.id).padStart(2, '0')}
-                    </span>
-                }
+          <div className="flex flex-col justify-between h-full relative z-10">
+            {steps.map((step) => (
+              <div key={step.id} className="relative flex items-center gap-4">
+                <div className="flex-shrink-0" style={{ width: '30px', height: '30px', marginLeft: '19px' }}>
+                  <div className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-300 ${
+                    currentStep > step.id ? 'bg-green-500 text-white'
+                    : currentStep === step.id ? 'bg-white text-[#0b1120]'
+                    : 'bg-[#111827] text-gray-500 border-2 border-white/20'
+                  }`}>
+                    {currentStep > step.id
+                      ? <CheckCircle2 size={14} />
+                      : <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: '12px', lineHeight: '21px', letterSpacing: '0px', textAlign: 'center' }}>
+                          {String(step.id).padStart(2, '0')}
+                        </span>
+                    }
+                  </div>
+                </div>
+                <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '21px', letterSpacing: '0px', width: '271px' }}
+                  className={`transition-colors duration-300 ${currentStep === step.id ? 'text-white' : currentStep > step.id ? 'text-white/60' : 'text-gray-500'}`}>
+                  {step.title}
+                </span>
               </div>
             </div>
             {/* Title - left:66px from card edge = 19+30+17 */}
@@ -245,6 +245,7 @@ const RequestInvestigationPage = () => {
             </div>
           </div>
         </div>
+      </div>
 
         <div className="border-t border-white/10 bg-[#0b1120] sticky bottom-0 z-20 py-4">
           <div className="max-w-6xl mx-auto flex justify-between gap-4">
@@ -266,8 +267,6 @@ const RequestInvestigationPage = () => {
         </div>
       </div>
     </div>
-  </div>
-</div>
   );
 };
 

@@ -9,7 +9,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
-  // 🔥 SCROLL EFFECT
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -39,12 +39,19 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* CENTER */}
-        <div className="hidden md:flex items-center justify-center flex-1">
-          <div className="flex items-center gap-8 px-8 py-2.5 rounded-full 
-            bg-black/30 backdrop-blur-xl border border-white/10
-            shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
-
+        {/* CENTER NAV */}
+        <div className="hidden md:flex items-center justify-center ">
+          <div
+            className="
+      flex items-center gap-2 
+      
+      rounded-xl
+      bg-[#0f1c24]/80
+      backdrop-blur-md
+      border border-white/20
+      shadow-[0_8px_25px_rgba(0,0,0,0.35)]
+    "
+          >
             {["home", "about", "services", "blog", "contact"].map((item) => (
               <button
                 key={item}
@@ -58,10 +65,13 @@ const Navbar = () => {
                       ?.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className={`px-5 py-1.5 rounded-full text-sm font-medium transition ${active === item
-                  ? "bg-[#e7dfd7] text-black"
-                  : "text-white/80 hover:text-white"
-                  }`}
+                className={`
+          px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300
+          ${active === item
+                    ? "bg-[#e7dfd7] text-black shadow-md"
+                    : "text-white/80 hover:text-white"
+                  }
+        `}
               >
                 {item === "home"
                   ? "Home"
@@ -71,11 +81,12 @@ const Navbar = () => {
           </div>
         </div>
 
+
         {/* RIGHT */}
         <div className="hidden md:block">
           <button
             onClick={() => navigate("/login")}
-            className="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-full text-sm font-medium shadow-md transition"
+            className="bg-[#D92B3A] hover:bg-red-600 px-6 py-2  text-sm font-medium shadow-md transition text-white rounded-md"
           >
             Login/ Register
           </button>

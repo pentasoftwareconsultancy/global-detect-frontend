@@ -142,10 +142,11 @@ const Services = () => {
     }
   ];
 
+  
   return (
     <section
       id="services"
-      className="bg-[#121F27] text-white py-8 md:py-2 px-6 md:px-12 lg:px-20 "
+      className="bg-[#121F27] text-white pt-16 pb-8 md:pb-2 px-6 md:px-12 lg:px-20"
     >
       <div className="max-w-6xl">
 
@@ -176,8 +177,8 @@ const Services = () => {
                       transition-all duration-500 ease-out
                       cursor-pointer
 
-                      hover:bg-red-600
-                      hover:shadow-[0_0_40px_rgba(255,0,0,0.6)]
+                      hover:bg-gradient-to-r hover:from-[#6b0f17] hover:to-[#c0202e]
+                      hover:shadow-[0_0_30px_rgba(180,20,40,0.5)]
                     `}
                     style={{
                       width: '420px', // ✅ same width for all cards
