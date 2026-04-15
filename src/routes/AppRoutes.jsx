@@ -4,6 +4,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { ROUTES } from "../core/constants/routes.constant";
 
 
+
 /* ======================= LAYOUTS ======================= */
 const PublicLayout = lazy(() => import("../components/layout/PublicLayout"));
 const UserLayout = lazy(() => import("../components/layout/UserLayout"));
@@ -11,6 +12,7 @@ const DetectiveLayout = lazy(() => import("../components/layout/DetectiveLayout"
 const AdminLayout = lazy(() => import("../components/layout/AuthLayout"));
 const AboutUs = lazy(() => import("../components/nonuser/home/AboutUs"));
 const Blogs = lazy(() => import("../components/nonuser/home/Blogs"));
+const BlogDetails = lazy(() => import("../components/nonuser/home/BlogDetails"));
 const ContactInfo = lazy(() => import("../components/nonuser/home/ContactInfo"));
 const Services = lazy(() => import("../components/nonuser/home/Services"));
 
@@ -86,6 +88,7 @@ const AppRoutes = () => {
               <Route path={ROUTES.SERVICES} element={<Services />} />
           
             <Route path={ROUTES.BLOG} element={<Blogs />} />
+            <Route path="/blogs/:id" element={<BlogDetails />} />
              <Route path={ROUTES.CONTACT} element={<ContactInfo />} />
         </Route>
 
