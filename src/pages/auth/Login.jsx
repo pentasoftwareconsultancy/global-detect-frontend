@@ -79,7 +79,7 @@ const Login = () => {
   );
 
   return (
-    <div className="min-h-screen flex font-montserrat bg-red overflow-x-hidden">
+    <div className="h-screen flex font-montserrat bg-red overflow-hidden">
 
       {/* LEFT PANEL - desktop only */}
       <div className="hidden lg:flex lg:flex-col w-[563px] min-h-screen relative flex-shrink-0">
@@ -95,14 +95,14 @@ const Login = () => {
       </div>
 
       {/* CENTER */}
-      <div className="flex-1 flex justify-center items-start bg-red relative px-4 sm:px-6 pb-10 pt-6 lg:pt-[52px]">
+      <div className="flex-1 flex justify-center items-center bg-red relative px-4 sm:px-6 py-4 lg:py-[32px] overflow-hidden">
 
         {/* SELECT LANGUAGE - desktop */}
         <div className="hidden lg:flex absolute top-[52px] right-6 z-50">
           <LangDropdown />
         </div>
 
-        <div className="w-full max-w-[500px] flex-shrink-0">
+        <div className="w-full max-w-[460px] flex-shrink-0 h-full overflow-hidden">
 
           {/* MOBILE HEADER */}
           <div className="flex lg:hidden flex-col w-full pt-2 pb-4">
@@ -119,19 +119,19 @@ const Login = () => {
           </div>
 
           {/* TITLE */}
-          <div className="w-full flex flex-col items-start text-left mb-4 mt-5">
-            <h2 style={{ lineHeight: '54px', fontSize: '36px', fontWeight: 700, color: '#FFF3EA', letterSpacing: '0px' }}>Log In</h2>
-            <p style={{ lineHeight: '24px', fontSize: '16px', fontWeight: 500, color: '#FFF3EA', letterSpacing: '0px' }}>
+          <div className="w-full flex flex-col items-start text-left mb-4 mt-3">
+            <h2 style={{ lineHeight: '42px', fontSize: '32px', fontWeight: 700, color: '#FFF3EA', letterSpacing: '0px' }}>Log In</h2>
+            <p style={{ lineHeight: '22px', fontSize: '14px', fontWeight: 500, color: '#FFF3EA', letterSpacing: '0px' }}>
               Choose your account type and login
             </p>
           </div>
 
           {/* ACCOUNT TYPE */}
-          <div className="flex justify-start gap-4 mt-4">
+          <div className="flex justify-start gap-3 mt-3">
             <button
               onClick={() => setAccountType('User')}
-              style={{ borderRadius: '10px', borderWidth: '2px', paddingTop: '18px', paddingRight: '18px', paddingBottom: '2px', paddingLeft: '18px' }}
-              className={`flex-1 flex flex-col justify-start items-center border-2 h-[111.5px] ${accountType === 'User' ? 'bg-white/30 border-white' : 'border-white/50'}`}
+              style={{ borderRadius: '10px', borderWidth: '2px', paddingTop: '14px', paddingRight: '16px', paddingBottom: '8px', paddingLeft: '16px' }}
+              className={`flex-1 flex flex-col justify-start items-center border-2 h-[104px] ${accountType === 'User' ? 'bg-white/30 border-white' : 'border-white/50'}`}
             >
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mb-2">
                 <img src={UserIcon} alt="User" className="w-5 h-5 object-contain" />
@@ -141,8 +141,8 @@ const Login = () => {
 
             <button
               onClick={() => setAccountType('Detective')}
-              style={{ borderRadius: '10px', borderWidth: '2px', paddingTop: '18px', paddingRight: '18px', paddingBottom: '2px', paddingLeft: '18px' }}
-              className={`flex-1 flex flex-col justify-start items-center border-2 h-[111.5px] ${accountType === 'Detective' ? 'bg-white/30 border-white' : 'border-white/50'}`}
+              style={{ borderRadius: '10px', borderWidth: '2px', paddingTop: '14px', paddingRight: '16px', paddingBottom: '8px', paddingLeft: '16px' }}
+              className={`flex-1 flex flex-col justify-start items-center border-2 h-[104px] ${accountType === 'Detective' ? 'bg-white/30 border-white' : 'border-white/50'}`}
             >
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mb-2">
                 <img src={DetectiveIcon} alt="Detective" className="w-5 h-5 object-contain" />

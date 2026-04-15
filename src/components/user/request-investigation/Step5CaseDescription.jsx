@@ -1,8 +1,8 @@
 import React from 'react';
 
 const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
-const textareaClass = "w-full bg-transparent border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors min-h-[120px] resize-none";
-const textareaStyle = { borderRadius: '14px', borderWidth: '2px', padding: '16px' };
+const textareaClass = "w-full bg-transparent border border-white/20 text-white placeholder:text-gray-500 placeholder:font-normal focus:outline-none focus:border-white transition-colors h-28 max-h-[160px] resize-none";
+const textareaStyle = { borderRadius: '14px', borderWidth: '2px', padding: '14px' };
 
 const Step5CaseDescription = ({ formData, handleInputChange }) => {
   return (

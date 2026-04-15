@@ -28,7 +28,7 @@ const Step6EvidenceSupportingInformation = ({ formData, handleInputChange }) => 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label style={labelStyle}>Existing Evidence Available?</label>
-          <input type="text" name="existingEvidence" placeholder="Yes / No" style={inputStyle} className="w-full bg-transparent border border-white/20 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors" value={formData.existingEvidence || ''} onChange={handleInputChange} />
+          <input type="text" name="existingEvidence" placeholder="Yes / No" style={inputStyle} className="w-full bg-transparent border border-white/20 pr-4 text-white placeholder:text-gray-500 placeholder:font-normal focus:outline-none focus:border-white transition-colors" value={formData.existingEvidence || ''} onChange={handleInputChange} />
         </div>
 
         <div className="space-y-2">
