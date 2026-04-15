@@ -1,89 +1,12 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
+import { blogsData } from "../../../data/blogsData";
+
 
 const Blogs = () => {
-  const blogs = [
-    {
-      id: 1,
-      line1: 'Private and Personal',
-      line2: 'Investigation Case Insights',
-      author: 'Tracey Wilson',
-      date: 'August 20, 2022',
-      image: "/image 11.png",
-      profile: "/profile1.png"
-    },
-    {
-      id: 2,
-      line1: 'Corporate Fraud and Internal',
-      line2: 'Risk Investigations',
-      author: 'Jason Francisco',
-      date: 'August 20, 2022',
-      image: "/image 12.png",
-      profile: "/profile2.png"
-    },
-    {
-      id: 3,
-      line1: 'Comprehensive Background Verification',
-      line2: 'and Screening Processes',
-      author: 'Elizabeth Slavin',
-      date: 'August 20, 2022',
-      image: "/image 14.png",
-      profile: "/profile3.png"
-    },
-    {
-      id: 4,
-      line1: 'Cybercrime and Digital Forensic',
-      line2: 'Investigations',
-      author: 'Ernie Smith',
-      date: 'August 20, 2022',
-      image: "/image 10.png",
-      profile: "/profile4.png"
-    },
-    {
-      id: 5,
-      line1: 'Property Ownership and Asset',
-      line2: 'Verification Investigations',
-      author: 'Eric Smith',
-      date: 'August 20, 2022',
-      image: "/image 9.png",
-      profile: "/profile5.png"
-    },
-    {
-      id: 6,
-      line1: 'Litigation Support and Court',
-      line2: 'Dispute Investigations',
-      author: 'Tracey Wilson',
-      date: 'August 20, 2022',
-      image: "/image 15.png",
-      profile: "/profile1.png"
-    },
-    {
-      id: 7,
-      line1: 'OSINT Based Intelligence',
-      line2: 'and Online Investigations',
-      author: 'Jason Francisco',
-      date: 'August 20, 2022',
-      image: "/image 16.png",
-      profile: "/profile2.png"
-    },
-    {
-      id: 8,
-      line1: 'Field Surveillance and',
-      line2: 'On-Ground Verification Operations',
-      author: 'Elizabeth Slavin',
-      date: 'August 20, 2022',
-      image: "/image 17.png",
-      profile: "/profile3.png"
-    },
-    {
-      id: 9,
-      line1: 'Security Threat Analysis and',
-      line2: 'Risk Assessment Investigations',
-      author: 'Ernie Smith',
-      date: 'August 20, 2022',
-      image: "/image 18.png",
-      profile: "/profile4.png"
-    }
-  ];
+  const blogs = blogsData;
+
+  const navigate = useNavigate();
 
   return (
     <section id="blog" className="bg-[#121F27] text-white pt-25 py-14 px-4 md:px-8 lg:px-20">
@@ -101,18 +24,22 @@ const Blogs = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
           {blogs.map((blog) => (
-            <div key={blog.id}>
+  <div
+    key={blog.id}
+    onClick={() => navigate(`/blogs/${blog.id}`)}
+    className="cursor-pointer"
+  >
 
               <div className="h-[220px] overflow-hidden rounded-m mb-4">
                 <img
                   src={blog.image}
-                  alt={blog.line1}
+                  alt={blog.title}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               <h4 className="text-lg font-semibold mb-4 leading-snug ">
-                {blog.line1}<br />{blog.line2}
+                {blog.title}
               </h4>
 
               <div className="flex items-center gap-3 text-sm text-gray-400">
