@@ -17,13 +17,17 @@ const BlogDetails = () => {
     }, []);
     const blog = blogsData.find((b) => b.id === Number(id));
 
+    const relatedBlogs = blogsData.filter((b) =>
+        blog.related.includes(b.id)
+    );
+
     if (!blog) return <div className="text-white p-10">Blog not found</div>;
 
     return (
         <div className="bg-[#0f1c24] text-white min-h-screen px-4 md:px-10 lg:px-24 py-10">
 
             {/* 🔹 HEADER */}
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
 
                 <span className="bg-red-500 text-white text-xs px-3 py-1 rounded-full">
                     {blog.category}
@@ -97,6 +101,36 @@ const BlogDetails = () => {
                         Request Investigation
                     </button>
 
+                </div>
+
+                {/* 🔹 RELATED ARTICLES */}
+                <div className="mt-12">
+                    <h2 className="text-xl font-semibold mb-6">Related Articles</h2>
+
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {relatedBlogs.map((item) => (
+                            <div
+                                key={item.id}
+                                onClick={() => navigate(`/blogs/${item.id}`)}
+                                className="cursor-pointer bg-[#16232c] rounded-xl overflow-hidden hover:scale-[1.02] transition"
+                            >
+                                <img
+                                    src={item.image}
+                                    className="w-full h-[160px] object-cover"
+                                />
+
+                                <div className="p-4">
+                                    <p className="text-xs text-gray-400 mb-1">
+                                        {item.date}
+                                    </p>
+
+                                    <h3 className="text-sm font-medium">
+                                        {item.title}
+                                    </h3>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
             </div>
