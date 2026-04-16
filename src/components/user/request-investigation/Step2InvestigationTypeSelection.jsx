@@ -2,7 +2,7 @@ import React from 'react';
 
 const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
 const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '16px' };
-const inputClass = "w-full bg-transparent border border-white/20 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors";
+const inputClass = "w-full bg-transparent border border-white/20 pr-4 text-white placeholder:text-gray-500 placeholder:font-normal focus:outline-none focus:border-white transition-colors";
 
 const Step2InvestigationTypeSelection = ({ formData, handleInputChange }) => {
   return (
@@ -15,7 +15,7 @@ const Step2InvestigationTypeSelection = ({ formData, handleInputChange }) => {
           name="purpose"
           placeholder="Write here"
           style={{ borderRadius: '14px', borderWidth: '2px', padding: '16px' }}
-          className="w-full bg-transparent border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors min-h-[160px] resize-none flex-grow"
+          className="w-full bg-transparent border border-white/20 text-white placeholder:text-gray-500 placeholder:font-normal focus:outline-none focus:border-white transition-colors min-h-[160px] resize-none flex-grow"
           value={formData.purpose || ''}
           onChange={handleInputChange}
         />
