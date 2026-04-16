@@ -171,17 +171,10 @@ const RequestInvestigationPage = () => {
                   {step.title}
                 </span>
               </div>
-            </div>
-            {/* Title - left:66px from card edge = 19+30+17 */}
-            <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '16px', lineHeight: '20px', letterSpacing: '0px', width: '265px', whiteSpace: 'normal' }}
-              className={`transition-colors duration-300 ${currentStep === step.id ? 'text-white' : currentStep > step.id ? 'text-white/60' : 'text-gray-500'}`}>
-              {step.title}
-            </span>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  </div>
 
   {/* MOBILE PROGRESS BAR */}
   <div className="md:hidden bg-[#0b1120] px-4 pt-4 pb-2 flex-shrink-0">
@@ -267,6 +260,7 @@ const RequestInvestigationPage = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
