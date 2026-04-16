@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../core/constants/routes.constant';
 import successGif from '../../../assets/success_screen.gif';
+import patternBg from '../../../assets/carbon-fibre.png';
 
 const SuccessScreen = () => {
   const navigate = useNavigate();
@@ -22,7 +23,10 @@ const SuccessScreen = () => {
       <div className="w-[900px] h-[620px] bg-[#FFF2EF] rounded-[24px] border-2 border-black/5 shadow-xl flex flex-col items-center justify-center text-center px-10">
         {/* Background detective silhouette placeholder */}
         <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+          <div
+            className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-cover bg-no-repeat"
+            style={{ backgroundImage: `url(${patternBg})` }}
+          />
         </div>
 
         <div className="z-10 flex flex-col items-center text-center">
