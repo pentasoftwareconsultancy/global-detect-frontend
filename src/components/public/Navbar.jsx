@@ -11,7 +11,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  
   const isBlogDetails = location.pathname.startsWith("/blogs/");
 
   useEffect(() => {
@@ -97,9 +96,15 @@ const Navbar = () => {
               </button>
             </div>
 
-            {/* MOBILE ICON */}
-            <div className="md:hidden text-white">
-              <button onClick={() => setIsOpen(!isOpen)}>
+            {/* MOBILE - Login + Hamburger */}
+            <div className="md:hidden flex items-center gap-3">
+              <button
+                onClick={() => navigate("/signup")}
+                className="bg-[#D92B3A] hover:bg-red-600 px-4 py-2 text-sm font-medium text-white rounded-md"
+              >
+                Login/ Register
+              </button>
+              <button onClick={() => setIsOpen(!isOpen)} className="text-white">
                 {isOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
