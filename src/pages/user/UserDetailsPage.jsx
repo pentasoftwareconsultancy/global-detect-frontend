@@ -4,7 +4,7 @@
 
 
 import React from "react";
-import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar } from "lucide-react";
+import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy } from "lucide-react";
 
 const CaseDetails = () => {
   return (
@@ -68,33 +68,49 @@ const CaseDetails = () => {
         </div>
 
         {/* RIGHT */}
-        <div className="bg-[#14232d] p-4 rounded-lg">
-          <h2 className="text-sm font-semibold mb-4">Case Summary</h2>
+       <div className="bg-[#14232d] p-4 rounded-lg">
+  <h2 className="text-sm font-semibold mb-4">Case Summary</h2>
 
-          <div className="space-y-3 text-xs text-gray-300">
+  <div className="space-y-4 text-xs text-gray-300">
 
-            <p>
-              <strong>Case Number:</strong><br />
-              #SC002
-            </p>
+    {/* Case Number */}
+    <div className="flex items-start gap-2">
+      <FileText className="w-4 h-4 mt-0.5 text-gray-400" />
+      <p>
+        <strong>Case Number:</strong><br />
+        #SC002
+      </p>
+    </div>
 
-            <p>
-              <strong>Client:</strong><br />
-              Sarah Johnson
-            </p>
+    {/* Client */}
+    <div className="flex items-start gap-2">
+      <User className="w-4 h-4 mt-0.5 text-gray-400" />
+      <p>
+        <strong>Client:</strong><br />
+        Sarah Johnson
+      </p>
+    </div>
 
-            <p>
-              <strong>Created:</strong><br />
-              1/20/2026
-            </p>
+    {/* Created */}
+    <div className="flex items-start gap-2">
+      <Calendar className="w-4 h-4 mt-0.5 text-gray-400" />
+      <p>
+        <strong>Created:</strong><br />
+        1/20/2026
+      </p>
+    </div>
 
-            <p>
-              <strong>Investigation Type:</strong><br />
-              Background Check
-            </p>
+    {/* Investigation Type */}
+    <div className="flex items-start gap-2">
+      <Search className="w-4 h-4 mt-0.5 text-gray-400" />
+      <p>
+        <strong>Investigation Type:</strong><br />
+        Background Check
+      </p>
+    </div>
 
-          </div>
-        </div>
+  </div>
+</div>
       </div>
 
       {/* FINAL REPORT */}
@@ -247,7 +263,8 @@ const CaseDetails = () => {
 
             <div>
               <p className="text-gray-400 flex items-center gap-1">
-                Description                </p>
+                Description
+              </p>
               <p>Comprehensive background investigation needed before entering into business partnership.</p>
             </div>
 

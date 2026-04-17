@@ -111,7 +111,7 @@ const UserDashboardPage = () => {
 
         {/* Request Investigation */}
         <div
-          onClick={() => navigate(ROUTES.CREATE_CASE)}
+          onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
           className="bg-gradient-to-r from-red-500 to-red-600 rounded-xl cursor-pointer"
         >
 
@@ -254,7 +254,7 @@ const UserDashboardPage = () => {
       </p>
  
       <button
-        onClick={() => navigate(`${ROUTES.CASE_DETAILS}/${item.id}`)}
+        onClick={() => navigate(`${ROUTES.USER_DASHBOARD_DETAILS}/${item.id}`)}
         className="bg-red-500 px-3 py-1 rounded text-xs"
       >
         View Full Case
@@ -372,7 +372,7 @@ const UserDashboardPage = () => {
     {/* BUTTON */}
     <button
       onClick={() =>
-        navigate(`${ROUTES.CASE_DETAILS}/${item.id}`)
+        navigate(`${ROUTES.USER_DASHBOARD_DETAILS}/${item.id}`)
       }
       className="bg-red-500 w-full py-2 rounded text-xs"
     >
