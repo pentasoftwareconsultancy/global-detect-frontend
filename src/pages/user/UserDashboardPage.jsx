@@ -111,7 +111,7 @@ const UserDashboardPage = () => {
 
         {/* Request Investigation */}
         <div
-          onClick={() => navigate(ROUTES.CREATE_CASE)}
+          onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
           className="bg-gradient-to-r from-red-500 to-red-600 rounded-xl cursor-pointer"
         >
 
@@ -165,222 +165,223 @@ const UserDashboardPage = () => {
           <div key={item.id} className="bg-[#2b3a42] rounded-xl overflow-hidden">
 
             {/* ===== DESKTOP ===== */}
-            <div className="hidden md:flex border border-white rounded-xl ">
+            <div className="hidden md:flex border border-white rounded-xl h-50 ">
 
-  <img
-    src={item.image}
-    className="w-52 h-40 object-cover"
-  />
+              {/* IMAGE */}
+              <img
+                src={item.image}
+                className="w-52 h-full object-cover"
+              />
 
-  <div className="flex-1 p-4 ">
+              <div className="flex-1 p-4 ">
 
-    {/* 🔴 Priority + Case ID */}
-    <div className="flex justify-between items-start">
+                {/* 🔴 Priority + Case ID */}
+                <div className="flex justify-between items-start">
 
-  {/* LEFT SIDE */}
-  <div>
+                  {/* LEFT SIDE */}
+                  <div>
 
-    {/* Priority + Case ID */}
-    <div className="flex items-center gap-2 mb-1">
-      <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
-        {item.priority} Priority
-      </span>
+                    {/* Priority + Case ID */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
+                        {item.priority} Priority
+                      </span>
 
-      <p className="text-[11px] text-gray-400">
-        Case ID: #{item.id}
-      </p>
-    </div>
+                      <p className="text-[11px] text-gray-400">
+                        Case ID: #{item.id}
+                      </p>
+                    </div>
 
-    {/* Title */}
-    {/* <h3 className="font-semibold text-lg">
+                    {/* Title */}
+                    {/* <h3 className="font-semibold text-lg">
       {item.title}
     </h3> */}
 
-  </div>
+                  </div>
 
-  {/* RIGHT SIDE AVATAR */}
-  <img
-    src="https://i.pravatar.cc/40"  // dummy avatar (replace later)
-    alt="user"
-    className="w-8 h-8 rounded-full object-cover"
-  />
+                  {/* RIGHT SIDE AVATAR */}
+                  <img
+                    src="https://i.pravatar.cc/40"  // dummy avatar (replace later)
+                    alt="user"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
 
-</div>
+                </div>
 
-    {/* Category */}
-    {/* <p className="text-xs text-red-400 mb-1">
+                {/* Category */}
+                {/* <p className="text-xs text-red-400 mb-1">
       {item.category}
     </p> */}
 
-    {/* Title */}
-    <h3 className="font-semibold text-lg">
-      {item.title}
-    </h3>
-    
-      
+                {/* Title */}
+                <h3 className="font-semibold text-lg">
+                  {item.title}
+                </h3>
 
 
-    {/* Progress */}
-    <div className="mt-2">
 
-      {/* 👇 Added Progress % */}
-      <div className="flex justify-between items-center">
-        <p className="text-xs text-gray-300">
-          Investigation Progress
-        </p>
 
-        <p className="text-[13px] text-white">
-          {item.progress}%
-        </p>
-      </div>
+                {/* Progress */}
+                <div className="mt-2">
 
-      <div className="bg-gray-600 h-1 rounded mt-1">
-        <div
-          className="bg-red-500 h-1"
-          style={{ width: `${item.progress}%` }}
-        ></div>
-      </div>
-    </div>
+                  {/* 👇 Added Progress % */}
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs text-gray-300">
+                      Investigation Progress
+                    </p>
 
-    {/* Status */}
-    <p className="text-xs text-gray-400 mt-2">
-      {item.status}
-    </p>
+                    <p className="text-[13px] text-white">
+                      {item.progress}%
+                    </p>
+                  </div>
 
-    {/* Footer */}
-    <div className="flex justify-between items-center mt-3">
-      <p className="text-xs text-gray-400">
-        {item.daysRemaining}
-      </p>
- 
-      <button
-        onClick={() => navigate(`${ROUTES.CASE_DETAILS}/${item.id}`)}
-        className="bg-red-500 px-3 py-1 rounded text-xs"
-      >
-        View Full Case
-      </button>
-    </div>
-  </div>
+                  <div className="bg-gray-600 h-1 rounded mt-1">
+                    <div
+                      className="bg-red-500 h-1"
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
 
-  {/* FILES */}
-  <div className="w-60 p-3 space-y-2 ">
-    {item.files.map((file, i) => (
-      <div key={i} className="bg-[#3a4b54] p-2 rounded text-xs rounded-xl border border-white">
-        {file.name}
-        <p className="text-[10px] text-gray-400">
-          {file.date}
-        </p>
-      </div>
-    ))}
-  </div>
+                {/* Status */}
+                <p className="text-xs text-gray-400 mt-2">
+                  {item.status}
+                </p>
 
-</div>
+                {/* Footer */}
+                <div className="flex justify-between items-center mt-3">
+                  <p className="text-xs text-gray-400">
+                    {item.daysRemaining}
+                  </p>
+
+                  <button
+                    onClick={() => navigate(`${ROUTES.USER_DASHBOARD_DETAILS}/${item.id}`)}
+                    className="bg-red-500 px-3 py-1 rounded text-xs"
+                  >
+                    View Full Case
+                  </button>
+                </div>
+              </div>
+
+              {/* FILES */}
+              <div className="w-60 p-3 space-y-2 ">
+                {item.files.map((file, i) => (
+                  <div key={i} className="bg-[#3a4b54] p-2 rounded text-xs rounded-xl border border-white">
+                    {file.name}
+                    <p className="text-[10px] text-gray-400">
+                      {file.date}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+            </div>
 
             {/* ===== MOBILE ===== */}
             <div className="md:hidden rounded-xl border border-white">
 
-  {/* IMAGE */}
-  <img
-    src={item.image}
-    className="w-full h-40 object-cover"
-  />
+              {/* IMAGE */}
+              <img
+                src={item.image}
+                className="w-full h-40 object-cover"
+              />
 
-  {/* CONTENT WRAPPER (IMPORTANT - you missed this) */}
-  <div className="p-3 space-y-2">
+              {/* CONTENT WRAPPER (IMPORTANT - you missed this) */}
+              <div className="p-3 space-y-2">
 
-    {/* Priority + Case ID */}
-   <div className="flex justify-between items-start">
+                {/* Priority + Case ID */}
+                <div className="flex justify-between items-start">
 
-  {/* LEFT SIDE */}
-  <div>
+                  {/* LEFT SIDE */}
+                  <div>
 
-    {/* Priority + Case ID */}
-    <div className="flex items-center gap-2 mb-1">
-      <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
-        {item.priority} Priority
-      </span>
+                    {/* Priority + Case ID */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
+                        {item.priority} Priority
+                      </span>
 
-      <p className="text-[11px] text-gray-400">
-        Case ID: #{item.id}
-      </p>
-    </div>
+                      <p className="text-[11px] text-gray-400">
+                        Case ID: #{item.id}
+                      </p>
+                    </div>
 
-    {/* Title */}
-    <h3 className="font-semibold text-lg">
-      {item.title}
-    </h3>
+                    {/* Title */}
+                    <h3 className="font-semibold text-lg">
+                      {item.title}
+                    </h3>
 
-  </div>
+                  </div>
 
-  {/* RIGHT SIDE AVATAR */}
-  <img
-    src="https://i.pravatar.cc/40"  // dummy avatar (replace later)
-    alt="user"
-    className="w-8 h-8 rounded-full object-cover"
-  />
+                  {/* RIGHT SIDE AVATAR */}
+                  <img
+                    src="https://i.pravatar.cc/40"  // dummy avatar (replace later)
+                    alt="user"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
 
-</div>
+                </div>
 
-    {/* Title */}
-    <h3 className="text-sm font-semibold">
-      {item.title}
-    </h3>
+                {/* Title */}
+                <h3 className="text-sm font-semibold">
+                  {item.title}
+                </h3>
 
-    {/* Progress */}
-    <div>
-      <div className="flex justify-between items-center">
-        <p className="text-[10px] text-gray-300">
-          Investigation Progress
-        </p>
+                {/* Progress */}
+                <div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[10px] text-gray-300">
+                      Investigation Progress
+                    </p>
 
-        {/* 👇 Progress % added */}
-        <p className="text-[11px] text-white">
-          {item.progress}%
-        </p>
-      </div>
+                    {/* 👇 Progress % added */}
+                    <p className="text-[11px] text-white">
+                      {item.progress}%
+                    </p>
+                  </div>
 
-      <div className="bg-gray-600 h-1 rounded mt-1">
-        <div
-          className="bg-red-500 h-1"
-          style={{ width: `${item.progress}%` }}
-        ></div>
-      </div>
-    </div>
+                  <div className="bg-gray-600 h-1 rounded mt-1">
+                    <div
+                      className="bg-red-500 h-1"
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
 
-    {/* Status */}
-    <p className="text-[10px] text-gray-400">
-      {item.status}
-    </p>
+                {/* Status */}
+                <p className="text-[10px] text-gray-400">
+                  {item.status}
+                </p>
 
-    {/* Days */}
-    <p className="text-[10px] text-gray-400">
-      {item.daysRemaining}
-    </p>
+                {/* Days */}
+                <p className="text-[10px] text-gray-400">
+                  {item.daysRemaining}
+                </p>
 
-    {/* FILES */}
-    <div className="space-y-2">
-      {item.files.map((file, i) => (
-        <div key={i} className="bg-[#3a4b54] p-2 rounded text-[10px]">
-          {file.name}
-          <p className="text-[9px] text-gray-400">
-            {file.date}
-          </p>
-        </div>
-      ))}
-    </div>
+                {/* FILES */}
+                <div className="space-y-2">
+                  {item.files.map((file, i) => (
+                    <div key={i} className="bg-[#3a4b54] p-2 rounded text-[10px]">
+                      {file.name}
+                      <p className="text-[9px] text-gray-400">
+                        {file.date}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-    {/* BUTTON */}
-    <button
-      onClick={() =>
-        navigate(`${ROUTES.CASE_DETAILS}/${item.id}`)
-      }
-      className="bg-red-500 w-full py-2 rounded text-xs"
-    >
-      View Full Case
-    </button>
+                {/* BUTTON */}
+                <button
+                  onClick={() =>
+                    navigate(`${ROUTES.USER_DASHBOARD_DETAILS}/${item.id}`)
+                  }
+                  className="bg-red-500 w-full py-2 rounded text-xs"
+                >
+                  View Full Case
+                </button>
 
-  </div>
-</div>
+              </div>
+            </div>
 
           </div>
         ))}

@@ -104,7 +104,7 @@ const AppRoutes = () => {
           <Route element={<UserLayout />}>
             <Route path={ROUTES.USER_FORM} element={<UserForm />} />
             <Route path={ROUTES.USER_DASHBOARD} element={<UserDashboardPage />} />
-            <Route path={ROUTES.USER_DASHBOARD_DETAILS} element={<UserDetailsPage />} />
+            <Route path={`${ROUTES.USER_DASHBOARD_DETAILS}/:id`} element={<UserDetailsPage />} />
             <Route path={ROUTES.USER_NOTIFICATION} element={<UserNotificationPage />} />
             <Route path={ROUTES.USER_PROFILE} element={<UserProfilePage />} />
             <Route path={ROUTES.USER_SETTINGS} element={<UserSettingsPage />} />
