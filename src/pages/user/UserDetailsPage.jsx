@@ -4,7 +4,7 @@
 
 
 import React from "react";
-import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy } from "lucide-react";
+import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy, FileSearch, CheckCircle } from "lucide-react";
 
 const CaseDetails = () => {
   return (
@@ -51,12 +51,21 @@ const CaseDetails = () => {
             <h2 className="text-sm font-semibold mb-2">Case Documents</h2>
             <p className="text-xs text-gray-400 mb-2">1 file attached</p>
 
-            <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
-              <div>
-                <p className="text-sm">Asset_List.pdf</p>
-                <p className="text-xs text-gray-400">Updated: 11/12/2026</p>
+            <div className="flex justify-between items-center border border-gray-600 p-3 rounded-md">
+
+              {/* LEFT SIDE */}
+              <div className="flex items-center gap-3">
+                <FileText size={18} className="text-gray-400" />
+
+                <div>
+                  <p className="text-sm text-white">Asset_List.pdf</p>
+                  <p className="text-xs text-gray-400">Updated: 11/12/2026</p>
+                </div>
               </div>
-              <Download size={16} />
+
+              {/* RIGHT SIDE */}
+              <Download size={16} className="text-gray-400 cursor-pointer" />
+
             </div>
           </div>
 
@@ -68,60 +77,72 @@ const CaseDetails = () => {
         </div>
 
         {/* RIGHT */}
-       <div className="bg-[#14232d] p-4 rounded-lg">
-  <h2 className="text-sm font-semibold mb-4">Case Summary</h2>
+        <div className="bg-[#14232d] p-4 rounded-lg">
+          <h2 className="text-sm font-semibold mb-4">Case Summary</h2>
 
-  <div className="space-y-4 text-xs text-gray-300">
+          <div className="space-y-4 text-xs text-gray-300">
 
-    {/* Case Number */}
-    <div className="flex items-start gap-2">
-      <FileText className="w-4 h-4 mt-0.5 text-gray-400" />
-      <p>
-        <strong>Case Number:</strong><br />
-        #SC002
-      </p>
-    </div>
+            {/* Case Number */}
+            <div className="flex items-start gap-2">
+              <FileText className="w-4 h-4 mt-0.5 text-gray-400" />
+              <p>
+                <strong>Case Number:</strong><br />
+                #SC002
+              </p>
+            </div>
+            <div className="border-b border-gray-600 mt-3"></div>
 
-    {/* Client */}
-    <div className="flex items-start gap-2">
-      <User className="w-4 h-4 mt-0.5 text-gray-400" />
-      <p>
-        <strong>Client:</strong><br />
-        Sarah Johnson
-      </p>
-    </div>
+            {/* Client */}
+            <div className="flex items-start gap-2">
+              <User className="w-4 h-4 mt-0.5 text-gray-400" />
+              <p>
+                <strong>Client:</strong><br />
+                Sarah Johnson
+              </p>
+            </div>
 
-    {/* Created */}
-    <div className="flex items-start gap-2">
-      <Calendar className="w-4 h-4 mt-0.5 text-gray-400" />
-      <p>
-        <strong>Created:</strong><br />
-        1/20/2026
-      </p>
-    </div>
+            <div className="border-b border-gray-600 mt-3"></div>
 
-    {/* Investigation Type */}
-    <div className="flex items-start gap-2">
-      <Search className="w-4 h-4 mt-0.5 text-gray-400" />
-      <p>
-        <strong>Investigation Type:</strong><br />
-        Background Check
-      </p>
-    </div>
+            {/* Created */}
+            <div className="flex items-start gap-2">
+              <Calendar className="w-4 h-4 mt-0.5 text-gray-400" />
+              <p>
+                <strong>Created:</strong><br />
+                1/20/2026
+              </p>
+            </div>
+            <div className="border-b border-gray-600 mt-3"></div>
 
-  </div>
-</div>
+            {/* Investigation Type */}
+            <div className="flex items-start gap-2">
+              <FileSearch size={18} className="text-gray-400" /><p>
+                <strong>Investigation Type:</strong><br />
+                Background Check
+              </p>
+            </div>
+
+          </div>
+        </div>
       </div>
 
       {/* FINAL REPORT */}
       <div className="mt-6 border border-red-500 rounded-lg p-4 bg-[#14232d] relative">
 
+
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4">
-          <h2 className="text-sm font-semibold">Final Report</h2>
+
+          {/* LEFT SIDE (Icon + Title) */}
+          <div className="flex items-center gap-2">
+            <CheckCircle size={16} className="text-red-500" />
+            <h2 className="text-sm font-semibold text-white">Final Report</h2>
+          </div>
+
+          {/* RIGHT SIDE (Button) */}
           <button className="flex items-center gap-2 bg-red-500 text-xs px-3 py-1 rounded w-fit">
             <Download size={14} />
             Download report
           </button>
+
         </div>
 
         <p className="text-xs text-gray-400 mb-2">Generated on 1/30/2026</p>
@@ -135,11 +156,26 @@ const CaseDetails = () => {
 
         <div className="mb-4">
           <h3 className="text-sm font-semibold mb-2">Key Findings</h3>
-          <ul className="list-disc list-inside text-xs text-gray-300 space-y-1">
-            <li>Assets located in storage unit 547</li>
-            <li>All items accounted</li>
-            <li>Items returned to client</li>
-            <li>No criminal charges filed</li>
+          <ul className="space-y-2 text-xs text-gray-300">
+            <li className="flex items-start gap-2">
+              <CheckCircle size={14} className="text-red-500 mt-0.5" />
+              Assets located in storage unit 547
+            </li>
+
+            <li className="flex items-start gap-2">
+              <CheckCircle size={14} className="text-red-500 mt-0.5" />
+              All items accounted
+            </li>
+
+            <li className="flex items-start gap-2">
+              <CheckCircle size={14} className="text-red-500 mt-0.5" />
+              Items returned to client
+            </li>
+
+            <li className="flex items-start gap-2">
+              <CheckCircle size={14} className="text-red-500 mt-0.5" />
+              No criminal charges filed
+            </li>
           </ul>
         </div>
 
@@ -150,19 +186,43 @@ const CaseDetails = () => {
         <div className="space-y-2">
           <h2 className="text-sm font-semibold">Report Documents</h2>
           <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
-            <p className="text-sm">Final_Report.pdf</p>
+
+            {/* LEFT SIDE */}
+            <div className="flex items-center gap-3">
+              <FileText size={18} className="text-red-500" />
+
+              <div>
+                <p className="text-sm text-white">Final_Report.pdf</p>
+                <p className="text-xs text-gray-400">PDF</p>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE */}
             <button className="bg-red-500 text-xs px-2 py-1 rounded flex items-center gap-1">
               <Download size={12} />
               Download
             </button>
+
           </div>
 
           <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
-            <p className="text-sm">Evidence_Photos.zip</p>
+
+            {/* LEFT SIDE */}
+            <div className="flex items-center gap-3">
+              <FileText size={18} className="text-red-500" />
+
+              <div>
+                <p className="text-sm text-white">Evidence_Photos.zip</p>
+                <p className="text-xs text-gray-400">ZIP</p>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE */}
             <button className="bg-red-500 text-xs px-2 py-1 rounded flex items-center gap-1">
               <Download size={12} />
               Download
             </button>
+
           </div>
         </div>
       </div>
@@ -214,9 +274,13 @@ const CaseDetails = () => {
 
         {/* Investigation Details */}
         <div className="bg-[#14232d] p-4 rounded-lg">
-          <h3 className="text-xs font-semibold mb-3 text-gray-300">
-            Investigation Details
-          </h3>
+          <div className="flex items-center gap-2 mb-3">
+            <FileSearch size={17} className="text-gray-400" />
+            <h3 className="text-sm font-semibold text-gray-300">
+              Investigation Details
+            </h3>
+          </div>
+         
 
           <div className="text-xs space-y-3">
             <p className="text-sm text-gray-400 mb-4">
@@ -262,7 +326,7 @@ const CaseDetails = () => {
             </div>
 
             <div>
-              <p className="text-gray-400 flex items-center gap-1">
+              <p className="text-gray-400 flex items-center gap-1 text-sm">
                 Description
               </p>
               <p>Comprehensive background investigation needed before entering into business partnership.</p>
@@ -286,32 +350,54 @@ const CaseDetails = () => {
         </div>
 
         {/* Case Documents */}
-        <div className="bg-[#14232d] p-4 rounded-lg">
-          <h3 className="text-xs font-semibold mb-3 text-gray-300">
-            Case Documents
-          </h3>
+       <div className="bg-[#14232d] p-4 rounded-lg">
+  
+  <h3 className="text-xs font-semibold mb-3 text-gray-300">
+    Case Documents
+  </h3>
 
-          <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
-            <p className="text-sm">Subject_Info.pdf</p>
-            <Download size={16} />
-          </div>
-        </div>
+  <p className="text-xs text-gray-400 mb-3">1 file(s) attached</p>
+
+  <div className="flex items-center gap-3 bg-[#0f1c24] p-3 rounded-md border border-white/10">
+    
+    {/* ICON */}
+    <FileText size={18} className="text-gray-400" />
+
+    {/* TEXT */}
+    <div>
+      <p className="text-sm text-white">Subject_Info.pdf</p>
+      <p className="text-xs text-gray-400">Uploaded: 1/20/2026</p>
+    </div>
+
+  </div>
+
+</div>
 
         {/* Legal Consent */}
-        <div className="bg-[#14232d] p-4 rounded-lg flex flex-col md:flex-row md:justify-between md:items-center gap-2">
-          <div>
-            <h3 className="text-xs font-semibold text-gray-300">
-              Legal Consent
-            </h3>
-            <p className="text-xs text-gray-400">
-              Client has provided legal consent for investigation
-            </p>
-          </div>
+        <div className="bg-[#14232d] p-4 rounded-lg flex flex-col md:flex-row md:justify-between md:items-center gap-3">
 
-          <span className="bg-red-500 text-xs px-3 py-1 rounded w-fit">
-            Consent Given
-          </span>
-        </div>
+  {/* LEFT SIDE */}
+  <div className="flex items-start gap-2">
+    <CheckCircle size={16} className="text-red-500 mt-0.5" />
+
+    <div>
+      <h3 className="text-xs font-semibold text-gray-300">
+        Legal Consent
+      </h3>
+
+      <div className="flex items-center gap-2 mt-1">
+        <span className="bg-red-500 text-[10px] px-2 py-0.5 rounded">
+          Consent Given
+        </span>
+
+        <p className="text-xs text-gray-400">
+          Client has provided legal consent for investigation
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
 
       </div>
     </div>
