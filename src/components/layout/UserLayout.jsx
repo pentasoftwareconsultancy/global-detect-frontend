@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutGrid, Bell, User, Settings, LogOut, Menu, Search } from 'lucide-react';
 import GlobalLogo from '../../assets/Global-logo.png';
 import { ROUTES } from '../../core/constants/routes.constant';
-import Footer from '../public/Footer';
+// import Footer from '../public/Footer';
 
 
 const UserLayout = () => {
