@@ -24,9 +24,9 @@ const HowItWorks = () => {
       icon: <UserPlus size={26} className="text-red-700" />,
       position: 'top'
     },
-    {
-      id: 4,
-      title: '4. Investigation',
+    { 
+      id: 4,  
+      title: '4. Investigation',  
       desc: 'Thorough investigation conducted',
       icon: <Search size={26} className="text-red-700" />,
       position: 'bottom'

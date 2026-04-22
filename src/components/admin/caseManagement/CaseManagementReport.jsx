@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const CaseManagementReport = () => {
   return (
     <div className="p-6 text-white">
