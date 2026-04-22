@@ -95,9 +95,9 @@ const AppRoutes = () => {
         </Route>
 
         {/* ================= REQUEST INVESTIGATION (public - no auth required) ================= */}
-        <Route element={<UserLayout />}>
-          <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
-        </Route>
+        {/* <Route element={<UserLayout />}>
+  <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
+        </Route> */}
 
         {/* ================= USER ROUTES ================= */}
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>

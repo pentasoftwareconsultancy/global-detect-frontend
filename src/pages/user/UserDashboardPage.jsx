@@ -112,7 +112,7 @@ const UserDashboardPage = () => {
         {/* Request Investigation */}
         <div
           onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-          className="bg-gradient-to-r from-red-500 to-red-600 rounded-xl cursor-pointer"
+          className="bg-linear-to-r from-red-500 to-red-600 rounded-xl cursor-pointer"
         >
 
           {/* ===== DESKTOP VIEW ===== */}

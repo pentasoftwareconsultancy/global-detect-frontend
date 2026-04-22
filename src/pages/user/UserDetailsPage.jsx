@@ -1,17 +1,23 @@
 
-
-// /////////////////////////////////////////////////////////////////////////////
-
-
 import React from "react";
+import { ROUTES } from "../../core/constants/routes.constant";
+import { useNavigate } from "react-router-dom";
+
+
 import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy, FileSearch, CheckCircle } from "lucide-react";
 
 const CaseDetails = () => {
+
+
+  const navigate = useNavigate();
+
   return (
     <div className=" text-white montserrat">
 
       {/* Back */}
-      <div className="flex items-center gap-2 mb-4 cursor-pointer">
+      <div
+        onClick={() => navigate("/user-dashboard")}
+        className="flex items-center gap-2 mb-4 cursor-pointer">
         <ArrowLeft size={18} />
         <span className="text-sm">Back</span>
       </div>
@@ -280,7 +286,7 @@ const CaseDetails = () => {
               Investigation Details
             </h3>
           </div>
-         
+
 
           <div className="text-xs space-y-3">
             <p className="text-sm text-gray-400 mb-4">
@@ -350,54 +356,54 @@ const CaseDetails = () => {
         </div>
 
         {/* Case Documents */}
-       <div className="bg-[#14232d] p-4 rounded-lg">
-  
-  <h3 className="text-xs font-semibold mb-3 text-gray-300">
-    Case Documents
-  </h3>
+        <div className="bg-[#14232d] p-4 rounded-lg">
 
-  <p className="text-xs text-gray-400 mb-3">1 file(s) attached</p>
+          <h3 className="text-xs font-semibold mb-3 text-gray-300">
+            Case Documents
+          </h3>
 
-  <div className="flex items-center gap-3 bg-[#0f1c24] p-3 rounded-md border border-white/10">
-    
-    {/* ICON */}
-    <FileText size={18} className="text-gray-400" />
+          <p className="text-xs text-gray-400 mb-3">1 file(s) attached</p>
 
-    {/* TEXT */}
-    <div>
-      <p className="text-sm text-white">Subject_Info.pdf</p>
-      <p className="text-xs text-gray-400">Uploaded: 1/20/2026</p>
-    </div>
+          <div className="flex items-center gap-3 bg-[#0f1c24] p-3 rounded-md border border-white/10">
 
-  </div>
+            {/* ICON */}
+            <FileText size={18} className="text-gray-400" />
 
-</div>
+            {/* TEXT */}
+            <div>
+              <p className="text-sm text-white">Subject_Info.pdf</p>
+              <p className="text-xs text-gray-400">Uploaded: 1/20/2026</p>
+            </div>
+
+          </div>
+
+        </div>
 
         {/* Legal Consent */}
         <div className="bg-[#14232d] p-4 rounded-lg flex flex-col md:flex-row md:justify-between md:items-center gap-3">
 
-  {/* LEFT SIDE */}
-  <div className="flex items-start gap-2">
-    <CheckCircle size={16} className="text-red-500 mt-0.5" />
+          {/* LEFT SIDE */}
+          <div className="flex items-start gap-2">
+            <CheckCircle size={16} className="text-red-500 mt-0.5" />
 
-    <div>
-      <h3 className="text-xs font-semibold text-gray-300">
-        Legal Consent
-      </h3>
+            <div>
+              <h3 className="text-xs font-semibold text-gray-300">
+                Legal Consent
+              </h3>
 
-      <div className="flex items-center gap-2 mt-1">
-        <span className="bg-red-500 text-[10px] px-2 py-0.5 rounded">
-          Consent Given
-        </span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="bg-red-500 text-[10px] px-2 py-0.5 rounded">
+                  Consent Given
+                </span>
 
-        <p className="text-xs text-gray-400">
-          Client has provided legal consent for investigation
-        </p>
-      </div>
-    </div>
-  </div>
+                <p className="text-xs text-gray-400">
+                  Client has provided legal consent for investigation
+                </p>
+              </div>
+            </div>
+          </div>
 
-</div>
+        </div>
 
       </div>
     </div>
