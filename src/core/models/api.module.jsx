@@ -4,3 +4,4 @@ export const API_MODULE = {
   REQUEST_FORM: "/case-request",
   BLOGS: "/blogs",
 };
+
