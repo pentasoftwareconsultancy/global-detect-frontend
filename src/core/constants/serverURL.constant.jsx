@@ -8,8 +8,7 @@ class ServerUrl {
     static AUTH_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.AUTH}`;
 
         static REGISTER_API = `${ServerUrl.AUTH_API}/register`;
-        static SENT_LOGIN_OTP_API = `${ServerUrl.AUTH_API}/send-otp`;
-        static LOGIN_WITH_OTP_API = `${ServerUrl.AUTH_API}/login/phone`;
+        static LOGIN_API = `${ServerUrl.AUTH_API}/login`;
 
     // detective kyc api endpoint
     static DETECTIVE_KYC_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.DETECTIVE_KYC}`;
@@ -51,6 +50,11 @@ class ServerUrl {
         static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
         // Admin list
         static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/`;
+
+    // profile api endpoint
+    static PROFILE_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.PROFILE}`;
+
+        static GET_PROFILE_API = `${ServerUrl.PROFILE_API}/`;
 }
 
 export default ServerUrl;
