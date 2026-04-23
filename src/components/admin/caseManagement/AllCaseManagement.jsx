@@ -3,6 +3,7 @@ import { casesData } from "./caseManagementData";
 import { Eye, Search } from "lucide-react";
 import { FiFileText } from "react-icons/fi";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { useEffect } from "react";
 
 const CaseManagement = () => {
   const [activeTab, setActiveTab] = useState("all");
@@ -12,9 +13,23 @@ const CaseManagement = () => {
   const [type, setType] = useState("All");
   const [priority, setPriority] = useState("All");
 
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedCase, setSelectedCase] = useState(null);
+  const [selectedDetective, setSelectedDetective] = useState("");
+
   const [dateSort, setDateSort] = useState("All");
 
   const [showReportModal, setShowReportModal] = useState(false);
+
+
+  const [cases, setCases] = useState(() => {
+    const saved = localStorage.getItem("cases");
+    return saved ? JSON.parse(saved) : casesData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cases", JSON.stringify(cases));
+  }, [cases]);
 
   const clearFilters = () => {
     setSearch("");
@@ -24,15 +39,35 @@ const CaseManagement = () => {
     setDateSort("All");
   };
 
+  const detectivesList = [
+    "Detective Emma Watson",
+    "Detective James Bond",
+    "Detective Olivia Martinez",
+    "Detective Suraj Mohite",
+    "Detective Aditi Jadhav",
+    "Detective Aditya Pathak",
+    "Detective Rutuja Katke",
+  ];
+
+  const assignedDetectives = cases
+    .map((c) => c.detective)
+    .filter(Boolean);
+
+  const availableDetectives = detectivesList.filter(
+    (d) => !assignedDetectives.includes(d)
+  );
+
+
+
   const tabs = [
-    { name: "All Cases", key: "all" },
+    { name: " All Cases", key: "all" },
     { name: "Pending Cases", key: "pending" },
     { name: "Review Insights", key: "review" },
   ];
 
   // 🔥 DATA CONTROL
   const filteredData = useMemo(() => {
-    let data = [...casesData];
+    let data = [...cases];
 
     if (activeTab === "pending") {
       data = data.filter((i) => i.status === "Pending");
@@ -64,10 +99,10 @@ const CaseManagement = () => {
     }
 
     return data;
-  }, [activeTab, search, status, type, priority, dateSort]);
+  }, [cases,activeTab, search, status, type, priority, dateSort]);
 
   return (
-    <div className="text-white bg-[#121F27] p-4">
+    <div className="text-white  p-4">
 
       {/* HEADER */}
       <div className="mb-6">
@@ -124,7 +159,7 @@ const CaseManagement = () => {
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full bg-[#0f1a1f] border border-[#22313d] px-3 py-2.5 rounded-lg text-sm text-white"
               >
-                <option>All Status</option>
+                <option value="All">All Status</option>
                 <option>Pending</option>
                 <option>Assigned</option>
                 <option>In Progress</option>
@@ -190,7 +225,7 @@ const CaseManagement = () => {
           {/* FOOTER */}
           <div className="flex justify-between items-center mt-5">
             <p className="text-xs text-[#8FA3B0]">
-              Showing {filteredData.length} of {casesData.length} cases
+              Showing {filteredData.length} of {cases.length} cases
             </p>
 
             <button
@@ -268,6 +303,10 @@ const CaseManagement = () => {
                   <span className={`
             px-3 py-1 text-xs rounded-md font-medium
             ${item.status === "Pending" && "bg-gray-500/20 text-gray-300"}
+            ${item.status === "Assigned" && "bg-blue-500/20 text-blue-300"}
+            ${item.status === "In Progress" && "bg-purple-500/20 text-purple-300"}
+            ${item.status === "Insights Submitted" && "bg-yellow-400/20 text-yellow-300"}
+            ${item.status === "Report Ready" && "bg-green-500/20 text-green-300"}
           `}>
                     {item.status}
                   </span>
@@ -283,7 +322,13 @@ const CaseManagement = () => {
 
                   {/* ✅ SHOW ONLY IF UNASSIGNED */}
                   {(!item.detective || item.detective === "Unassigned") && (
-                    <button className="p-2 bg-red-500 rounded-lg hover:bg-red-600">
+                    <button
+                      onClick={() => {
+                        setSelectedCase(item);
+                        setShowAssignModal(true);
+                      }}
+                      className="p-2 bg-red-500 rounded-lg hover:bg-red-600"
+                    >
                       <MdOutlinePersonAddAlt />
                     </button>
                   )}
@@ -292,7 +337,7 @@ const CaseManagement = () => {
                     <Eye size={16} />
                   </button>
 
-                  
+
                 </div>
               </div>
             ))}
@@ -350,11 +395,95 @@ const CaseManagement = () => {
                   Generate Report
                 </button>
               </div>
-
             </div>
           </div>
         )}
       </div>
+
+      {showAssignModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+
+          <div className="w-[90%] max-w-3xl bg-[#1A2832] border border-[#22313d] rounded-xl p-6 relative">
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setShowAssignModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              ✕
+            </button>
+
+            {/* HEADER */}
+            <h2 className="text-lg font-semibold">
+              Assign Detective to Case
+            </h2>
+            <p className="text-xs text-[#8FA3B0] mb-4">
+              Select a detective to assign to this case
+            </p>
+
+            {/* SEARCH (optional for now static) */}
+            <div className="bg-[#0f1a1f] border border-[#22313d] rounded-lg px-4 py-2 mb-5">
+              <input
+                placeholder="Search detective..."
+                className="bg-transparent outline-none w-full text-sm"
+              />
+            </div>
+
+            {/* DETECTIVE GRID */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {availableDetectives.map((det) => (
+                <div
+                  key={det}
+                  onClick={() => setSelectedDetective(det)}
+                  className={`p-4 rounded-lg border cursor-pointer transition 
+              ${selectedDetective === det
+                      ? "bg-red-500/20 border-red-500"
+                      : "border-[#243642] hover:bg-[#223544]"
+                    }`}
+                >
+                  {det}
+                </div>
+              ))}
+            </div>
+
+            {/* FOOTER */}
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  if (!selectedDetective) return;
+
+                  setCases((prev) =>
+                    prev.map((c) =>
+                      c.id === selectedCase.id
+                        ? {
+                          ...c,
+                          detective: selectedDetective,
+                          status: "Assigned", // ✅ update status also
+                        }
+                        : c
+                    )
+                  );
+
+                  setSelectedDetective("");
+                  setShowAssignModal(false); // temp update
+                  setShowAssignModal(false);
+                }}
+                className="px-4 py-2 bg-red rounded-lg text-sm"
+              >
+                Assign Case
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {showReportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -457,6 +586,9 @@ const CaseManagement = () => {
 
           </div>
         </div>
+
+
+
       )}
 
     </div>
