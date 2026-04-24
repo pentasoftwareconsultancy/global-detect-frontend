@@ -1,145 +1,119 @@
 import React, { useState } from 'react';
-import { MapPin } from 'lucide-react';
-import { MdPerson, MdEmail, MdPhone, MdWork } from 'react-icons/md';
+import { User, Mail, Phone, Briefcase, MapPin, Calendar, Save } from 'lucide-react';
+
+const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', marginBottom: '16px' };
+const fieldBox = { background: '#1C2B35', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#fff' };
+const lbl = { fontSize: '13px', color: '#9ca3af', marginBottom: '6px'  };
+const dividerRow = { borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' };
 
 const DetectiveProfilePage = () => {
-  const [profileData] = useState({ 
-    firstName: 'Emma',
-    lastName: 'Watson',
-    email: 'ewatson@detectiveagency.com',
-    phone: '+1 90002 22202',
-    fullName: 'Detective Emma Watson',
-    specialization: 'Corporate Fraud',
-    role: 'Detective',
-    status: 'On Case',
-    accountId: 'det-1',
-    activeCases: 2,
-    location: {
-      address: '123 Wall Street, New York, NY',
-      lat: 40.7728,
-      lng: -73.9560,
-      lastUpdated: '1/3/2026, 10:30:00 AM'
-    }
-  });
-
-  const [formData] = useState(profileData);
-
-  const initials = `${profileData.firstName[0]}${profileData.lastName[0]}`.toUpperCase();
+  const [name, setName] = useState('Detective Emma Watson');
+  const [email, setEmail] = useState('e.watson@detectiveagency.com');
+  const [phone, setPhone] = useState('91-00002 22202');
+  const [specialization, setSpecialization] = useState('Corporate Fraud');
 
   return (
-    <div className="bg-[#0b1120] text-white min-h-screen overflow-x-hidden">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6">
 
-      {/* Content Area */}
-      <div className="px-4 py-6 mx-auto w-full max-w-[1318px] space-y-6">
-          {/* Profile Header */}
-          <div className="w-full bg-[#1A2832] rounded-[12px] p-6">
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#D92B3A] to-[#bb2d3b] flex items-center justify-center text-white text-3xl font-bold shrink-0">
-                {initials}
-              </div>
-              <div className="flex-1 py-2 lg:py-4">
-                <h2 className="montserrat font-medium text-[20px] leading-[30px] text-white mb-1">
-                  {profileData.fullName}
-                </h2>
-                <p className="text-gray-400 mb-3 text-sm sm:text-base">{profileData.email}</p>
-                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-2">
-                  <span className="px-3 py-1 bg-[#1f2937] text-gray-300 text-xs rounded">
-                    {profileData.role}
-                  </span>
-                  <span className="px-3 py-1 bg-[#D92B3A] text-white text-xs rounded font-medium">
-                    {profileData.status}
-                  </span>
-                </div>
-              </div>
-            </div>
+      {/* Page header */}
+      <div className="mb-5">
+        <h1 className="text-xl font-semibold text-white">Profile</h1>
+        <p className="text-sm text-gray-400">Manage your account information</p>
+      </div>
+
+      {/* Avatar card */}
+      <div style={card}>
+        <div className="flex items-center gap-4">
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#dc3545', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
+            D
           </div>
-
-          {/* Personal Information */}
-          <div className="w-full bg-[#1A2832] rounded-[12px] p-6">
-            <div className="max-w-[894.67px]">
-              <h3 className="montserrat font-medium text-[16px] leading-[16px] text-white mb-2" style={{width: '172px', height: '16px'}}>Personal Information</h3>
-              <p className="text-gray-400 text-sm mb-6" style={{width: '230px', height: '24px'}}>Update your personal details</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="flex flex-col">
-                <label className="montserrat font-medium text-[14px] leading-[14px] text-gray-300 mb-2" style={{width: '73px', height: '14px'}}>Full Name</label>
-                <div className="flex items-center gap-2 w-full max-w-[415.33px] h-[36px] rounded-[12px] border border-[#2f3b45] bg-[#15202b] px-3">
-                  <MdPerson size={18} className="text-[#D92B3A]" />
-                  <span className="montserrat font-normal text-[14px] leading-[20px] text-white">{formData.fullName}</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <label className="montserrat font-medium text-[14px] leading-[14px] text-gray-300 mb-2">Email Address</label>
-                <div className="flex items-center gap-2 w-full max-w-[415.33px] h-[36px] rounded-[12px] border border-[#2f3b45] bg-[#15202b] px-3 min-w-0">
-                  <MdEmail size={18} className="text-[#D92B3A]" />
-                  <span className="montserrat font-normal text-[14px] leading-[20px] text-white min-w-0 break-words">{formData.email}</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <label className="montserrat font-medium text-[14px] leading-[14px] text-gray-300 mb-2">Phone Number</label>
-                <div className="flex items-center gap-2 w-full max-w-[415.33px] h-[36px] rounded-[12px] border border-[#2f3b45] bg-[#15202b] px-3 min-w-0">
-                  <MdPhone size={18} className="text-[#D92B3A]" />
-                  <span className="montserrat font-normal text-[14px] leading-[20px] text-white min-w-0 break-words">{formData.phone}</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <label className="montserrat font-medium text-[14px] leading-[14px] text-gray-300 mb-2" style={{width: '73px', height: '14px'}}>Specialization</label>
-                <div className="flex items-center gap-2 w-full max-w-[415.33px] h-[36px] rounded-[12px] border border-[#2f3b45] bg-[#15202b] px-3">
-                  <MdWork size={18} className="text-[#D92B3A]" />
-                  <span className="montserrat font-normal text-[14px] leading-[20px] text-white">{formData.specialization}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 border-t border-[#2f3b45]" style={{width: '100%', maxWidth: '1269px', height: '1px'}}></div>
-            <div className="flex justify-end mt-4">
-              <button className="montserrat font-medium text-[14px] leading-[20px] text-center text-white bg-[#D92B3A] rounded-[6px] w-[155px] h-[36px] hover:bg-[#bb2d3b] transition">Save Changes</button>
-            </div>
-          </div>
-
-          {/* Current Location */}
-          <div className="w-full bg-[#1A2832] rounded-[12px] p-6">
-            <div className="flex items-center gap-2 mb-2">
-              
-              <h3 className="montserrat font-medium text-[16px] leading-[16px] text-white">Current Location</h3>
-            </div>
-            <p className="text-gray-400 text-sm mb-4">Your last known location</p>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-2 text-white">
-                <MapPin size={16} className="text-[#D92B3A] mt-1" />
-                <span className="text-sm sm:text-base">{profileData.location.address}</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-gray-300">
-                <p>Lat: {profileData.location.lat}</p>
-                <p>Lng: {profileData.location.lng}</p>
-              </div>
-              <p className="text-xs text-gray-500">Last updated: {profileData.location.lastUpdated}</p>
-            </div>
-          </div>
-
-          {/* Account Information */}
-          <div className="w-full bg-[#1A2832] rounded-[12px] p-6">
-            <h3 className="montserrat font-medium text-[16px] leading-[16px] text-white mb-4">Account Information</h3>
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center border-b border-[#2f3b45] pb-4 text-sm sm:text-base">
-                <span className="text-gray-400">Account ID</span>
-                <span className="text-white font-medium">{profileData.accountId}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-[#2f3b45] pb-4 text-sm sm:text-base">
-                <span className="text-gray-400">Role</span>
-                <span className="text-white font-medium">{profileData.role}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm sm:text-base">
-                <span className="text-gray-400">Active Cases</span>
-                <span className="text-white font-medium">{profileData.activeCases}</span>
-              </div>
+          <div>
+            <p className="text-lg font-semibold text-white">Detective Emma Watson</p>
+            <p className="text-sm text-gray-400 mb-2">e.watson@detectiveagency.com</p>
+            <div className="flex items-center gap-2">
+              <span style={{ background: '#2a3a47', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', color: '#cbd5e1' }}>Detective</span>
+              <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', color: '#fff', fontWeight: '500' }}>On Case</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Personal Information */}
+      <div style={card}>
+        <p className="font-semibold text-base mb-1">Personal Information</p>
+        <p className="text-xs text-gray-400 mb-5">Update your personal details</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <p style={lbl}>Full Name</p>
+            <div style={fieldBox}>
+              <User size={15} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <input value={name} onChange={e => setName(e.target.value)} style={{ background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', width: '100%' }} />
+            </div>
+          </div>
+          <div>
+            <p style={lbl}>Email Address</p>
+            <div style={fieldBox}>
+              <Mail size={15} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <input value={email} onChange={e => setEmail(e.target.value)} style={{ background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', width: '100%' }} />
+            </div>
+          </div>
+          <div>
+            <p style={lbl}>Phone Number</p>
+            <div style={fieldBox}>
+              <Phone size={15} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <input value={phone} onChange={e => setPhone(e.target.value)} style={{ background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', width: '100%' }} />
+            </div>
+          </div>
+          <div>
+            <p style={lbl}>Specialization</p>
+            <div style={fieldBox}>
+              <Briefcase size={15} style={{ color: '#9ca3af', flexShrink: 0 }} />
+              <input value={specialization} onChange={e => setSpecialization(e.target.value)} style={{ background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', width: '100%' }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end mt-5">
+          <button style={{ background: '#dc3545', border: 'none', borderRadius: '8px', padding: '9px 20px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Save size={15} /> Save Changes
+          </button>
+        </div>
+      </div>
+
+      {/* Current Location */}
+      <div style={card}>
+        <p className="font-semibold text-base mb-1">Current Location</p>
+        <p className="text-xs text-gray-400 mb-4">Your last known location</p>
+        <div className="flex items-start gap-2 mb-2">
+          <MapPin size={16} style={{ color: '#dc3545', marginTop: '2px', flexShrink: 0 }} />
+          <p className="text-sm font-semibold text-white">123 Wall Street, New York, NY</p>
+        </div>
+        <div style={{ paddingLeft: '24px' }}>
+          <p className="text-xs text-gray-400">Lat: 40.7128 &nbsp;&nbsp; Lng: -74.0060</p>
+          <div className="flex items-center gap-1 mt-1">
+            <Calendar size={12} style={{ color: '#9ca3af' }} />
+            <p className="text-xs text-gray-400">Last updated: 1/31/2026, 10:30:00 AM</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Information */}
+      <div style={card}>
+        <p className="font-semibold text-base mb-4">Account Information</p>
+        {[
+          { label: 'Account ID', value: 'det-1' },
+          { label: 'Role', value: 'Detective' },
+          { label: 'Active Cases', value: '2' },
+        ].map((item, i, arr) => (
+          <div key={i} style={{ ...dividerRow, borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
+            <span style={{ fontSize: '13px', color: '#9ca3af' }}>{item.label}</span>
+            <span style={{ fontSize: '14px', color: '#fff', fontWeight: '500' }}>{item.value}</span>
+          </div>
+        ))}
+      </div>
+
+    </div>
   );
 };
 
