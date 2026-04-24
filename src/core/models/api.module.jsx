@@ -1,3 +1,7 @@
 export const API_MODULE = {
-  AUTH: "/api/auth",
+  AUTH: "auth",
+  DETECTIVE_KYC: "detective-kyc",
+  REQUEST_FORM: "case-request",
+  BLOGS: "blogs",
+  PROFILE: "profile",
 };

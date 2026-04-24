@@ -1,6 +1,6 @@
 // import UserSidebar from "../public/UserSidebar";
 // import UserNavbar from "../public/UserNavbar";
-// import { Outlet } from "react-router-dom";
+// impoxrt { Outlet } from "react-router-dom";
 // import { useState } from "react";
 
 // const UserLayout = () => {
@@ -54,9 +54,17 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import UserNavbar from "../public/UserNavbar";
 import UserSidebar from "../public/UserSidebar";
+import { useLocation } from "react-router-dom";
 
 const UserLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const location = useLocation();
+
+ const showSidebar =
+  location.pathname === "/user-dashboard" ||
+  location.pathname === "/user-profile" ||
+  location.pathname === "/user-settings";
 
   return (
     <div className="h-screen flex flex-col bg-[#0b141c] text-white">
@@ -75,10 +83,12 @@ const UserLayout = () => {
         )}
 
         {/* Sidebar */}
-        <UserSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
+        {showSidebar && (
+          <UserSidebar
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
+        )}
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">

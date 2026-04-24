@@ -14,7 +14,7 @@ const DetectiveLayout = () => {
           <Outlet />
         </main>
       </div>
-    <Footer />
+    {/* <Footer /> */}
     </div>
   );
 };

@@ -6,15 +6,24 @@ import { BiSolidMessageAlt } from "react-icons/bi";
 import se from "../../../assets/image 4.png";
 import rect from "../../../assets/Rectangle.png";
 
+ 
+
+
 const HomeHero = () => {
   const navigate = useNavigate();
 
+
+
+  const handleRequestInvestigation = () => {
+  navigate(ROUTES.REQUEST_INVESTIGATION);
+};
+
   return (
     <div className="relative lg:min-h-[87vh] bg-[#121F27] text-white overflow-hidden">
-      
+
       {/* DESKTOP LAYOUT */}
       <div className="hidden lg:flex items-center px-20 h-full pt-2">
-        
+
         {/* RIGHT SIDE (DESKTOP) */}
         <div className="absolute top-0 right-[90px] h-full w-[22%] overflow-hidden">
           <img src={rect} className="absolute top-0 right-0 w-full h-full object-cover saturate-170" />
@@ -35,7 +44,7 @@ const HomeHero = () => {
             Platform"
           </h1>
 
-          <p className="text-gray-400 text-[15px] leading-[1.7] mb-10 max-w-[700px]">
+          <p className="text-gray-400 text-[15px] leading-[1.7] mb-10 max-w-175">
             Delivering confidential private investigations powered by verified professionals,
             ethical practices, and advanced digital technology—ensuring accuracy, accountability,
             and complete discretion at every stage. From background verification to litigation support,
@@ -45,8 +54,8 @@ const HomeHero = () => {
 
           <div className="flex gap-4 mb-12">
             <button
-              onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-              className="bg-[#D92B3A] hover:bg-[#c62828] px-7 py-3 rounded-md font-medium"
+              onClick={handleRequestInvestigation}
+              className="bg-red hover:bg-[#c62828] px-7 py-3 rounded-md font-medium"
             >
               Request Investigation
             </button>
@@ -58,7 +67,7 @@ const HomeHero = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 max-w-[520px] pt-5 pl-4">
+          <div className="grid grid-cols-2 gap-6 max-w-130 pt-5 pl-4">
             {[
               { id: "01", text: "Encrypted Reports" },
               { id: "02", text: "Verified Detectives" },
@@ -96,7 +105,7 @@ const HomeHero = () => {
           </div>
 
           {/* RIGHT - Red rect + Detective */}
-          <div className="relative w-[120px] flex-shrink-0" style={{height: '220px'}}>
+          <div className="relative w-30 shrink-0" style={{ height: '220px' }}>
             <img src={rect} className="absolute top-0 right-0 w-full h-[55%] object-cover saturate-170" />
             <img src={se} className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[85%] object-contain z-10" />
           </div>
@@ -106,7 +115,7 @@ const HomeHero = () => {
         <div className="flex gap-3 mb-8">
           <button
             onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-            className="bg-[#D92B3A] hover:bg-[#c62828] px-4 py-2.5 rounded-md font-medium text-sm flex-1"
+            className="bg-red hover:bg-[#c62828] px-4 py-2.5 rounded-md font-medium text-sm flex-1"
           >
             Request Investigation
           </button>
@@ -140,10 +149,10 @@ const HomeHero = () => {
 
       {/* FLOATING BUTTONS */}
       <div className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 flex flex-col gap-3 z-50">
-        <button className="bg-[#D92B3A] p-3 rounded-full shadow-lg">
+        <button className="bg-red p-3 rounded-full shadow-lg">
           <RiWhatsappFill className="w-6 h-6" />
         </button>
-        <button className="bg-[#D92B3A] p-3 rounded-full shadow-lg">
+        <button className="bg-red p-3 rounded-full shadow-lg">
           <BiSolidMessageAlt className="w-6 h-6" />
         </button>
       </div>
