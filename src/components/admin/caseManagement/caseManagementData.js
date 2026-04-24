@@ -10,6 +10,7 @@ export const casesData = [
     insight:
       "Initial investigation reveals suspicious wire transfers totaling $250,000 to offshore accounts. Found discrepancies in ledger entries during October–December period. Recommend forensic accounting audit.",
   },
+  
   {
     id: "C002",
     client: "Sarah Johnson",
