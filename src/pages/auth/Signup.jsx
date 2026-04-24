@@ -6,6 +6,8 @@ import NoiseBg from '../../assets/noise.png';
 import UserIcon from '../../assets/user_icon.png';
 import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
+import ApiService from '../../core/services/api.service';
+import ServerUrl from '../../core/constants/serverURL.constant';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -21,12 +23,32 @@ const Signup = () => {
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const roleMap = { User: 'user', Detective: 'detective' };
-    localStorage.setItem('accountType', roleMap[accountType]);
-    localStorage.setItem('isFromSignup', 'true');
-    navigate(ROUTES.OTP);
+
+    const form = e.target;
+
+    const payload = {
+      name: form.name.value,
+      phone: form.phone.value,
+      email: form.email.value,
+      city: form.city.value,
+      password: form.password.value,
+      confirmPassword: form.confirmPassword.value,
+      role: accountType.toLowerCase(),
+    };
+
+    try {
+      const response = await new ApiService().apipost(
+        ServerUrl.REGISTER_API,
+        payload
+      );
+      console.log(ServerUrl.REGISTER_API, payload, response);
+      navigate(ROUTES.OTP);
+
+    } catch (err) {
+      console.error("Registration failed:", err);
+    }
   };
 
   const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
@@ -43,7 +65,7 @@ const Signup = () => {
         className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px]"
       >
         {selectedLabel}
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round"/></svg>
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round" /></svg>
       </button>
       {showLangDropdown && (
         <div className="absolute top-[52px] left-0 w-full bg-white rounded-[10px] shadow-lg overflow-hidden">
@@ -144,9 +166,9 @@ const Signup = () => {
           {/* FORM */}
           <form className="space-y-3 mt-4" onSubmit={handleSubmit}>
             {[
-              { label: 'Name (As per Adhar card)', icon: User, placeholder: 'Enter name' },
-              { label: 'Phone Number (linked to adhar card)', icon: Phone, placeholder: 'Enter Phone number' },
-              { label: 'Email Address', icon: Mail, placeholder: 'Enter your email' },
+              { name: 'name', label: 'Name (As per Adhar card)', icon: User, placeholder: 'Enter name' },
+              { name: 'phone', label: 'Phone Number (linked to adhar card)', icon: Phone, placeholder: 'Enter Phone number' },
+              { name: 'email', label: 'Email Address', icon: Mail, placeholder: 'Enter your email' },
             ].map((field, i) => {
               const Icon = field.icon;
               return (
@@ -154,7 +176,7 @@ const Signup = () => {
                   <label style={labelStyle}>{field.label}</label>
                   <div className="relative mt-1">
                     <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                    <input placeholder={field.placeholder} style={inputStyle} className={inputClass} />
+                    <input name={field.name} placeholder={field.placeholder} style={inputStyle} className={inputClass} />
                   </div>
                 </div>
               );
@@ -165,9 +187,10 @@ const Signup = () => {
               <label style={labelStyle}>City</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 z-10" size={16} />
-                <select style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full bg-transparent border border-white/60 text-white outline-none focus:border-white appearance-none">
+                {/* <select style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full bg-transparent border border-white/60 text-white outline-none focus:border-white appearance-none">
                   <option className="text-black">Select City</option>
-                </select>
+                </select> */}
+                <input name="city" placeholder="city" style={inputStyle} className={inputClass} />
               </div>
             </div>
 
@@ -176,7 +199,7 @@ const Signup = () => {
               <label style={labelStyle}>Create Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type={showPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
+                <input name="password" type={showPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -188,7 +211,7 @@ const Signup = () => {
               <label style={labelStyle}>Confirm Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type={showConfirmPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
+                <input name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
