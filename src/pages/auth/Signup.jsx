@@ -15,6 +15,41 @@ const LANGUAGES = [
   { key: 'Marathi', label: 'मराठी' },
 ];
 
+const LangDropdown = ({ showLangDropdown, setShowLangDropdown, language, setLanguage }) => {
+  const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
+
+  return (
+    <div className="relative z-50">
+      <button
+        onClick={() => setShowLangDropdown(!showLangDropdown)}
+        style={{ height: '48px', borderRadius: '10px', paddingLeft: '20px', paddingRight: '20px', fontSize: '15px', fontWeight: 600 }}
+        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px]"
+      >
+        {selectedLabel}
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round" /></svg>
+      </button>
+      {showLangDropdown && (
+        <div className="absolute top-[52px] left-0 w-full bg-white rounded-[10px] shadow-lg overflow-hidden">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.key}
+              onClick={() => { setLanguage(lang.key); setShowLangDropdown(false); }}
+              className="w-full px-5 py-3 text-left text-red font-medium hover:bg-red/10 flex items-center justify-between"
+              style={{
+                fontSize: '15px',
+                borderLeft: language === lang.key ? '3px solid #D92B3A' : '3px solid transparent',
+                fontWeight: language === lang.key ? 600 : 400,
+              }}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Signup = () => {
   const [accountType, setAccountType] = useState('User');
   const [showPassword, setShowPassword] = useState(false);
@@ -92,62 +127,8 @@ const Signup = () => {
   const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
   const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
 
-  const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
-
   return (
-    <div className="relative z-50">
-      <button
-        onClick={() => setShowLangDropdown(!showLangDropdown)}
-        style={{ height: '48px', borderRadius: '10px', paddingLeft: '20px', paddingRight: '20px', fontSize: '15px', fontWeight: 600 }}
-        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px]"
-      >
-        {selectedLabel}
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round" /></svg>
-      </button>
-      {showLangDropdown && (
-        <div className="absolute top-[52px] left-0 w-full bg-white rounded-[10px] shadow-lg overflow-hidden">
-          {LANGUAGES.map((lang) => (
-            <button
-              key={lang.key}
-              onClick={() => { setLanguage(lang.key); setShowLangDropdown(false); }}
-              className="w-full px-5 py-3 text-left text-red font-medium hover:bg-red/10 flex items-center justify-between"
-              style={{
-                fontSize: '15px',
-                borderLeft: language === lang.key ? '3px solid #D92B3A' : '3px solid transparent',
-                fontWeight: language === lang.key ? 600 : 400,
-              }}
-            >
-              {lang.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const Signup = () => {
-  const [accountType, setAccountType] = useState('User');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [language, setLanguage] = useState('English');
-  const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const roleMap = { User: 'user', Detective: 'detective' };
-    localStorage.setItem('accountType', roleMap[accountType]);
-    localStorage.setItem('isFromSignup', 'true');
-    navigate(ROUTES.OTP);
-  };
-
-  const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
-  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
-  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
-
-  return (
-    <div className="h-screen flex font-montserrat bg-red overflow-x-hidden overflow-y-auto">
+    <div className="min-h-screen flex font-montserrat bg-red overflow-x-hidden overflow-y-hidden">
 
       {/* LEFT PANEL - desktop only */}
       <div className="hidden lg:flex lg:flex-col w-[563px] min-h-screen relative flex-shrink-0">
@@ -231,9 +212,9 @@ const Signup = () => {
           {/* ========== STEP 1: FORM ========== */}
           <form className="space-y-3 mt-4" onSubmit={handleStep1Submit}>
             {[
-              { label: 'Name (As per Adhar card)', icon: User, name: 'name', placeholder: 'Enter name' },
-              { label: 'Phone Number (linked to adhar card)', icon: Phone, name: 'phone', placeholder: 'Enter Phone number', pattern: '[6-9][0-9]{9}' },
-              { label: 'Email Address', icon: Mail, name: 'email', placeholder: 'Enter your email', type: 'email' },
+              { name: 'name', label: 'Name (As per Adhar card)', icon: User, placeholder: 'Enter name' },
+              { name: 'phone', label: 'Phone Number (linked to adhar card)', icon: Phone, placeholder: 'Enter Phone number' },
+              { name: 'email', label: 'Email Address', icon: Mail, placeholder: 'Enter your email' },
             ].map((field, i) => {
               const Icon = field.icon;
               return (
@@ -244,7 +225,6 @@ const Signup = () => {
                     <input 
                       type={field.type || 'text'}
                       name={field.name}
-                      pattern={field.pattern}
                       value={formData[field.name]}
                       onChange={handleInputChange}
                       disabled={loading}
@@ -269,8 +249,8 @@ const Signup = () => {
                   onChange={handleInputChange}
                   disabled={loading}
                   placeholder="Enter city"
-                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
-                  className="w-full bg-transparent border border-white/60 text-white outline-none focus:border-white placeholder:text-white/60 disabled:opacity-50"
+                  style={inputStyle}
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -281,16 +261,16 @@ const Signup = () => {
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
                 <input 
-                  type={showPassword ? 'text' : 'password'} 
-                  name="password"
+                  name="password" 
                   value={formData.password}
                   onChange={handleInputChange}
                   disabled={loading}
                   placeholder="Create password"
+                  type={showPassword ? 'text' : 'password'} 
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
-                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white disabled:opacity-50" 
+                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" 
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -302,16 +282,16 @@ const Signup = () => {
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
                 <input 
-                  type={showConfirmPassword ? 'text' : 'password'} 
-                  name="confirmPassword"
+                  name="confirmPassword" 
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   disabled={loading}
                   placeholder="Confirm password"
+                  type={showConfirmPassword ? 'text' : 'password'} 
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
-                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white disabled:opacity-50" 
+                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" 
                 />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
