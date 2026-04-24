@@ -21,6 +21,7 @@ const StepIndicator = ({ steps, active }) => {
   )
 }
 
+
 const DetectiveForm = () => {
   const { setKycComplete } = useAuth();
   const navigate = useNavigate();

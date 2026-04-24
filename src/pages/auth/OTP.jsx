@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -5,13 +6,18 @@ import GlobalLogo from '../../assets/Global-logo.png';
 import OtpContainer from '../../assets/Container-otp.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { useAuth } from '../../core/contexts/AuthContext';
+import { authService } from '../../core/services/auth.service';
 
 const OTP = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(52);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
+  const phone = localStorage.getItem('registrationPhone');
+  const accountType = localStorage.getItem('accountType') || 'user';
 
   useEffect(() => {
     let interval;
@@ -38,23 +44,49 @@ const OTP = () => {
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    const accountType = localStorage.getItem('accountType');
-    const isFromSignup = localStorage.getItem('isFromSignup') === 'true';
-    login({
-      token: 'temp-token-' + Date.now(),
-      user: {
-        role: accountType,
-        kycComplete: true,
-      },
-    });
-    localStorage.removeItem('isFromSignup');
-    if (isFromSignup) {
+    setError('');
+
+    if (!phone) {
+      setError('Phone number not found. Please signup again.');
+      setTimeout(() => navigate(ROUTES.SIGNUP), 2000);
+      return;
+    }
+
+    const otpString = otp.join('');
+    if (otpString.length !== 6) {
+      setError('Please enter a valid 6-digit OTP');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ✅ Call backend - Verify OTP and create account
+      const response = await authService.registerVerifyOtp(phone, otpString);
+
+      console.log('Registration completed:', response.data);
+
+      // ✅ Extract token from response
+      const token = response.data.data?.token || response.data.data?.accessToken;
+      if (token) {
+        localStorage.setItem('TOKEN', token);
+      }
+
+      // ✅ Clear registration data
+      localStorage.removeItem('registrationPhone');
+      localStorage.removeItem('isFromSignup');
+      localStorage.removeItem('accountType');
+
+      // ✅ Show success screen
       setIsSuccess(true);
-    } else {
-      const routeMap = { user: ROUTES.USER_DASHBOARD, detective: ROUTES.DETECTIVE_DASHBOARD, admin: ROUTES.ADMIN_DASHBOARD };
-      navigate(routeMap[accountType] || ROUTES.USER_DASHBOARD);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to verify OTP';
+      setError(errorMsg);
+      console.error('OTP verification error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,8 +167,15 @@ const OTP = () => {
           {/* SUBTITLE */}
           <p className="mt-1 text-[#575757] text-sm">We've sent a 6-digit code to</p>
           <p style={{ fontSize: '14px', fontWeight: 700, lineHeight: '21px', color: '#D92B3A' }} className="mt-1">
-            1234567890
+            {phone || '1234567890'}
           </p>
+
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded-lg text-red-700 text-sm w-full">
+              {error}
+            </div>
+          )}
 
           {/* OTP INPUTS */}
           <form onSubmit={handleVerify} className="flex flex-col items-center mt-6 w-full max-w-[500px]">
@@ -176,16 +215,17 @@ const OTP = () => {
             {/* VERIFY BUTTON */}
             <button
               type="submit"
-              style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', marginTop: '16px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A' }}
-              className="bg-[#D92B3A] text-white w-full"
+              disabled={loading || otp.join('').length !== 6}
+              style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', marginTop: '16px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A', opacity: loading || otp.join('').length !== 6 ? 0.6 : 1 }}
+              className="bg-[#D92B3A] text-white w-full disabled:cursor-not-allowed"
             >
-              Verify Code
+              {loading ? 'Verifying...' : 'Verify Code'}
             </button>
 
             {/* CHANGE PHONE NUMBER */}
             <button
               type="button"
-              onClick={() => navigate(ROUTES.LOGIN)}
+              onClick={() => navigate(ROUTES.SIGNUP)}
               className="flex items-center justify-center gap-2 mt-4"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: '2.5px' }}>
