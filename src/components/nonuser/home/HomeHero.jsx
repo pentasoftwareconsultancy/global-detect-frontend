@@ -1,114 +1,159 @@
 import React from 'react';
-import { Shield, CheckCircle, Lock, Gavel } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../core/constants/routes.constant';
-
+import { RiWhatsappFill } from "react-icons/ri";
+import { BiSolidMessageAlt } from "react-icons/bi";
 import se from "../../../assets/image 4.png";
 import rect from "../../../assets/Rectangle.png";
+
+ 
+
 
 const HomeHero = () => {
   const navigate = useNavigate();
 
+
+
+  const handleRequestInvestigation = () => {
+  navigate(ROUTES.REQUEST_INVESTIGATION);
+};
+
   return (
-    <div className="relative min-h-screen bg-[#07121a] text-white overflow-hidden flex items-center px-4 sm:px-6 md:px-12 lg:px-20">
+    <div className="relative lg:min-h-[87vh] bg-[#121F27] text-white overflow-hidden">
 
-      {/* RIGHT SIDE (DESKTOP) */}
-      <div className="absolute right-0 top-0 h-full w-[30%] hidden lg:block overflow-hidden">
+      {/* DESKTOP LAYOUT */}
+      <div className="hidden lg:flex items-center px-20 h-full pt-2">
 
-        <img src={rect} className="absolute top-0 right-0 w-full h-full object-cover" />
+        {/* RIGHT SIDE (DESKTOP) */}
+        <div className="absolute top-0 right-[90px] h-full w-[22%] overflow-hidden">
+          <img src={rect} className="absolute top-0 right-0 w-full h-full object-cover saturate-170" />
+          <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 w-[160%] h-[360px] bg-[#121F27] rounded-full z-10"></div>
+          <img src={se} className="absolute bottom-[-50px] left-1/2 -translate-x-1/2 h-[80%] w object-contain z-20" />
+        </div>
 
-        <div className="absolute bottom-[-120px] left-1/2 -translate-x-1/2 w-[140%] h-[320px] bg-[#07121a] rounded-full z-10"></div>
+        {/* LEFT GRADIENT */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121F27] via-[#121F27]/95 to-transparent z-0"></div>
 
-        <img
-          src={se}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[92%] object-contain z-20"
-        />
+        {/* CONTENT */}
+        <div className="relative z-30 pb-10">
+          <h1 className="text-[64px] leading-[1.2] font-light mb-6">
+            <span className="font-semibold">"Professional</span> Private <br />
+            <span className="whitespace-nowrap">
+              Investigation & <span className="font-semibold">Security</span>
+            </span> <br />
+            Platform"
+          </h1>
+
+          <p className="text-gray-400 text-[15px] leading-[1.7] mb-10 max-w-175">
+            Delivering confidential private investigations powered by verified professionals,
+            ethical practices, and advanced digital technology—ensuring accuracy, accountability,
+            and complete discretion at every stage. From background verification to litigation support,
+            our platform ensures secure case handling, verified professionals,
+            and structured workflows that meet corporate and legal standards.
+          </p>
+
+          <div className="flex gap-4 mb-12">
+            <button
+              onClick={handleRequestInvestigation}
+              className="bg-red hover:bg-[#c62828] px-7 py-3 rounded-md font-medium"
+            >
+              Request Investigation
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="border-[1.6px] border-white px-7 py-3 rounded-md font-medium hover:bg-white/10"
+            >
+              Join as Detective
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 max-w-130 pt-5 pl-4">
+            {[
+              { id: "01", text: "Encrypted Reports" },
+              { id: "02", text: "Verified Detectives" },
+              { id: "03", text: "Icons + short labels" },
+              { id: "04", text: "Legal & Ethical Compliance" },
+            ].map((item, index) => (
+              <div key={index} className="relative">
+                <div className="absolute -top-3 -left-3 z-20 bg-[#c8a882] text-black text-[11px] px-2 py-[2px] font-bold shadow-md">
+                  {item.id}
+                </div>
+                <div className="border border-white/15 bg-[#1a2535] px-5 py-4 shadow-[0_8px_20px_rgba(0,0,0,0.3)]">
+                  <span className="text-[13px] text-gray-200">"{item.text}"</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* MOBILE BACKGROUND IMAGE */}
-      <div className="absolute inset-0 lg:hidden opacity-20">
-        <img src={se} className="w-full h-full object-cover object-right" />
-      </div>
+      {/* MOBILE LAYOUT */}
+      <div className="lg:hidden px-4 pt-6 pb-4 flex flex-col">
 
-      {/* LEFT GRADIENT */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#07121a] via-[#07121a]/95 to-transparent z-0"></div>
+        {/* TOP ROW - Text left, Detective right */}
+        <div className="flex items-start gap-3 mb-5">
 
-      {/* CONTENT */}
-      <div className="relative z-30 max-w-[620px] pt-16 sm:pt-20">
+          {/* LEFT - Heading + Paragraph */}
+          <div className="flex-1">
+            <h1 className="text-[20px] leading-[1.3] font-light mb-3">
+              <span className="font-bold">"Professional</span> Private<br />
+              Investigation & <span className="font-bold">Security</span> Platform"
+            </h1>
+            <p className="text-gray-400 text-[10px] leading-[1.6]">
+              Delivering confidential private investigations powered by verified professionals, ethical practices, and advanced digital technology—ensuring accuracy, accountability, and complete discretion at every stage. From background verification to litigation support, our platform ensures secure case handling, verified professionals, and structured workflows that meet corporate and legal standards.
+            </p>
+          </div>
 
-        {/* HEADING */}
-        <h1 className="text-[32px] sm:text-[40px] md:text-[54px] lg:text-[64px] leading-[1.1] font-light mb-6">
-          <span className="font-semibold">“Professional</span> Private <br />
-          <span className="whitespace-nowrap">
-            Investigation & <span className="font-semibold">Security</span>
-          </span> <br />
-          Platform”
-        </h1>
+          {/* RIGHT - Red rect + Detective */}
+          <div className="relative w-30 shrink-0" style={{ height: '220px' }}>
+            <img src={rect} className="absolute top-0 right-0 w-full h-[55%] object-cover saturate-170" />
+            <img src={se} className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[85%] object-contain z-10" />
+          </div>
+        </div>
 
-        {/* TEXT */}
-        <p className="text-gray-400 text-sm sm:text-[15px] leading-[1.7] mb-8 sm:mb-10">
-          Delivering confidential private investigations powered by verified professionals,
-          ethical practices, and advanced digital technology—ensuring accuracy, accountability,
-          and complete discretion at every stage.
-        </p>
-
-        {/* BUTTONS */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-10 sm:mb-12">
-
+        {/* BUTTONS - side by side */}
+        <div className="flex gap-3 mb-8">
           <button
             onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-            className="bg-[#e53935] hover:bg-[#c62828] px-6 sm:px-7 py-3 rounded-md font-medium w-full sm:w-auto"
+            className="bg-red hover:bg-[#c62828] px-4 py-2.5 rounded-md font-medium text-sm flex-1"
           >
             Request Investigation
           </button>
-
           <button
             onClick={() => navigate('/login')}
-            className="border border-white/30 px-6 sm:px-7 py-3 rounded-md font-medium hover:bg-white/10 w-full sm:w-auto"
+            className="border-[1.6px] border-white px-4 py-2.5 rounded-md font-medium text-sm flex-1 hover:bg-white/10"
           >
             Join as Detective
           </button>
-
         </div>
 
-        {/* FEATURES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-x-10 sm:gap-y-6 max-w-[520px]">
-
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">01</span>
-            <Lock size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Encrypted Reports”</span>
-          </div>
-
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">02</span>
-            <CheckCircle size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Verified Detectives”</span>
-          </div>
-
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">03</span>
-            <Shield size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Icons + short labels”</span>
-          </div>
-
-          <div className="relative border border-white/10 bg-white/5 px-4 py-2 flex items-center gap-3 backdrop-blur-sm">
-            <span className="absolute -top-2 -left-2 bg-[#e7dfd7] text-black text-[9px] px-2 py-[1px]">04</span>
-            <Gavel size={14} className="text-red-500" />
-            <span className="text-[13px] text-gray-200">“Legal & Ethical Compliance”</span>
-          </div>
-
+        {/* FEATURE CARDS 2x2 */}
+        <div className="grid grid-cols-2 gap-4 pt-3 pl-3">
+          {[
+            { id: "01", text: "Encrypted Reports" },
+            { id: "02", text: "Verified Detectives" },
+            { id: "03", text: "Icons + short labels" },
+            { id: "04", text: "Legal Compliance" },
+          ].map((item, index) => (
+            <div key={index} className="relative">
+              <div className="absolute -top-3 -left-3 z-20 bg-[#c8a882] text-black text-[11px] px-2 py-[2px] font-bold shadow-md">
+                {item.id}
+              </div>
+              <div className="border border-white/15 bg-[#1a2535] px-4 py-3 shadow-[0_8px_20px_rgba(0,0,0,0.3)]">
+                <span className="text-[12px] text-gray-200">"{item.text}"</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* FLOATING BUTTONS */}
       <div className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 flex flex-col gap-3 z-50">
-        <button className="bg-[#25D366] p-3 rounded-full shadow-lg">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" className="w-5 h-5" />
+        <button className="bg-red p-3 rounded-full shadow-lg">
+          <RiWhatsappFill className="w-6 h-6" />
         </button>
-
-        <button className="bg-[#e53935] p-3 rounded-full shadow-lg">
-          <img src="https://www.svgrepo.com/show/521104/chat-bubble.svg" className="w-5 h-5 invert" />
+        <button className="bg-red p-3 rounded-full shadow-lg">
+          <BiSolidMessageAlt className="w-6 h-6" />
         </button>
       </div>
 

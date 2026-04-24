@@ -1,227 +1,224 @@
-import React, { useState } from 'react';
-import { Plus, Eye, FileText } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../core/constants/routes.constant';
+
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../core/constants/routes.constant";
 
 const UserDashboardPage = () => {
   const navigate = useNavigate();
-  
-  const savedCases = JSON.parse(localStorage.getItem('userCases') || '[]');
+
+  const savedCases = JSON.parse(localStorage.getItem("userCases") || "[]");
 
   const defaultCases = [
     {
-      id: 'CASE-1001',
-      title: 'Background verification',
-      category: 'Background',
+      id: "CASE-1001",
+      title: "Background verification",
+      category: "Background",
       progress: 100,
-      status: 'Evidence gathering phase in downtown sector',
-      daysRemaining: '34 Days',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
+      status: "Evidence gathering phase in downtown sector",
+      daysRemaining: "34 Days",
+      image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop",
       files: [
-        { name: 'Surveillance_Photo_01.jpg', date: 'Oct 21, 2025 | 2:34 PM' },
-        { name: 'Property_Records.pdf', date: 'Oct 16, 2025 | 11:03' },
-        { name: 'Interview_Recording_04.mp3', date: 'Oct 12, 2025 | 8:59 AM' }
-      ]
+        { name: "Surveillance_Photo_01.jpg", date: "Oct 21, 2023 • 2.4 MB" },
+        { name: "Property_Records.pdf", date: "Oct 16, 2023 • 1.2 MB" },
+        { name: "Interview_Recording_04.mp3", date: "Oct 12, 2023 • 5.8 MB" },
+      ],
     },
     {
-      id: 'CASE-1002',
-      title: 'Whispering Hall',
-      category: 'Surveillance',
+      id: "CASE-1002",
+      title: "Whispering Hall",
+      category: "Surveillance",
       progress: 20,
-      status: 'Preliminary background checks initiated',
-      daysRemaining: '8 Days',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop',
+      status: "Preliminary background checks initiated",
+      daysRemaining: "8 Days",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
       files: [
-        { name: 'Surveillance_Photo_01.jpg', date: 'Oct 21, 2025 | 2:34 PM' },
-        { name: 'Property_Records.pdf', date: 'Oct 16, 2025 | 11:03' }
-      ]
+        { name: "Surveillance_Photo_01.jpg", date: "Oct 21, 2023 • 2.4 MB" },
+        { name: "Property_Records.pdf", date: "Oct 16, 2023 • 1.2 MB" },
+      ],
     },
     {
-      id: 'CASE-1003',
-      title: 'Background verification',
-      category: 'Background',
+      id: "CASE-1003",
+      title: "Background verification",
+      category: "Background",
       progress: 65,
-      status: 'Evidence gathering phase in downtown sector',
-      daysRemaining: '34 Days',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
+      status: "Evidence gathering phase in downtown sector",
+      daysRemaining: "34 Days",
+      image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop",
       files: [
-        { name: 'Surveillance_Photo_01.jpg', date: 'Oct 21, 2025 | 2:34 PM' },
-        { name: 'Property_Records.pdf', date: 'Oct 16, 2025 | 11:03' },
-        { name: 'Interview_Recording_04.mp3', date: 'Oct 12, 2025 | 8:59 AM' }
-      ]
+        { name: "Surveillance_Photo_01.jpg", date: "Oct 21, 2023 • 2.4 MB" },
+        { name: "Property_Records.pdf", date: "Oct 16, 2023 • 1.2 MB" },
+        { name: "Interview_Recording_04.mp3", date: "Oct 12, 2023 • 5.8 MB" },
+      ],
     },
     {
-      id: 'CASE-1004',
-      title: 'Whispering Hall',
-      category: 'Surveillance',
+      id: "CASE-1004",
+      title: "Whispering Hall",
+      category: "Surveillance",
       progress: 20,
-      status: 'Preliminary background checks initiated',
-      daysRemaining: '8 Days',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop',
+      status: "Preliminary background checks initiated",
+      daysRemaining: "8 Days",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
       files: [
-        { name: 'Surveillance_Photo_01.jpg', date: 'Oct 21, 2025 | 2:34 PM' },
-        { name: 'Property_Records.pdf', date: 'Oct 16, 2025 | 11:03' }
-      ]
-    }
+        { name: "Surveillance_Photo_01.jpg", date: "Oct 21, 2023 • 2.4 MB" },
+        { name: "Property_Records.pdf", date: "Oct 16, 2023 • 1.2 MB" },
+      ],
+    },
+    {
+      id: "CASE-1005",
+      title: "Financial Fraud Investigation",
+      category: "Fraud",
+      progress: 45,
+      status: "Document review phase in progress",
+      daysRemaining: "15 Days",
+      image:
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
+      files: [
+        { name: "Bank_Statements.pdf", date: "Oct 20, 2023 • 3.1 MB" },
+        { name: "Transaction_Log.xlsx", date: "Oct 19, 2023 • 2.8 MB" },
+        { name: "Audit_Report.docx", date: "Oct 18, 2023 • 1.5 MB" },
+      ],
+    },
   ];
-  
+
   const [investigations] = useState([...savedCases, ...defaultCases]);
-  const activeCount = investigations.filter(inv => inv.progress < 100).length;
+
+  const activeCount = investigations.filter(
+    (inv) => inv.progress < 100
+  ).length;
   const totalCount = investigations.length;
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-6 md:py-10">
+    <div className="text-white montserrat w-full">
 
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12">
-          Dashboard
-        </h1>
+      {/* HEADER */}
+      <h1 className="font-['Montserrat'] font-medium text-2xl leading-[21px] tracking-normal text-white mb-6">
+        Dashboard
+      </h1>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-12">
-          
-          <div className="bg-gradient-to-br from-[#1a2847] to-[#111827] rounded-xl md:rounded-2xl p-5 md:p-8 border border-white/10">
-            <p className="text-gray-400 text-xs md:text-sm mb-1">Active Investigations</p>
-            <p className="text-3xl md:text-5xl font-bold">{activeCount}</p>
-          </div>
+      {/* TOP CARDS */}
+      <div className="grid grid-cols-3 gap-2 md:gap-6 mb-8">
 
-          <div className="bg-gradient-to-br from-[#1a2847] to-[#111827] rounded-xl md:rounded-2xl p-5 md:p-8 border border-white/10">
-            <p className="text-gray-400 text-xs md:text-sm mb-1">Total Investigations</p>
-            <p className="text-3xl md:text-5xl font-bold">{totalCount}</p>
-          </div>
-
-          <div
-            className="bg-gradient-to-br from-[#D92B3A] to-[#a0202a] rounded-xl md:rounded-2xl p-5 md:p-8 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-all"
-            onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-          >
-            <Plus size={36} className="mb-2" />
-            <p className="font-bold text-center text-sm md:text-base">
-              Request Investigation
-            </p>
-            <p className="text-xs text-white/80 text-center mt-1">
-              Request a new investigation now
-            </p>
-          </div>
+        <div className="dashboard-stats-container bg-[#2b3a42] border-white border-opacity-50 hover:border-opacity-100 transition" style={{minHeight: 'unset'}}>
+          <p className="investigation-label">Active Investigations</p>
+          <div className="stat-number-container bg-[rgba(217,43,58,0.48)]">{activeCount}</div>
         </div>
 
-        <h2 className="text-xl md:text-2xl font-bold mb-6 md:mb-8">
-          Active Investigations
-        </h2>
+        {/* Total */}
+        <div className="dashboard-stats-container bg-[#2b3a42] border-white border-opacity-50 hover:border-opacity-100 transition" style={{minHeight: 'unset'}}>
+          <p className="investigation-label">Total Investigations</p>
+          <div className="stat-number-container bg-[rgba(217,43,58,0.48)]">{totalCount}</div>
+        </div>
 
-        {/* Cards */}
-        <div className="space-y-6 md:space-y-8">
-          {investigations.map((investigation) => (
-            <div
-              key={investigation.id}
-              className="bg-[#111827] rounded-xl md:rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-all"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 md:p-6">
+        {/* Request Investigation */}
+        <div
+          onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
+          className="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl cursor-pointer p-3 flex flex-col justify-between transition hover:shadow-lg"
+          style={{minHeight: 'unset'}}
+        >
+          <p className="investigation-label">Request investigation</p>
+          <div className="flex items-center gap-2">
+            <div className="request-investigation-icon">
+              <Plus className="w-7 h-7 text-white" strokeWidth={3} />
+            </div>
+            <p className="text-sm text-white/80 hidden sm:block">Request your new investigation now</p>
+          </div>
+        </div>
+      </div>
 
-                {/* Image */}
-                <div className="md:col-span-1">
-                  <img
-                    src={investigation.image}
-                    alt={investigation.title}
-                    className="w-full h-40 sm:h-48 object-cover rounded-lg md:rounded-xl"
-                  />
+      {/* TITLE */}
+      <h2 className="active-investigations-title" style={{ marginBottom: '24px' }}>
+        Active Investigations
+      </h2>
+
+      {/* CARDS */}
+      <div className="space-y-6">
+        {investigations.map((item) => (
+          <div key={item.id} className="investigation-card">
+
+            {/* IMAGE */}
+            <img
+              src={item.image}
+              alt={item.title}
+              className="investigation-image"
+            />
+
+            {/* CONTENT SECTION */}
+            <div className="investigation-content">
+
+              {/* PRIORITY + CASE ID + AVATAR */}
+              <div className="investigation-priority-case">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
+                      {item.priority || "High"} Priority
+                    </span>
+                    <p className="text-[11px] text-gray-400">
+                      Case ID: #{item.id}
+                    </p>
+                  </div>
+                  <h3 className="font-semibold text-white text-lg">
+                    {item.title}
+                  </h3>
                 </div>
+                <img
+                  src="https://i.pravatar.cc/32"
+                  alt="user"
+                  className="investigation-avatar"
+                />
+              </div>
 
-                {/* Content */}
-                <div className="md:col-span-3 flex flex-col justify-between">
-
-                  {/* Top */}
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-                    
-                    <div>
-                      <span className="inline-block bg-[#D92B3A] px-3 py-1 rounded-md text-[10px] md:text-xs font-semibold mb-2">
-                        {investigation.category}
-                      </span>
-
-                      <h3 className="text-lg md:text-xl font-bold mb-1">
-                        {investigation.title}
-                      </h3>
-
-                      <p className="text-gray-400 text-xs md:text-sm">
-                        Case ID:{' '}
-                        <span className="text-white font-semibold">
-                          {investigation.id}
-                        </span>
-                      </p>
-                    </div>
-
-                    <div className="sm:text-right">
-                      <p className="text-xs text-gray-400">Time Remaining</p>
-                      <p className="font-bold text-sm md:text-base">
-                        {investigation.daysRemaining}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Progress */}
-                  <div className="mb-4">
-                    <p className="text-xs md:text-sm text-gray-400 mb-1">
-                      Investigation Progress
-                    </p>
-                    <div className="w-full h-2 bg-[#1a2847] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-[#D92B3A] to-[#ff4757]"
-                        style={{ width: `${investigation.progress}%` }}
-                      />
-                    </div>
-                    <p className="text-[10px] md:text-xs text-gray-400 mt-1">
-                      {investigation.progress}%
-                    </p>
-                  </div>
-
-                  {/* Status */}
-                  <p className="text-gray-300 text-xs md:text-sm mb-4">
-                    <span className="text-gray-400">Status:</span>{' '}
-                    {investigation.status}
+              {/* PROGRESS SECTION */}
+              <div className="investigation-progress">
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-xs text-gray-300">
+                    Investigation Progress
                   </p>
-
-                  {/* Bottom */}
-                  <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
-
-                    <button
-                      onClick={() =>
-                        navigate(
-                          `${ROUTES.USER_DASHBOARD_DETAILS}?caseId=${investigation.id}`
-                        )
-                      }
-                      className="bg-[#D92B3A] hover:bg-[#b0202a] px-4 py-2 rounded-lg text-sm flex items-center justify-center gap-2"
-                    >
-                      <Eye size={14} />
-                      View Full Case
-                    </button>
-
-                    <div className="flex-1">
-                      <p className="text-[10px] md:text-xs text-gray-400 mb-1">
-                        Attached Files
-                      </p>
-
-                      <div className="space-y-1">
-                        {investigation.files.slice(0, 3).map((file, idx) => (
-                          <div
-                            key={idx}
-                            className="flex flex-wrap items-center gap-2 text-gray-300 text-[10px] md:text-xs"
-                          >
-                            <FileText size={12} />
-                            <span>{file.name}</span>
-                            <span className="text-gray-500">
-                              {file.date}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                  </div>
+                  <p className="text-sm text-white font-semibold">
+                    {item.progress}%
+                  </p>
                 </div>
+                <div className="bg-gray-600 h-2 rounded w-full">
+                  <div
+                    className="bg-red-500 h-2 rounded"
+                    style={{ width: `${item.progress}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  {item.status}
+                </p>
+              </div>
+
+              {/* FOOTER - DAYS + BUTTON */}
+              <div className="investigation-footer">
+                <p className="text-xs text-gray-400">
+                  {item.daysRemaining}
+                </p>
+                <button
+                  onClick={() => navigate(`${ROUTES.USER_DASHBOARD_DETAILS}/${item.id}`)}
+                  className="view-full-case-btn"
+                >
+                  View Full Case
+                </button>
               </div>
             </div>
-          ))}
-        </div>
 
+            {/* FILES CARDS - RIGHT SIDE */}
+            <div className="investigation-files">
+              {item.files.map((file, i) => (
+                <div key={i} className="files-card">
+                  <div className="files-card-name">{file.name}</div>
+                  <div className="files-card-date">{file.date}</div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        ))}
       </div>
     </div>
   );

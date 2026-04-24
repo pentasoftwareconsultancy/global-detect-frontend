@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
 
+const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
+
 const Step7LegalConsentDeclaration = ({ formData, handleInputChange }) => {
   const [signatureFile, setSignatureFile] = useState(formData.signatureFile || null);
   const [previewUrl, setPreviewUrl] = useState(formData.signaturePreview || null);
@@ -22,8 +24,10 @@ const Step7LegalConsentDeclaration = ({ formData, handleInputChange }) => {
     handleInputChange({ target: { name: 'signatureFile', value: null } });
     handleInputChange({ target: { name: 'signaturePreview', value: null } });
   };
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
+
       {/* Checkbox */}
       <div className="flex items-start gap-4">
         <input
@@ -34,46 +38,31 @@ const Step7LegalConsentDeclaration = ({ formData, handleInputChange }) => {
           checked={formData.legalConsent || false}
           onChange={handleInputChange}
         />
-        <label htmlFor="legalConsent" className="text-sm text-gray-300 leading-relaxed">
+        <label htmlFor="legalConsent" style={{ ...labelStyle, fontSize: '14px' }} className="leading-relaxed">
           "I confirm that the information provided is accurate and the investigation request complies with applicable laws and ethical standards."
         </label>
       </div>
 
       {/* Upload Sign */}
-      <div className="space-y-4 max-w-sm">
-        <label className="text-sm font-medium text-gray-300">Upload Sign for consent</label>
-        <input
-          type="file"
-          id="signUpload"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
+      <div className="space-y-3 max-w-sm">
+        <label style={labelStyle}>Upload Sign for Consent</label>
+        <input type="file" id="signUpload" accept="image/*" className="hidden" onChange={handleFileUpload} />
         {!signatureFile ? (
-          <label
-            htmlFor="signUpload"
-            className="border-2 border-dashed border-white/20 rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer min-h-[160px]"
-          >
+          <label htmlFor="signUpload" style={{ borderRadius: '14px', borderWidth: '2px' }} className="border-2 border-dashed border-white/20 p-8 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer min-h-[160px]">
             <Upload size={32} className="text-gray-400" />
-            <span className="text-sm text-gray-400">Upload Sign</span>
+            <span style={labelStyle}>Upload Sign</span>
           </label>
         ) : (
-          <div className="relative border-2 border-white/20 rounded-xl p-4 bg-white/5">
-            <button
-              onClick={removeFile}
-              className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 rounded-full p-1 transition-colors"
-            >
+          <div className="relative border-2 border-white/20 rounded-[14px] p-4 bg-white/5">
+            <button onClick={removeFile} className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 rounded-full p-1 transition-colors">
               <X size={16} className="text-white" />
             </button>
-            <img
-              src={previewUrl}
-              alt="Signature"
-              className="w-full h-40 object-contain"
-            />
+            <img src={previewUrl} alt="Signature" className="w-full h-40 object-contain" />
             <p className="text-sm text-gray-300 mt-2 text-center truncate">{signatureFile.name}</p>
           </div>
         )}
       </div>
+
     </div>
   );
 };

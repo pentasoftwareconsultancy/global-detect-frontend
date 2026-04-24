@@ -1,16 +1,23 @@
+
 import React, { useState, useEffect } from 'react';
-import { Smartphone, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import GlobalLogo from '../../assets/Global.png';
+import GlobalLogo from '../../assets/Global-logo.png';
+import OtpContainer from '../../assets/Container-otp.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { useAuth } from '../../core/contexts/AuthContext';
+import { authService } from '../../core/services/auth.service';
 
 const OTP = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(52);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
+  const phone = localStorage.getItem('registrationPhone');
+  const accountType = localStorage.getItem('accountType') || 'user';
 
   useEffect(() => {
     let interval;
@@ -21,11 +28,11 @@ const OTP = () => {
   }, [timer, isSuccess]);
 
   const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
     if (value.length > 1) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
     if (value && index < 5) {
       document.getElementById(`otp-${index + 1}`).focus();
     }
@@ -37,153 +44,202 @@ const OTP = () => {
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    const accountType = localStorage.getItem('accountType');
-    const isFromSignup = localStorage.getItem('isFromSignup') === 'true';
+    setError('');
 
-    login({
-      token: 'temp-token-' + Date.now(),
-      user: {
-        role: accountType,
-        kycComplete: isFromSignup ? (accountType === 'detective' ? false : true) : true,
-      },
-    });
+    if (!phone) {
+      setError('Phone number not found. Please signup again.');
+      setTimeout(() => navigate(ROUTES.SIGNUP), 2000);
+      return;
+    }
 
-    localStorage.removeItem('isFromSignup');
-    setIsSuccess(true);
+    const otpString = otp.join('');
+    if (otpString.length !== 6) {
+      setError('Please enter a valid 6-digit OTP');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ✅ Call backend - Verify OTP and create account
+      const response = await authService.registerVerifyOtp(phone, otpString);
+
+      console.log('Registration completed:', response.data);
+
+      // ✅ Extract token from response
+      const token = response.data.data?.token || response.data.data?.accessToken;
+      if (token) {
+        localStorage.setItem('TOKEN', token);
+      }
+
+      // ✅ Clear registration data
+      localStorage.removeItem('registrationPhone');
+      localStorage.removeItem('isFromSignup');
+      localStorage.removeItem('accountType');
+
+      // ✅ Show success screen
+      setIsSuccess(true);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to verify OTP';
+      setError(errorMsg);
+      console.error('OTP verification error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getRedirectRoute = () => {
-    const stored = JSON.parse(localStorage.getItem('user') || '{}');
-    const accountType = stored?.role || localStorage.getItem('accountType');
-    const kyc = stored?.kycComplete ?? true;
-    const isFromSignup = localStorage.getItem('isFromSignup') === 'true';
-
-    if (isFromSignup && accountType === 'detective' && !kyc) {
-      return ROUTES.DETECTIVE_FORM;
-    }
-
+    const accountType = localStorage.getItem('accountType');
     const routeMap = {
       user: ROUTES.USER_DASHBOARD,
       detective: ROUTES.DETECTIVE_DASHBOARD,
       admin: ROUTES.ADMIN_DASHBOARD,
     };
-
     return routeMap[accountType] || ROUTES.USER_DASHBOARD;
   };
+
+  const cardClass = "bg-white border shadow-lg flex flex-col items-center justify-center text-center w-full max-w-[900px] px-6 py-10";
+  const cardStyle = { borderRadius: '24px', borderWidth: '2px', borderColor: '#e5e7eb' };
 
   /* ================= SUCCESS SCREEN ================= */
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-[#D92B3A] flex flex-col font-montserrat px-4 py-6">
+      <div className="h-screen bg-[#D92B3A] flex flex-col font-montserrat overflow-hidden">
 
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8 sm:mb-12">
-          <img src={GlobalLogo} alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
-          <h1 className="text-white text-sm sm:text-lg font-bold uppercase leading-tight">
+        {/* HEADER */}
+        <div className="flex items-center gap-4 px-4 sm:px-8 lg:px-[78px] pt-6 lg:pt-10 pb-4 flex-shrink-0">
+          <img src={GlobalLogo} alt="Logo" className="object-cover" style={{ width: '50px', height: '64px', borderRadius: '140.5px' }} />
+          <h1 style={{ fontSize: '20px', fontWeight: 700, lineHeight: '31px', color: 'white' }}>
             Universal Detective <br /> pvt ltd
           </h1>
         </div>
 
-        {/* Center Card */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="bg-[#FFF2EF] w-full max-w-xl rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 md:p-16 flex flex-col items-center text-center shadow-2xl">
-
-            <CheckCircle2 size={70} className="text-[#D92B3A] mb-6" />
-
-            <h2 className="text-[#140000] text-2xl sm:text-4xl font-black mb-3">
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-0">
+          <div style={cardStyle} className={cardClass}>
+            <CheckCircle2 size={70} className="text-[#D92B3A] mb-4" />
+            <h2 style={{ fontFamily: 'Montserrat', lineHeight: '54px', fontSize: '36px', fontWeight: 700, color: '#140000', letterSpacing: '0px' }}>
               OTP Successful!
             </h2>
-
-            <p className="text-[#575757] text-sm sm:text-lg mb-8">
+            <p style={{ fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 400, lineHeight: '21px', color: '#575757' }} className="mt-2 mb-6">
               OTP Verification has been completed
             </p>
-
             <button
-              onClick={() => navigate(getRedirectRoute())}
-              className="w-full max-w-xs bg-[#D92B3A] text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg hover:bg-[#b0232f]"
+              onClick={() => navigate(ROUTES.LOGIN)}
+              style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A' }}
+              className="bg-[#D92B3A] text-white w-full max-w-[500px]"
             >
-              Go to Dashboard
+              Back to Login
             </button>
           </div>
         </div>
+
       </div>
     );
   }
 
   /* ================= OTP SCREEN ================= */
   return (
-    <div className="min-h-screen bg-[#D92B3A] flex flex-col font-montserrat px-4 py-6">
+    <div className="h-screen bg-[#D92B3A] flex flex-col font-montserrat overflow-hidden">
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-8 sm:mb-12">
-        <img src={GlobalLogo} alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
-        <h1 className="text-white text-sm sm:text-lg font-bold uppercase leading-tight">
+      {/* HEADER */}
+      <div className="flex items-center gap-4 px-4 sm:px-8 lg:px-[78px] pt-6 lg:pt-10 pb-4 flex-shrink-0">
+        <img src={GlobalLogo} alt="Logo" className="object-cover" style={{ width: '50px', height: '64px', borderRadius: '140.5px' }} />
+        <h1 style={{ fontSize: '20px', fontWeight: 700, lineHeight: '31px', color: 'white' }}>
           Universal Detective <br /> pvt ltd
         </h1>
       </div>
 
-      {/* Center Card */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="bg-[#FFF2EF] w-full max-w-lg rounded-[30px] sm:rounded-[40px] p-6 sm:p-10 md:p-14 flex flex-col items-center text-center shadow-2xl">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-0">
+        <div style={cardStyle} className={cardClass}>
 
-          {/* Icon */}
-          <div className="bg-[#00C853] p-3 sm:p-4 rounded-xl sm:rounded-2xl mb-6">
-            <Smartphone size={36} className="text-white" />
+          {/* OTP CONTAINER ICON */}
+          <div style={{ width: '80px', height: '80px', borderRadius: '16px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A' }} className="flex items-center justify-center mb-4 overflow-hidden flex-shrink-0">
+            <img src={OtpContainer} alt="OTP" className="w-full h-full object-contain" />
           </div>
 
-          <h2 className="text-[#140000] text-2xl sm:text-3xl md:text-4xl font-black mb-2">
+          {/* TITLE */}
+          <h2 style={{ lineHeight: '54px', fontSize: '36px', fontWeight: 700, letterSpacing: '0px', color: '#140000' }}>
             Verify OTP
           </h2>
 
-          <p className="text-[#575757] text-sm">We've sent a 6-digit code to</p>
-          <p className="text-[#D92B3A] font-bold text-lg sm:text-xl mb-6">
-            1234567890
+          {/* SUBTITLE */}
+          <p className="mt-1 text-[#575757] text-sm">We've sent a 6-digit code to</p>
+          <p style={{ fontSize: '14px', fontWeight: 700, lineHeight: '21px', color: '#D92B3A' }} className="mt-1">
+            {phone || '1234567890'}
           </p>
 
-          {/* OTP Inputs */}
-          <form onSubmit={handleVerify} className="w-full max-w-sm">
-            <div className="flex justify-between gap-2 sm:gap-3 mb-6">
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded-lg text-red-700 text-sm w-full">
+              {error}
+            </div>
+          )}
+
+          {/* OTP INPUTS */}
+          <form onSubmit={handleVerify} className="flex flex-col items-center mt-6 w-full max-w-[500px]">
+            <div className="flex justify-between gap-2 sm:gap-4 w-full">
               {otp.map((digit, index) => (
                 <input
                   key={index}
                   id={`otp-${index}`}
                   type="text"
+                  inputMode="numeric"
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-10 h-12 sm:w-12 sm:h-14 md:w-14 md:h-16 border-2 border-[#D92B3A] rounded-lg sm:rounded-xl text-center text-lg sm:text-xl font-bold text-[#D92B3A] focus:outline-none focus:bg-[#D92B3A]/5"
+                  className="bg-white outline-none focus:bg-[#D92B3A]/5 flex-1 min-w-0"
+                  style={{ height: '56px', maxWidth: '64px', borderRadius: '16px', borderWidth: '2px', fontSize: '20px', fontWeight: 700, color: '#D92B3A', borderColor: '#D92B3A', textAlign: 'center' }}
                 />
               ))}
             </div>
 
-            {/* Timer */}
-            <div className="flex items-center justify-center gap-2 mb-6 text-xs sm:text-sm text-[#575757]">
-              <span>Resend code in</span>
-              <span className="text-[#D92B3A] font-bold">{timer}s</span>
+            {/* RESEND */}
+            <div className="flex flex-wrap items-center justify-center gap-1 w-full mt-4">
+              <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '21px', color: '#575757' }}>
+                Didn't receive the code?
+              </span>
+              {timer > 0 ? (
+                <span style={{ fontSize: '14px', fontWeight: 700, lineHeight: '21px', color: '#D92B3A' }}>
+                  Resend in {timer}s
+                </span>
+              ) : (
+                <button type="button" onClick={() => setTimer(52)} style={{ fontSize: '14px', fontWeight: 700, lineHeight: '21px', color: '#D92B3A' }}>
+                  Resend
+                </button>
+              )}
             </div>
 
-            {/* Button */}
+            {/* VERIFY BUTTON */}
             <button
               type="submit"
-              className="w-full bg-[#D92B3A] text-white py-3 rounded-xl font-bold text-sm sm:text-lg hover:bg-[#b0232f] mb-6"
+              disabled={loading || otp.join('').length !== 6}
+              style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', marginTop: '16px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A', opacity: loading || otp.join('').length !== 6 ? 0.6 : 1 }}
+              className="bg-[#D92B3A] text-white w-full disabled:cursor-not-allowed"
             >
-              Verify Code
+              {loading ? 'Verifying...' : 'Verify Code'}
             </button>
 
-            {/* Change Number */}
+            {/* CHANGE PHONE NUMBER */}
             <button
               type="button"
-              className="flex items-center gap-2 text-xs sm:text-sm text-[#575757] hover:text-[#140000] mx-auto"
+              onClick={() => navigate(ROUTES.SIGNUP)}
+              className="flex items-center justify-center gap-2 mt-4"
             >
-              <ArrowLeft size={16} />
-              Change Phone number
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: '2.5px' }}>
+                <path d="M10 2L4 8L10 14" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span style={{ width: '174px', height: '21px', fontSize: '14px', fontWeight: 600, lineHeight: '21px', letterSpacing: '0px', color: '#D92B3A', textAlign: 'center' }}>
+                Change Phone Number
+              </span>
             </button>
+
           </form>
         </div>
       </div>
+
     </div>
   );
 };

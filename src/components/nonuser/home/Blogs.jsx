@@ -1,91 +1,62 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
+import { blogsData } from "../../../data/blogsData";
 
 const Blogs = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: 'Private and Personal Investigation Case Insights',
-      author: 'Tracey Wilson',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1593115057322-e94b77572f20?q=80&w=2071&auto=format&fit=crop',
-      category: 'Latest Post'
-    },
-    {
-      id: 2,
-      title: 'Corporate Fraud and Internal Risk Investigations',
-      author: 'Jason Francisco',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1454165833767-027ff33027b6?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-      id: 3,
-      title: 'Comprehensive Background Verification and Screening Processes',
-      author: 'Elizabeth Slavin',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2069&auto=format&fit=crop'
-    },
-    {
-      id: 4,
-      title: 'Cybercrime and Digital Forensic Investigations',
-      author: 'Ernie Smith',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-      id: 5,
-      title: 'Property Ownership and Asset Verification Investigations',
-      author: 'Eric Smith',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop'
-    },
-    {
-      id: 6,
-      title: 'Litigation Support and Court Dispute Investigations',
-      author: 'Tracey Wilson',
-      date: 'August 20, 2022',
-      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070&auto=format&fit=crop'
-    }
-  ];
+  const blogs = blogsData;
+  const navigate = useNavigate();
 
   return (
-    <section id="blog" className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
-    <section className="bg-[#0b1120] text-white py-20 px-6 md:px-12 lg:px-24">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4">Blogs</h2>
-        <p className="text-gray-400 mb-12 max-w-2xl">
+    <section id="blog" className="bg-[#121F27] text-white pt-8 lg:pt-25 pb-2 lg:py-14 px-4 md:px-8 lg:px-20">
+
+      <div className="max-w-8xl mx-auto">
+
+        <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 lg:mb-4">Blogs</h2>
+
+        <p className="text-gray-400 mb-6 lg:mb-10 max-w-3xl leading-relaxed text-xs sm:text-sm lg:text-base">
           Explore expert insights, industry updates, and ethical perspectives on investigations, security, and intelligence. Our blog is designed to inform, educate, and help you make confident decisions—while maintaining complete confidentiality and professional integrity.
         </p>
 
-        <h3 className="text-xl font-bold mb-6">Latest Post</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <h3 className="text-lg lg:text-xl font-semibold mb-6 lg:mb-8">Latest Post</h3>
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-10">
+
           {blogs.map((blog) => (
-            <div key={blog.id} className="group cursor-pointer">
-              <div className="relative aspect-video overflow-hidden rounded-xl mb-4">
-                <img 
-                  src={blog.image} 
-                  alt={blog.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            <div
+              key={blog.id}
+              onClick={() => navigate(`/blogs/${blog.id}`)}
+              className="cursor-pointer"
+            >
+
+              <div className="h-[160px] lg:h-[220px] overflow-hidden rounded-m mb-3 lg:mb-4">
+                <img
+                  src={blog.image}
+                  alt={blog.title}
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
-              <h4 className="text-lg font-bold mb-3 group-hover:red transition-colors line-clamp-2">
+
+              <h4 className="text-sm lg:text-lg font-semibold mb-3 lg:mb-4 leading-snug">
                 {blog.title}
               </h4>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-red/20 border border-red flex items-center justify-center text-[10px] font-bold">
-                  {blog.author[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{blog.author}</p>
-                  <p className="text-xs text-gray-500">{blog.date}</p>
+
+              <div className="flex items-center gap-2 lg:gap-3 text-xs lg:text-sm text-gray-400">
+                <img
+                  src={blog.profile}
+                  alt={blog.author}
+                  className="w-6 lg:w-8 h-6 lg:h-8 rounded-full object-cover"
+                />
+                <div className="flex items-center gap-2 lg:gap-3">
+                  <p className="text-white font-medium pr-1 lg:pr-2">{blog.author}</p>
+                  <p className="text-gray-500">{blog.date}</p>
                 </div>
               </div>
+
             </div>
           ))}
+
         </div>
       </div>
-    </section>
     </section>
   );
 };

@@ -1,20 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import DetectiveNavbar from '../public/DetectiveNavbar';
 import DetectiveSidbar from '../public/DetectiveSidbar';
-import Footer from '../public/Footer';
 
 const DetectiveLayout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <DetectiveNavbar />
-      <div className="flex">
-        <DetectiveSidbar />
-        <main className="flex-1">
-          <Outlet />
-        </main>
+    <div className="min-h-screen bg-[#121F27]">
+      <DetectiveNavbar onMenuClick={() => setSidebarOpen(o => !o)} />
+
+      {/* Mobile overlay — closes sidebar on tap */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar wrapper — hidden off-screen on mobile, always visible on lg+ */}
+      <div
+        className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0`}
+      >
+        <DetectiveSidbar onClose={() => setSidebarOpen(false)} />
       </div>
-    <Footer />
+
+      {/* Main content — offset by sidebar width on desktop only */}
+      <main className="lg:ml-[235px] min-h-screen">
+        <Outlet />
+      </main>
     </div>
   );
 };

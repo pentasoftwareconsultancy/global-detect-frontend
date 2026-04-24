@@ -8,7 +8,8 @@ const UserProfilePage = () => {
     phone: '+1-555-0102',
   });
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
+  const [saved, setSaved] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -16,169 +17,154 @@ const UserProfilePage = () => {
       ...prev,
       [name]: value
     }));
+    setSaved(false);
   };
 
   const handleSaveChanges = () => {
-    setIsEditing(false);
+    setSaved(true);
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-white px-4 sm:px-6 md:px-10 lg:px-12 py-6 md:py-10">
-      
-      <div className="max-w-4xl mx-auto">
-        
-        {/* TITLE */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-10">
-          Profile
-        </h1>
+    <div className="w-full text-white">
+      <div className="w-full space-y-6">
+        <div className="w-full">
+          <h1 className="font-['Montserrat'] font-medium text-2xl leading-[21px] tracking-normal text-white">
+            Profile
+          </h1>
 
-        <p className="text-gray-400 mb-6 md:mb-8 text-sm sm:text-base">
-          Manage your account information
-        </p>
+          <p className="text-[16px] leading-[20px] text-gray-400 mt-1">
+            Manage your account information
+          </p>
+        </div>
 
-        <div className="bg-[#111827] rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10">
-
-          {/* AVATAR */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 mb-8 md:mb-12 pb-8 md:pb-12 border-b border-white/10">
-
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#D92B3A] to-[#a0202a] rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-2xl sm:text-4xl font-bold text-white">S</span>
+        <div className="w-full bg-[#1A2832] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
+          <div className="flex items-center gap-4 py-4 px-4 sm:px-6">
+            <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-br from-[#D92B3A] to-[#a0202a] flex items-center justify-center flex-shrink-0">
+              <span className="text-[24px] leading-[28px] font-bold text-white">S</span>
             </div>
 
-            <div className="flex-1">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1">
+            <div className="flex-1 min-w-0">
+              <p className="text-[18px] leading-[24px] font-semibold text-white truncate">
                 {formData.fullName}
-              </h2>
-              <p className="text-gray-400 text-sm">User</p>
+              </p>
+              <p className="text-[14px] leading-[20px] text-gray-400 mt-1 truncate">
+                {formData.email}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full bg-[#1A2832] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
+          <div className="w-full flex flex-col gap-4 p-4 sm:p-5">
+            <div>
+              <h3 className="text-[15px] leading-[22px] text-white font-semibold">
+                Personal Information
+              </h3>
+              <p className="text-[16px] leading-[24px] text-gray-400 mt-2">
+                Update your personal details
+              </p>
             </div>
 
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="w-full sm:w-auto bg-[#D92B3A] hover:bg-[#b0202a] text-white px-5 sm:px-6 py-2 rounded-xl font-medium transition-all"
-            >
-              {isEditing ? 'Cancel' : 'Edit Profile'}
-            </button>
-          </div>
-
-          {/* PERSONAL INFO */}
-          <div className="mb-8 md:mb-12">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-4 md:mb-6">
-              Personal information
-            </h3>
-
-            <p className="text-gray-400 text-xs sm:text-sm mb-4 md:mb-6">
-              Update your personal details
-            </p>
-
-            <div className="space-y-5 md:space-y-6">
-
-              {/* NAME + EMAIL */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">
-                    Full Name
-                  </label>
-
-                  <div className="flex items-center gap-3 bg-[#0b1120] border border-white/10 rounded-xl px-4 py-3">
-                    <UserIcon size={18} className="text-gray-400" />
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      disabled={!isEditing}
-                      className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-sm sm:text-base"
-                    />
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-[13px] leading-[18px] font-medium text-white">
+                  Full Name
+                </label>
+                <div className="h-[44px] bg-[#0b1120] border border-white/10 rounded-xl flex items-center gap-3 px-3">
+                  <UserIcon size={16} className="text-gray-400" />
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}
+                    className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-[13px] leading-[18px]"
+                  />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">
-                    Email Address
-                  </label>
-
-                  <div className="flex items-center gap-3 bg-[#0b1120] border border-white/10 rounded-xl px-4 py-3">
-                    <Mail size={18} className="text-gray-400" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      disabled={!isEditing}
-                      className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-sm sm:text-base"
-                    />
-                  </div>
-                </div>
-
               </div>
 
-              {/* PHONE */}
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
+              <div className="flex flex-col gap-2">
+                <label className="text-[13px] leading-[18px] font-medium text-white">
+                  Email Address
+                </label>
+                <div className="h-[44px] bg-[#0b1120] border border-white/10 rounded-xl flex items-center gap-3 px-3">
+                  <Mail size={16} className="text-gray-400" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}
+                    className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-[13px] leading-[18px]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[13px] leading-[18px] font-medium text-white">
                   Phone Number
                 </label>
-
-                <div className="flex items-center gap-3 bg-[#0b1120] border border-white/10 rounded-xl px-4 py-3">
-                  <Phone size={18} className="text-gray-400" />
+                <div className="h-[44px] bg-[#0b1120] border border-white/10 rounded-xl flex items-center gap-3 px-3">
+                  <Phone size={16} className="text-gray-400" />
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-sm sm:text-base"
+                    style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}
+                    className="flex-1 bg-transparent text-white focus:outline-none disabled:text-gray-400 text-[13px] leading-[18px]"
                   />
                 </div>
               </div>
+            </div>
 
+            <div className="h-px bg-white/10 mt-1" />
+
+            {isEditing && (
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSaveChanges}
+                  className="w-auto h-[36px] bg-[#D92B3A] hover:bg-[#b0202a] text-white rounded-xl text-[14px] leading-[20px] px-5 transition-all"
+                >
+                  {saved ? 'Saved Changes' : 'Save Changes'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full min-h-[160px] rounded-[12px] bg-[#1A2832] border border-white/10 p-0" style={{ borderWidth: '0.67px' }}>
+          <div className="flex flex-col gap-3 px-6 py-6">
+            <div>
+              <h3 className="text-[16px] leading-[16px] text-white">
+                Account Information
+              </h3>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 px-3 py-2">
+                <span className="text-[14px] leading-[20px]" style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px', color: '#9CA3AF' }}>
+                  Account ID
+                </span>
+                <span className="text-[14px] leading-[20px]" style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px', color: '#9CA3AF' }}>
+                  user-2
+                </span>
+              </div>
+              <div className="w-full h-[1px] bg-white/10 mt-0" style={{ background: '#FFFFFF1A' }} />
+
+              <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 px-3 py-2">
+                <span className="text-[14px] leading-[20px]" style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px', color: '#9CA3AF' }}>
+                  Role
+                </span>
+                <span className="text-[14px] leading-[20px]" style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px', color: '#9CA3AF' }}>
+                  User
+                </span>
+              </div>
             </div>
           </div>
-
-          {/* ACCOUNT INFO */}
-          <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-white/10">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-4 md:mb-6">
-              Account information
-            </h3>
-
-            <div className="space-y-3 md:space-y-4">
-
-              <div className="flex items-center justify-between p-4 bg-[#0b1120] rounded-xl border border-white/10">
-                <div>
-                  <p className="text-gray-400 text-xs sm:text-sm">Account ID</p>
-                  <p className="text-white font-semibold text-sm sm:text-base">user-2</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-[#0b1120] rounded-xl border border-white/10">
-                <div>
-                  <p className="text-gray-400 text-xs sm:text-sm">Role</p>
-                  <p className="text-white font-semibold text-sm sm:text-base">User</p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* BUTTONS */}
-          {isEditing && (
-            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl border border-white/20 font-medium hover:bg-white/5 transition-all"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleSaveChanges}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl bg-[#D92B3A] hover:bg-[#b0202a] text-white font-medium transition-all"
-              >
-                Save Changes
-              </button>
-            </div>
-          )}
-
         </div>
       </div>
     </div>
