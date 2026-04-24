@@ -12,29 +12,29 @@ const CaseDetails = () => {
   const navigate = useNavigate();
 
   return (
-    <div className=" text-white montserrat">
+    <div className="text-white montserrat w-full max-w-full overflow-x-hidden px-4 md:px-0">
+      <div className="bg-[#14232d] p-4 rounded-lg mb-4">
+        <div className="flex items-center gap-2 mb-4 cursor-pointer">
+          <ArrowLeft size={18} />
+          <span className="text-sm">Back</span>
+        </div>
 
-      {/* Back */}
-      <div
-        onClick={() => navigate("/user-dashboard")}
-        className="flex items-center gap-2 mb-4 cursor-pointer">
-        <ArrowLeft size={18} />
-        <span className="text-sm">Back</span>
-      </div>
+        {/* Title */}
+        <h1 className="text-base md:text-lg font-semibold mb-2 break-words">          Background verification Investigation - Case ID - SCV2667
+        </h1>
 
-      {/* Title */}
-      <h1 className="text-base md:text-lg font-semibold mb-2">
-        Background verification Investigation - Case ID - SCV2667
-      </h1>
+        {/* Tags */}
+        <div className="flex flex-wrap items-center gap-2 mt-3 mb-6">
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <span className="bg-red-500 text-xs px-3 py-1 rounded-full">
-          High Priority
-        </span>
-        <span className="bg-gray-600 text-xs px-3 py-1 rounded-full">
-          Report Ready
-        </span>
+          <span className="bg-red-500 text-sm px-3 py-1 rounded-lg whitespace-nowrap">
+            High Priority
+          </span>
+
+          <span className="bg-gray-600 text-sm px-3 py-1 rounded-lg whitespace-nowrap">
+            Report Ready
+          </span>
+
+        </div>
       </div>
 
       {/* GRID */}
@@ -144,7 +144,7 @@ const CaseDetails = () => {
           </div>
 
           {/* RIGHT SIDE (Button) */}
-          <button className="flex items-center gap-2 bg-red-500 text-xs px-3 py-1 rounded w-fit">
+          <button className="flex items-center gap-2 bg-red-500 text-s px-3 py-1 rounded w-fit">
             <Download size={14} />
             Download report
           </button>
@@ -204,7 +204,7 @@ const CaseDetails = () => {
             </div>
 
             {/* RIGHT SIDE */}
-            <button className="bg-red-500 text-xs px-2 py-1 rounded flex items-center gap-1">
+            <button className="bg-red-500 text-s px-2 py-1 rounded flex items-center gap-1">
               <Download size={12} />
               Download
             </button>
@@ -224,7 +224,7 @@ const CaseDetails = () => {
             </div>
 
             {/* RIGHT SIDE */}
-            <button className="bg-red-500 text-xs px-2 py-1 rounded flex items-center gap-1">
+            <button className="bg-red-500 text-s px-2 py-1 rounded flex items-center gap-1">
               <Download size={12} />
               Download
             </button>
@@ -387,12 +387,12 @@ const CaseDetails = () => {
             <CheckCircle size={16} className="text-red-500 mt-0.5" />
 
             <div>
-              <h3 className="text-xs font-semibold text-gray-300">
+              <h3 className="text-sm font-Arial text-gray-300">
                 Legal Consent
               </h3>
 
               <div className="flex items-center gap-2 mt-1">
-                <span className="bg-red-500 text-[10px] px-2 py-0.5 rounded">
+                <span className="bg-red-500 text-10 px px px-2 py-0.5 rounded">
                   Consent Given
                 </span>
 

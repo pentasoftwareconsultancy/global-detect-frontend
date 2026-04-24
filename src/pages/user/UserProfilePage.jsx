@@ -25,21 +25,19 @@ const UserProfilePage = () => {
   };
 
   return (
-    <div className="h-screen bg-[#0b1120] text-white flex justify-center px-4 sm:px-6 md:px-10 lg:px-12 overflow-hidden" style={{ fontFamily: 'Montserrat' }}>
-      
-      <div className="w-full max-w-[1100px] mx-auto space-y-6 h-full overflow-hidden py-4">
-        
+    <div className="w-full text-white">
+      <div className="w-full space-y-6">
         <div className="w-full">
-          <h1 className="text-[22px] leading-[28px] font-semibold text-white">
+          <h1 className="font-['Montserrat'] font-medium text-2xl leading-[21px] tracking-normal text-white">
             Profile
           </h1>
 
-          <p className="text-[14px] leading-[20px] text-gray-400 mt-1">
+          <p className="text-[16px] leading-[20px] text-gray-400 mt-1">
             Manage your account information
           </p>
         </div>
 
-        <div className="w-full bg-[#111827] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
+        <div className="w-full bg-[#1A2832] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
           <div className="flex items-center gap-4 py-4 px-4 sm:px-6">
             <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-br from-[#D92B3A] to-[#a0202a] flex items-center justify-center flex-shrink-0">
               <span className="text-[24px] leading-[28px] font-bold text-white">S</span>
@@ -56,7 +54,7 @@ const UserProfilePage = () => {
           </div>
         </div>
 
-        <div className="w-full rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
+        <div className="w-full bg-[#1A2832] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
           <div className="w-full flex flex-col gap-4 p-4 sm:p-5">
             <div>
               <h3 className="text-[15px] leading-[22px] text-white font-semibold">
@@ -138,7 +136,7 @@ const UserProfilePage = () => {
           </div>
         </div>
 
-        <div className="w-full min-h-[160px] rounded-[12px] border border-white/10 p-0" style={{ borderWidth: '0.67px' }}>
+        <div className="w-full min-h-[160px] rounded-[12px] bg-[#1A2832] border border-white/10 p-0" style={{ borderWidth: '0.67px' }}>
           <div className="flex flex-col gap-3 px-6 py-6">
             <div>
               <h3 className="text-[16px] leading-[16px] text-white">
@@ -168,7 +166,6 @@ const UserProfilePage = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
