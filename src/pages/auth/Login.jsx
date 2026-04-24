@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import GlobalLogo from '../../assets/Global-logo.png';
@@ -18,10 +18,22 @@ const Login = () => {
   const [accountType, setAccountType] = useState('User');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ emailOrPhone: '', password: '', rememberMe: false });
+  const [otpRequested, setOtpRequested] = useState(false);
   const [language, setLanguage] = useState('English');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const phoneDigits = formData.emailOrPhone.replace(/\D/g, '');
+  const isUserPhone = accountType === 'User' && phoneDigits.length >= 10;
+  const shouldShowGetOtp = isUserPhone && !otpRequested;
+  const isPasswordDisabled = accountType === 'User' && isUserPhone && !otpRequested;
+
+  useEffect(() => {
+    if (accountType !== 'User' || phoneDigits.length < 10) {
+      setOtpRequested(false);
+    }
+  }, [accountType, phoneDigits.length]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -79,7 +91,7 @@ const Login = () => {
   );
 
   return (
-    <div className="h-screen flex font-montserrat bg-red overflow-hidden">
+    <div className="min-h-screen flex font-montserrat bg-red overflow-x-hidden">
 
       {/* LEFT PANEL - desktop only */}
       <div className="hidden lg:flex lg:flex-col w-[563px] min-h-screen relative flex-shrink-0">
@@ -95,14 +107,14 @@ const Login = () => {
       </div>
 
       {/* CENTER */}
-      <div className="flex-1 flex justify-center items-center bg-red relative px-4 sm:px-6 py-4 lg:py-[32px] overflow-hidden">
+      <div className="flex-1 flex justify-center items-start lg:items-center bg-red relative px-4 sm:px-6 py-4 lg:py-[32px]">
 
         {/* SELECT LANGUAGE - desktop */}
         <div className="hidden lg:flex absolute top-[52px] right-6 z-50">
           <LangDropdown />
         </div>
 
-        <div className="w-full max-w-[460px] flex-shrink-0 h-full overflow-hidden">
+        <div className="w-full max-w-[460px] flex-shrink-0">
 
           {/* MOBILE HEADER */}
           <div className="flex lg:hidden flex-col w-full pt-2 pb-4">
@@ -158,8 +170,20 @@ const Login = () => {
               <label style={labelStyle}>Email or Phone number</label>
               <div className="relative mt-1">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} style={inputStyle} className={inputClass} />
+                <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }} className={inputClass} autoComplete="off" />
               </div>
+              {shouldShowGetOtp && (
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOtpRequested(true)}
+                    className="bg-[#fefafa] text-black rounded-[10px] text-[15px] font-semibold leading-[22.5px] tracking-[0px] text-center"
+                    style={{ width: '142px', height: '37px' }}
+                  >
+                    Get OTP
+                  </button>
+                </div>
+              )}
             </div>
 
             <div>
@@ -169,11 +193,12 @@ const Login = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password / OTP"
                   value={formData.password}
                   onChange={handleInputChange}
+                  disabled={isPasswordDisabled}
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
-                  className="w-full border border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60"
+                  className={`w-full border border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

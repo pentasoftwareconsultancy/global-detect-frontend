@@ -15,49 +15,10 @@ const LANGUAGES = [
   { key: 'Marathi', label: 'मराठी' },
 ];
 
-const Signup = () => {
-  const [accountType, setAccountType] = useState('User');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [language, setLanguage] = useState('English');
-  const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-
-    const payload = {
-      name: form.name.value,
-      phone: form.phone.value,
-      email: form.email.value,
-      city: form.city.value,
-      password: form.password.value,
-      confirmPassword: form.confirmPassword.value,
-      role: accountType.toLowerCase(),
-    };
-
-    try {
-      const response = await new ApiService().apipost(
-        ServerUrl.REGISTER_API,
-        payload
-      );
-      console.log(ServerUrl.REGISTER_API, payload, response);
-      navigate(ROUTES.OTP);
-
-    } catch (err) {
-      console.error("Registration failed:", err);
-    }
-  };
-
-  const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
-  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
-  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
-
+const LangDropdown = ({ showLangDropdown, setShowLangDropdown, language, setLanguage }) => {
   const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
 
-  const LangDropdown = () => (
+  return (
     <div className="relative z-50">
       <button
         onClick={() => setShowLangDropdown(!showLangDropdown)}
@@ -87,9 +48,30 @@ const Signup = () => {
       )}
     </div>
   );
+};
+
+const Signup = () => {
+  const [accountType, setAccountType] = useState('User');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [language, setLanguage] = useState('English');
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const roleMap = { User: 'user', Detective: 'detective' };
+    localStorage.setItem('accountType', roleMap[accountType]);
+    localStorage.setItem('isFromSignup', 'true');
+    navigate(ROUTES.OTP);
+  };
+
+  const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
+  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
+  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
 
   return (
-    <div className="min-h-screen flex font-montserrat bg-red overflow-x-hidden">
+    <div className="h-screen flex font-montserrat bg-red overflow-x-hidden overflow-y-auto">
 
       {/* LEFT PANEL - desktop only */}
       <div className="hidden lg:flex lg:flex-col w-[563px] min-h-screen relative flex-shrink-0">
@@ -105,11 +87,11 @@ const Signup = () => {
       </div>
 
       {/* CENTER */}
-      <div className="flex-1 flex justify-center items-start bg-red relative px-4 sm:px-6 pb-10 pt-6 lg:pt-[52px]">
+      <div className="flex-1 flex justify-center items-start bg-red relative px-4 sm:px-6 pb-10 pt-6 lg:pt-[52px] overflow-y-auto">
 
         {/* SELECT LANGUAGE - desktop */}
         <div className="hidden lg:flex absolute top-[52px] right-6 z-50">
-          <LangDropdown />
+          <LangDropdown showLangDropdown={showLangDropdown} setShowLangDropdown={setShowLangDropdown} language={language} setLanguage={setLanguage} />
         </div>
 
         <div className="w-full max-w-[500px]">
@@ -118,7 +100,7 @@ const Signup = () => {
           <div className="flex lg:hidden flex-col w-full pt-2 pb-4">
             {/* Language button - top right */}
             <div className="flex justify-end mb-4">
-              <LangDropdown />
+              <LangDropdown showLangDropdown={showLangDropdown} setShowLangDropdown={setShowLangDropdown} language={language} setLanguage={setLanguage} />
             </div>
             {/* Logo + text centered */}
             <div className="flex flex-col items-center">
@@ -187,10 +169,7 @@ const Signup = () => {
               <label style={labelStyle}>City</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 z-10" size={16} />
-                {/* <select style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full bg-transparent border border-white/60 text-white outline-none focus:border-white appearance-none">
-                  <option className="text-black">Select City</option>
-                </select> */}
-                <input name="city" placeholder="city" style={inputStyle} className={inputClass} />
+                <input type="text" placeholder="Enter your city" style={inputStyle} className={inputClass} />
               </div>
             </div>
 
@@ -215,6 +194,15 @@ const Signup = () => {
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
+              </div>
+            </div>
+
+            {/* AADHAAR CARD NUMBER */}
+            <div>
+              <label style={labelStyle}>Aadhaar Card Number</label>
+              <div className="relative mt-1">
+                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
+                <input type="text" placeholder="Enter your Aadhaar card number" style={inputStyle} className={inputClass} />
               </div>
             </div>
 
