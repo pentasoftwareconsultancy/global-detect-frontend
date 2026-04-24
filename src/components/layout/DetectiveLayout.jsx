@@ -19,4 +19,5 @@ const DetectiveLayout = () => {
   );
 };
 
+
 export default DetectiveLayout;

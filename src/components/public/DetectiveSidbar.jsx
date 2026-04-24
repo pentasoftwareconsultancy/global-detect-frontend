@@ -18,7 +18,7 @@ const DetectiveSidbar = () => {
   return (
     <div className="
       w-full md:w-20 lg:w-64 
-      bg-[#0b1120] text-white 
+      bg-[#121F27] text-white 
       fixed md:sticky bottom-0 md:top-0 
       h-auto md:h-screen 
       flex md:flex-col 

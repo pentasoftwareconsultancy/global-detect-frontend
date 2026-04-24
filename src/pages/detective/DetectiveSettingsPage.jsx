@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { MdOutlineLightMode } from "react-icons/md";
+import { IoMoonOutline } from "react-icons/io5";
 
 /* ── Toggle ── */
 function Toggle({ on, onChange }) {
@@ -18,6 +20,7 @@ function Toggle({ on, onChange }) {
     </button>
   );
 }
+
 
 /* ── Section Card ── */
 function Card({ children, danger = false }) {
@@ -183,8 +186,8 @@ export default function DetectiveSettingsPage() {
   const [locationTracking, setLocationTracking] = useState(true);
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#0b1120" }}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <div className="min-h-screen w-full" style={{ backgroundColor: "#121F27" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 ">
 
         {/* ── Page Title ── */}
         <div className="mb-7">
@@ -197,7 +200,7 @@ export default function DetectiveSettingsPage() {
         ══════════════ */}
         <Card>
           <SectionHeader
-            icon={<span className="text-base">✳</span>}
+            icon={<span className="text-base"><MdOutlineLightMode /></span>}
             title="Appearance"
             subtitle="Customize the look and feel of the application"
           />
@@ -208,8 +211,8 @@ export default function DetectiveSettingsPage() {
             value={theme}
             options={["Dark", "Light", "System"]}
             onChange={setTheme}
-            pillIcon="🌙"
-          />
+            pillIcon=<IoMoonOutline />
+            />
           <SelectRow
             label="Language"
             desc="Select your preferred language"
@@ -304,7 +307,7 @@ export default function DetectiveSettingsPage() {
             SAVE BUTTON
         ══════════════ */}
         <div className="flex justify-center mt-2">
-          <button className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 active:bg-red-800 transition-colors text-white text-[14px] font-medium rounded-lg px-7 py-3 cursor-pointer">
+          <button className="inline-flex items-center gap-2 bg-red-700 hover:bg-red-700 active:bg-red-800 transition-colors text-white text-[14px] font-medium rounded-lg px-7 py-3 cursor-pointer">
             <SaveIcon />
             Save All Settings
           </button>

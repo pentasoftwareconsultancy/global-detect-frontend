@@ -14,6 +14,8 @@ import { FaRegEye } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaArrowAltCircleDown } from "react-icons/fa";
 
+
+
 const DetectiveNotificationPage = () => {
   const [activeFilter, setActiveFilter] = useState('All')
   const [unreadOnly, setUnreadOnly] = useState(false)
@@ -213,7 +215,7 @@ const DetectiveNotificationPage = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">

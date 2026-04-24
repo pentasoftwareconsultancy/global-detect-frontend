@@ -26,8 +26,9 @@ const DetectiveDashboardPage = () => {
     }
   ]);
 
+
   return (
-    <div className="bg-[#0b1120] text-white min-h-screen px-4 sm:px-6 md:px-10 lg:px-12 py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-4 sm:px-6 md:px-10 lg:px-12 py-6">
 
       {/* Header */}
       <div className="mb-6">
@@ -35,17 +36,17 @@ const DetectiveDashboardPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-300 text-xs sm:text-sm mb-2">Total Investigations</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 ">
+        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6 border border-white-300">
+          <p className="text-gray-300 text-xs sm:text-sm mb-2 font-bold">Total Investigations</p>
           <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#dc3545] mb-1">05</p>
         </div>
-        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-300 text-xs sm:text-sm mb-2">Active Investigation</p>
+        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6 border border-white-300">
+          <p className="text-gray-300 text-xs sm:text-sm mb-2 font-bold">Active Investigation</p>
           <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#dc3545] mb-1">02</p>
         </div>
-        <div className="bg-[#dc3545] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-200 text-xs sm:text-sm mb-2">Admin Changes requested</p>
+        <div className="bg-[#FF495924] rounded-xl p-4 sm:p-6 border border-[#FF4959]">
+          <p className="text-red-500 text-xs sm:text-sm mb-2 font-bold">Admin Changes requested</p>
           <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-1">01</p>
           <p className="text-xs text-gray-200">Require resubmission</p>
         </div>
@@ -121,7 +122,7 @@ const DetectiveDashboardPage = () => {
         {/* CARDS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {cases.map((caseItem) => (
-            <div key={caseItem.id} className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
+            <div key={caseItem.id} className="bg-[#1A2832] rounded-xl p-4 sm:p-6">
 
               <div className="flex items-start justify-between mb-4 gap-2">
                 <h3 className="text-base sm:text-lg font-semibold flex-1 text-white">
