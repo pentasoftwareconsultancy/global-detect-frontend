@@ -54,7 +54,7 @@ class ServerUrl {
     // profile api endpoint
     static PROFILE_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.PROFILE}`;
 
-        static GET_PROFILE_API = `${ServerUrl.PROFILE_API}/`;
+        static GET_PROFILE_API = `${ServerUrl.PROFILE_API}/profile`;
 }
 
 export default ServerUrl;

@@ -7,6 +7,7 @@ import UserIcon from '../../assets/user_icon.png';
 import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { useAuth } from '../../core/contexts/AuthContext';
+import { authService } from '../../core/services/auth.service';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -21,6 +22,9 @@ const Login = () => {
   const [otpRequested, setOtpRequested] = useState(false);
   const [language, setLanguage] = useState('English');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -40,17 +44,148 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
+  // ========== CASE 1: Email + Password Login ==========
+  const handleEmailLogin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // ✅ Call backend with email + password
+      const response = await authService.loginWithEmail(
+        formData.emailOrPhone,
+        formData.password
+      );
+
+      // ✅ Parse response
+      const { token, user } = response.data.data;
+
+      // ✅ Store token and user in context
+      login({ token, user });
+
+      // ✅ Store account type
+      const roleMap = { User: 'user', Detective: 'detective' };
+      localStorage.setItem('accountType', roleMap[accountType]);
+
+      // ✅ Redirect based on role
+      const routeMap = {
+        user: ROUTES.USER_DASHBOARD,
+        detective: ROUTES.DETECTIVE_DASHBOARD,
+        admin: ROUTES.ADMIN_DASHBOARD,
+      };
+      navigate(routeMap[user.role] || ROUTES.USER_DASHBOARD);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Login failed';
+      setError(errorMsg);
+      console.error('Email login error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ========== CASE 2: Send OTP for Phone Login ==========
+  const handleSendOtp = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // ✅ Call backend to send OTP to phone
+      const response = await authService.loginSendOtp(formData.emailOrPhone);
+      
+      console.log('OTP sent:', response.data.data);
+
+      // ✅ Store phone for next step
+      localStorage.setItem('loginPhone', formData.emailOrPhone);
+      localStorage.setItem('isFromLogin', 'true');
+
+      // ✅ Show OTP input
+      setOtpSent(true);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to send OTP';
+      setError(errorMsg);
+      console.error('Send OTP error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ========== CASE 3: Verify OTP and Login with Phone ==========
+  const handlePhoneOtpLogin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // ✅ Call backend to verify OTP and login
+      const response = await authService.loginVerifyOtp(
+        formData.emailOrPhone,
+        formData.password
+      );
+
+      const { token, user } = response.data.data;
+
+      // ✅ Store token and user in context
+      login({ token, user });
+
+      // ✅ Store account type
+      const roleMap = { User: 'user', Detective: 'detective' };
+      localStorage.setItem('accountType', roleMap[accountType]);
+
+      // ✅ Clear temporary login flags
+      localStorage.removeItem('loginPhone');
+      localStorage.removeItem('isFromLogin');
+
+      // ✅ Redirect based on role
+      const routeMap = {
+        user: ROUTES.USER_DASHBOARD,
+        detective: ROUTES.DETECTIVE_DASHBOARD,
+        admin: ROUTES.ADMIN_DASHBOARD,
+      };
+      navigate(routeMap[user.role] || ROUTES.USER_DASHBOARD);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'OTP verification failed';
+      setError(errorMsg);
+      console.error('Phone OTP login error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const roleMap = { User: 'user', Detective: 'detective' };
-    const role = roleMap[accountType];
-    localStorage.setItem('accountType', role);
-    login({
-      token: 'temp-token-' + Date.now(),
-      user: { role, kycComplete: true },
-    });
-    const routeMap = { user: ROUTES.USER_DASHBOARD, detective: ROUTES.DETECTIVE_DASHBOARD };
-    navigate(routeMap[role] || ROUTES.USER_DASHBOARD);
+    setError('');
+
+    if (!formData.emailOrPhone) {
+      setError('Please enter email or phone number');
+      return;
+    }
+
+    // Check if email or phone
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailOrPhone);
+
+    if (isEmail) {
+      // Email login requires password
+      if (!formData.password) {
+        setError('Please enter password');
+        return;
+      }
+      handleEmailLogin();
+    } else {
+      // Phone login uses OTP
+      if (!otpSent) {
+        handleSendOtp();
+      } else {
+        if (!formData.password) {
+          setError('Please enter OTP');
+          return;
+        }
+
+        if (!/^\d{6}$/.test(formData.password)) {
+          setError('Please enter a valid 6-digit OTP');
+          return;
+        }
+
+        handlePhoneOtpLogin();
+      }
+    }
   };
 
   const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
@@ -163,6 +298,13 @@ const Login = () => {
             </button>
           </div>
 
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200 text-sm">
+              {error}
+            </div>
+          )}
+
           {/* FORM */}
           <form className="space-y-3 mt-4" onSubmit={handleSubmit}>
 
@@ -170,7 +312,7 @@ const Login = () => {
               <label style={labelStyle}>Email or Phone number</label>
               <div className="relative mt-1">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }} className={inputClass} autoComplete="off" />
+                <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} disabled={loading} style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }} className={inputClass} autoComplete="off" />
               </div>
               {shouldShowGetOtp && (
                 <div className="flex justify-end mt-2">
@@ -196,11 +338,11 @@ const Login = () => {
                   placeholder="Enter your password / OTP"
                   value={formData.password}
                   onChange={handleInputChange}
-                  disabled={isPasswordDisabled}
+                  disabled={loading || isPasswordDisabled}
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
-                  className={`w-full border border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  className={`w-full border disabled:opacity-50 border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -209,7 +351,7 @@ const Login = () => {
             {/* REMEMBER ME */}
             <div className="flex items-center">
               <label className="flex items-center gap-2 cursor-pointer" style={labelStyle}>
-                <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleInputChange} className="hidden" />
+                <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleInputChange} disabled={loading} className="hidden" />
                 <div className={`w-4 h-4 rounded-sm border-2 border-white flex items-center justify-center ${formData.rememberMe ? 'bg-white' : 'bg-transparent'}`}>
                   {formData.rememberMe && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </div>
@@ -217,8 +359,8 @@ const Login = () => {
               </label>
             </div>
 
-            <button type="submit" style={{ height: '54.5px', fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', borderRadius: '10px' }} className="w-full bg-white text-red mt-3 flex items-center justify-center">
-              Log in as {accountType}
+            <button type="submit" disabled={loading} style={{ height: '54.5px', fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', borderRadius: '10px' }} className="w-full bg-white text-red mt-3 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? 'Logging in...' : `Log in as ${accountType}`}
             </button>
 
           </form>

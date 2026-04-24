@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,8 +7,7 @@ import NoiseBg from '../../assets/noise.png';
 import UserIcon from '../../assets/user_icon.png';
 import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
-import ApiService from '../../core/services/api.service';
-import ServerUrl from '../../core/constants/serverURL.constant';
+import { authService } from '../../core/services/auth.service';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -15,7 +15,83 @@ const LANGUAGES = [
   { key: 'Marathi', label: 'मराठी' },
 ];
 
-const LangDropdown = ({ showLangDropdown, setShowLangDropdown, language, setLanguage }) => {
+const Signup = () => {
+  const [accountType, setAccountType] = useState('User');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [language, setLanguage] = useState('English');
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    aadharNumber: '',
+    city: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ========== STEP 1: Send OTP ==========
+  const handleStep1Submit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Validate
+    if (!formData.name || !formData.email || !formData.phone) {
+      setError('Please fill all required fields');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ✅ Call backend - Step 1: Send OTP
+      const response = await authService.registerSendOtp({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        aadharCard: formData.aadharNumber,
+        city: formData.city,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        role: accountType === 'Detective' ? 'detective' : 'user',
+      });
+
+      console.log('OTP sent:', response.data.data);
+
+      // ✅ Store phone for step 2
+      localStorage.setItem('registrationPhone', formData.phone);
+      localStorage.setItem('isFromSignup', 'true');
+      localStorage.setItem('accountType', accountType === 'Detective' ? 'detective' : 'user');
+
+      // ✅ Redirect to OTP page
+      navigate('/OTP');
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to send OTP';
+      setError(errorMsg);
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
+  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
+  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
+
   const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
 
   return (
@@ -145,12 +221,19 @@ const Signup = () => {
             </button>
           </div>
 
-          {/* FORM */}
-          <form className="space-y-3 mt-4" onSubmit={handleSubmit}>
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200 text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* ========== STEP 1: FORM ========== */}
+          <form className="space-y-3 mt-4" onSubmit={handleStep1Submit}>
             {[
-              { name: 'name', label: 'Name (As per Adhar card)', icon: User, placeholder: 'Enter name' },
-              { name: 'phone', label: 'Phone Number (linked to adhar card)', icon: Phone, placeholder: 'Enter Phone number' },
-              { name: 'email', label: 'Email Address', icon: Mail, placeholder: 'Enter your email' },
+              { label: 'Name (As per Adhar card)', icon: User, name: 'name', placeholder: 'Enter name' },
+              { label: 'Phone Number (linked to adhar card)', icon: Phone, name: 'phone', placeholder: 'Enter Phone number', pattern: '[6-9][0-9]{9}' },
+              { label: 'Email Address', icon: Mail, name: 'email', placeholder: 'Enter your email', type: 'email' },
             ].map((field, i) => {
               const Icon = field.icon;
               return (
@@ -158,7 +241,17 @@ const Signup = () => {
                   <label style={labelStyle}>{field.label}</label>
                   <div className="relative mt-1">
                     <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                    <input name={field.name} placeholder={field.placeholder} style={inputStyle} className={inputClass} />
+                    <input 
+                      type={field.type || 'text'}
+                      name={field.name}
+                      pattern={field.pattern}
+                      value={formData[field.name]}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                      placeholder={field.placeholder} 
+                      style={inputStyle} 
+                      className={inputClass + ' disabled:opacity-50'}
+                    />
                   </div>
                 </div>
               );
@@ -169,7 +262,16 @@ const Signup = () => {
               <label style={labelStyle}>City</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 z-10" size={16} />
-                <input type="text" placeholder="Enter your city" style={inputStyle} className={inputClass} />
+                <input 
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="Enter city"
+                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
+                  className="w-full bg-transparent border border-white/60 text-white outline-none focus:border-white placeholder:text-white/60 disabled:opacity-50"
+                />
               </div>
             </div>
 
@@ -178,8 +280,17 @@ const Signup = () => {
               <label style={labelStyle}>Create Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input name="password" type={showPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="Create password"
+                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
+                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white disabled:opacity-50" 
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -190,8 +301,17 @@ const Signup = () => {
               <label style={labelStyle}>Confirm Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
+                <input 
+                  type={showConfirmPassword ? 'text' : 'password'} 
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="Confirm password"
+                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
+                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white disabled:opacity-50" 
+                />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -207,8 +327,8 @@ const Signup = () => {
             </div>
 
             {/* BUTTON */}
-            <button type="submit" className="w-full bg-white text-red py-3 rounded-[16px] font-semibold mt-3">
-              Create Account
+            <button type="submit" disabled={loading} className="w-full bg-white text-red py-3 rounded-[16px] font-semibold mt-3 disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
@@ -250,3 +370,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
