@@ -64,6 +64,7 @@ const UserLayout = () => {
  const showSidebar =
   location.pathname === "/user-dashboard" ||
   location.pathname === "/user-profile" ||
+  location.pathname ==="/user-notification" ||
   location.pathname === "/user-settings";
 
   return (
