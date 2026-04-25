@@ -217,8 +217,13 @@ const RequestInvestigationPage = () => {
    <div className="fixed inset-0 bg-[#0b1120] text-white flex flex-col md:flex-row overflow-hidden">
 
   {/* STEP PROGRESS SIDEBAR */}
+<<<<<<< HEAD
+  <div className="hidden md:flex shrink-0" style={{ width: '374px' }}>
+    <div className="bg-[#111827] rounded-3xl m-6 flex flex-col relative" style={{ width: '374px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
+=======
   <div className="hidden md:flex flex-shrink-0" style={{ width: '450px' }}>
     <div className="bg-[#1A2832] rounded-[24px] m-6 flex flex-col relative" style={{ width: '400px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
+>>>>>>> 5033c567905a36751a5acdd7748fbb39e2aaa465
 
           <div className="absolute" style={{ left: '63px', top: '40px', width: '6px', bottom: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
 
@@ -262,7 +267,7 @@ const RequestInvestigationPage = () => {
       </div>
 
   {/* MOBILE PROGRESS BAR */}
-  <div className="md:hidden bg-[#0b1120] px-4 pt-4 pb-2 flex-shrink-0">
+  <div className="md:hidden bg-[#0b1120] px-4 pt-4 pb-2 shrink-0">
     <div style={{ width: '100%', gap: '11.99px' }} className="flex flex-col">
 
       {/* Step X of 8 + percentage */}
