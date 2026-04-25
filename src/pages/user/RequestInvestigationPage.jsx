@@ -222,17 +222,22 @@ existing_evidence: formData.existingEvidence,
    <div className="fixed inset-0 bg-[#0b1120] text-white flex flex-col md:flex-row overflow-hidden">
 
   {/* STEP PROGRESS SIDEBAR */}
+<<<<<<< HEAD
   <div className="hidden md:flex shrink-0" style={{ width: '374px' }}>
     <div className="bg-[#111827] rounded-3xl m-6 flex flex-col relative" style={{ width: '374px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
+=======
+  <div className="hidden md:flex flex-shrink-0" style={{ width: '450px' }}>
+    <div className="bg-[#1A2832] rounded-[24px] m-6 flex flex-col relative" style={{ width: '400px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
+>>>>>>> 5033c567905a36751a5acdd7748fbb39e2aaa465
 
-          <div className="absolute" style={{ left: '63px', top: '79px', width: '6px', bottom: '79px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
+          <div className="absolute" style={{ left: '63px', top: '40px', width: '6px', bottom: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
 
       {/* Filled progress line */}
       <div className="absolute transition-all duration-500" style={{
         left: '63px',
-        top: '79px',
+        top: '40px',
         width: '6px',
-        height: 'calc(100% - 158px)',
+        height: 'calc(100% - 80px)',
         transform: `scaleY(${(currentStep - 1) / (steps.length - 1)})`,
         transformOrigin: 'top',
         background: 'white',
@@ -256,7 +261,7 @@ existing_evidence: formData.existingEvidence,
                     }
                   </div>
                 </div>
-                <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '21px', letterSpacing: '0px', width: '271px' }}
+                <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '17px', lineHeight: '20px', letterSpacing: '0px', width: '310px' }}
                   className={`transition-colors duration-300 ${currentStep === step.id ? 'text-white' : currentStep > step.id ? 'text-white/60' : 'text-gray-500'}`}>
                   {step.title}
                 </span>
@@ -303,7 +308,7 @@ existing_evidence: formData.existingEvidence,
 
   {/* Main Content */}
   <div className="flex-1 flex flex-col overflow-hidden">
-    <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-10 lg:px-12 py-4 md:py-10" style={{ height: '100%' }}>
+    <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10" style={{ height: '100%' }}>
       <div className="max-w-6xl mx-auto h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-hidden">

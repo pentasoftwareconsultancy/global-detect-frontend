@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { MapPin, Search, Filter, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../core/constants/routes.constant';
+import { LuSend } from "react-icons/lu";
+
 
 const DetectiveDashboardPage = () => {
+  const navigate = useNavigate();
   const [cases] = useState([
     {
       id: 1,
@@ -26,8 +31,9 @@ const DetectiveDashboardPage = () => {
     }
   ]);
 
+
   return (
-    <div className="bg-[#0b1120] text-white min-h-screen px-4 sm:px-6 md:px-10 lg:px-12 py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-5 md:px-8 py-4 sm:py-6">
 
       {/* Header */}
       <div className="mb-6">
@@ -35,34 +41,41 @@ const DetectiveDashboardPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-300 text-xs sm:text-sm mb-2">Total Investigations</p>
-          <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#dc3545] mb-1">05</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {/* Card 1 */}
+        <div style={{ borderRadius: '20px', border: '0.67px solid #F3F4F6', background: '#FFFFFF24', padding: '16px 20px' }}>
+          <p className="text-gray-300 text-sm mb-3 font-medium">Total Investigations</p>
+          <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>05</span>
+          </div>
         </div>
-        <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-300 text-xs sm:text-sm mb-2">Active Investigation</p>
-          <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#dc3545] mb-1">02</p>
+        {/* Card 2 */}
+        <div style={{ borderRadius: '20px', border: '0.67px solid #F3F4F6', background: '#FFFFFF24', padding: '16px 20px' }}>
+          <p className="text-gray-300 text-sm mb-3 font-medium">Active Investigation</p>
+          <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>02</span>
+          </div>
         </div>
-        <div className="bg-[#dc3545] rounded-xl p-4 sm:p-6">
-          <p className="text-gray-200 text-xs sm:text-sm mb-2">Admin Changes requested</p>
-          <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-1">01</p>
-          <p className="text-xs text-gray-200">Require resubmission</p>
+        {/* Card 3 */}
+        <div style={{ borderRadius: '20px', border: '0.67px solid #FF4959', background: '#FF495918', padding: '16px 20px' }}>
+          <p className="text-red-400 text-sm font-medium mb-3">Admin Changes requested</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>01</span>
+            </div>
+            <p className="text-xs text-gray-400 ">Require resubmission</p>
+          </div>
         </div>
       </div>
 
       {/* Map Section */}
-      <div className="bg-[#3a4651] rounded-xl p-4 sm:p-6 mb-8">
-        <div className="flex items-center gap-2 mb-4">
+      <div style={{ borderRadius: '12px', border: '0.67px solid rgba(255,255,255,0.12)', background: '#1C2B35', padding: '20px 24px', marginBottom: '32px' }}>
+        <div className="flex items-center gap-2 mb-2">
           <MapPin size={18} className="text-[#dc3545]" />
-          <h2 className="text-base sm:text-lg font-semibold text-white">Current Location</h2>
+          <h2 className="text-base font-semibold text-white">Current Location</h2>
         </div>
-
-        <p className="text-xs sm:text-sm text-gray-300 mb-4">
-          Your real-time location for case tracking
-        </p>
-
-        <div className="w-full h-52 sm:h-64 bg-gray-700 rounded-lg overflow-hidden relative">
+        <p className="text-sm text-gray-300 mb-4">Your real-time location for case tracking</p>
+        <div className="w-full overflow-hidden" style={{ borderRadius: '8px', height: 'clamp(200px, 40vw, 340px)' }}>
           <iframe
             src="https://www.openstreetmap.org/export/embed.html?bbox=-74.0060%2C40.7128%2C-73.9352%2C40.7589&layer=mapnik"
             width="100%"
@@ -70,104 +83,87 @@ const DetectiveDashboardPage = () => {
             style={{ border: 0 }}
             title="Current Location Map"
           />
-          <div className="absolute top-3 left-3 bg-white text-black px-2 py-1 rounded text-xs font-medium">+</div>
-          <div className="absolute top-10 left-3 bg-white text-black px-2 py-1 rounded text-xs font-medium">-</div>
         </div>
-
-        <p className="text-[10px] sm:text-xs text-gray-400 mt-3">
-          Lat: 40.7128 | Lng: -74.0060 | Last updated: 1/1/2025, 10:30:00 AM
+        <p className="text-xs text-gray-400 mt-3">
+          Lat: 40.7128 &nbsp; Lng: -74.0060 &nbsp; Last updated: 1/31/2026, 10:30:00 AM
         </p>
       </div>
 
       {/* Assigned Cases */}
       <div className="mb-8">
 
-        {/* HEADER + FILTERS */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        {/* HEADER */}
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-white">Assigned Cases</h2>
+          <p className="text-sm text-gray-400">2 cases assigned</p>
+        </div>
 
-          <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-white">Assigned Cases</h2>
-            <p className="text-xs sm:text-sm text-gray-400">2 cases assigned</p>
+        {/* SEARCH + FILTERS - separate row */}
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by case number, title, or client name..."
+              className="bg-[#1C2B35] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm w-full focus:outline-none text-white placeholder:text-gray-400"
+            />
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-            {/* SEARCH */}
-            <div className="relative w-full sm:w-auto">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="bg-[#3a4651] border-0 rounded-lg py-2 pl-9 pr-3 text-xs sm:text-sm w-full sm:w-60 md:w-72 focus:outline-none text-white placeholder:text-gray-400"
-              />
-            </div>
-
-            {/* FILTER BUTTONS */}
-            <div className="flex gap-2 sm:gap-3">
-              <button className="flex items-center gap-2 bg-[#3a4651] rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white w-full sm:w-auto justify-center">
-                <Filter size={14} />
-                All Status
-              </button>
-
-              <button className="flex items-center gap-2 bg-[#3a4651] rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white w-full sm:w-auto justify-center">
-                <Filter size={14} />
-                All Priority
-              </button>
-            </div>
-
-          </div>
+          <button className="flex items-center gap-2 bg-[#1C2B35] border border-white/10 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white whitespace-nowrap">
+            <Filter size={14} /> All Status
+          </button>
+          <button className="flex items-center gap-2 bg-[#1C2B35] border border-white/10 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white whitespace-nowrap">
+            <Filter size={14} /> All Priority
+          </button>
         </div>
 
         {/* CARDS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {cases.map((caseItem) => (
-            <div key={caseItem.id} className="bg-[#3a4651] rounded-xl p-4 sm:p-6">
+            <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px' }}>
 
-              <div className="flex items-start justify-between mb-4 gap-2">
-                <h3 className="text-base sm:text-lg font-semibold flex-1 text-white">
-                  {caseItem.title}
-                </h3>
-
-                <span className="px-2 sm:px-3 py-1 rounded-md text-[10px] sm:text-xs font-semibold bg-[#dc3545] text-white whitespace-nowrap">
+              {/* Title + badge */}
+              <div className="flex items-start justify-between mb-3 gap-2">
+                <h3 className="text-base font-semibold text-white">{caseItem.title}</h3>
+                <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap' }}>
                   {caseItem.type}
                 </span>
               </div>
 
-              <p className="text-xs sm:text-sm text-gray-300 mb-5 leading-relaxed">
-                {caseItem.description}
-              </p>
+              {/* Description */}
+              <p className="text-sm text-gray-300 mb-5 leading-relaxed">{caseItem.description}</p>
 
-              <div className="space-y-2 sm:space-y-3 mb-5">
-                <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <span className="text-gray-400">Client:</span>
-                  <span className="text-white font-medium">{caseItem.client}</span>
+              {/* Client */}
+              <div className="mb-1">
+                <p className="text-xs text-gray-400 mb-0.5">Client:</p>
+                <p className="text-sm font-semibold text-white">{caseItem.client}</p>
+              </div>
+
+              {/* Status + Admin Feedback inline */}
+              <div className="flex items-end gap-8 mt-3 mb-4">
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Status:</p>
+                  <span style={{ border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', color: '#fff' }}>
+                    {caseItem.status}
+                  </span>
                 </div>
-
-                <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <span className="text-gray-400">Status:</span>
-                  <span className="text-white font-medium">{caseItem.status}</span>
-                </div>
-
                 {caseItem.adminFeedback && (
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-gray-400">{caseItem.adminFeedback}:</span>
-                    <span className="text-[#dc3545] font-medium">{caseItem.feedbackStatus}</span>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Admin Feedback:</p>
+                    <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', color: '#fff' }}>
+                      {caseItem.feedbackStatus}
+                    </span>
                   </div>
                 )}
               </div>
 
-              <div className="mb-5">
-                <div className="w-full h-2 bg-[#2a3441] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#dc3545] rounded-full transition-all duration-300"
-                    style={{ width: `${caseItem.progress}%` }}
-                  />
-                </div>
-              </div>
+              {/* Insights Submitted button */}
+              <button className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg mb-3" style={{ background: '#dc3545' }}>
+                <LuSend size={14} /> Insights Submitted
+              </button>
 
-              <button className="w-full bg-[#2a3441] hover:bg-[#1e2329] text-white py-2.5 sm:py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 border border-gray-600 text-sm">
-                <FileText size={14} />
-                View Details
+              {/* View Details */}
+              <button onClick={() => navigate(ROUTES.DETECTIVE_CASE_DETAILS, { state: { caseItem } })} className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg" style={{ background: '#1e2d38', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <FileText size={14} /> View Details
               </button>
 
             </div>
