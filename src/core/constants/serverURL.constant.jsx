@@ -7,9 +7,10 @@ class ServerUrl {
     // auth api endpoint
     static AUTH_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.AUTH}`;
 
-        static REGISTER_API = `${ServerUrl.AUTH_API}/register`;
-        static LOGIN_API = `${ServerUrl.AUTH_API}/login`;
-
+        static REGISTER_API = `${ServerUrl.AUTH_API}/register`; //endpoint is same for both sending OTP and verifying OTP for registration, backend will differentiate based on request body
+        static LOGIN_API = `${ServerUrl.AUTH_API}/login`; //endpoint is same for all login flows (email/password, send OTP, verify OTP), backend will differentiate based on request body
+    
+    // ------------------------- all detective side related api endpoints -------------------------------------------
     // detective kyc api endpoint
     static DETECTIVE_KYC_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.DETECTIVE_KYC}`;
         
@@ -22,6 +23,7 @@ class ServerUrl {
         // Get specific application
         static GET_KYC_APPLICATION_API = `${ServerUrl.DETECTIVE_KYC_API}/:id`; // Assuming the endpoint is /detective-kyc/:id
     
+    // ------------------------- all user side related api endpoints -----------------------------------------------  
     // user request form api endpoint
     static REQUEST_FORM_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.REQUEST_FORM}`;
 
@@ -40,21 +42,35 @@ class ServerUrl {
         // logined user routes
         static CREATE_REQUEST_FORM_API = `${ServerUrl.REQUEST_FORM_API}/submit`;
 
-    // blogs api endpoint
-    static BLOGS_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.BLOGS}`;
+    // user case api endpoint
+    static CASE_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.CASES}`;
 
-        // Admin routes
-        static CREATE_BLOG_API = `${ServerUrl.BLOGS_API}/`;
-        static GET_BLOGS_API = `${ServerUrl.BLOGS_API}/stats`;
-        static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
-        static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
-        // Admin list
-        static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/`;
-
+        static GET_MY_CASES_API = `${ServerUrl.CASE_API}/my-cases`;
+        static GET_CASE_STATS_API = `${ServerUrl.CASE_API}/stats`;
+        static GET_CASE_DETAILS_API = `${ServerUrl.CASE_API}/:caseId`;
+        
     // profile api endpoint
     static PROFILE_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.PROFILE}`;
 
-        static GET_PROFILE_API = `${ServerUrl.PROFILE_API}/profile`;
+        static GET_PROFILE_API = `${ServerUrl.PROFILE_API}/`; //endpoint to get, put and delete current user profile, requires auth token
+        static UPDATE_PROFILE_API = `${ServerUrl.PROFILE_API}/`; //endpoint to update current user profile, requires auth token
+        static DELETE_PROFILE_API = `${ServerUrl.PROFILE_API}/`; //endpoint to delete current user profile, requires auth token
+        
+    // ------------------------- all blogs related api endpoints -----------------------------------------------
+    // blogs api endpoint
+    static BLOGS_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.BLOGS}`;
+
+        // Public routes
+        static GET_PUBLISHED_BLOGS_API = `${ServerUrl.BLOGS_API}/`;
+        static GET_BLOG_BY_ID_API = `${ServerUrl.BLOGS_API}/:id`;
+
+        // Admin routes
+        static CREATE_BLOG_API = `${ServerUrl.BLOGS_API}/`;
+        static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/admin/list`;
+        static GET_BLOG_BY_ID_ADMIN_API = `${ServerUrl.BLOGS_API}/admin/preview/:id`;
+        static GET_BLOG_BY_STATUS_API = `${ServerUrl.BLOGS_API}/admin/status`;
+        static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
+        static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
 }
 
 export default ServerUrl;

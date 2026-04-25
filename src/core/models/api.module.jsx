@@ -3,5 +3,6 @@ export const API_MODULE = {
   DETECTIVE_KYC: "detective-kyc",
   REQUEST_FORM: "case-request",
   BLOGS: "blogs",
-  PROFILE: "user",
+  PROFILE: "profile",
+  CASES: "cases",
 };
