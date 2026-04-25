@@ -171,7 +171,8 @@ const Login = () => {
     } else {
       // Phone login uses OTP
       if (!otpSent) {
-        handleSendOtp();
+        setError('Please click Get OTP first');
+        return;
       } else {
         if (!formData.password) {
           setError('Please enter OTP');
@@ -318,11 +319,15 @@ const Login = () => {
                 <div className="flex justify-end mt-2">
                   <button
                     type="button"
-                    onClick={() => setOtpRequested(true)}
-                    className="bg-[#fefafa] text-black rounded-[10px] text-[15px] font-semibold leading-[22.5px] tracking-[0px] text-center"
+                    onClick={async () => {
+                      setOtpRequested(true);
+                      await handleSendOtp();   // ✅ SEND OTP HERE
+                    }}
+                    disabled={loading}
+                    className="bg-[#fefafa] text-black rounded-[10px] text-[15px] font-semibold leading-[22.5px] tracking-[0px] text-center disabled:opacity-50"
                     style={{ width: '142px', height: '37px' }}
                   >
-                    Get OTP
+                    {loading ? 'Sending...' : 'Get OTP'}
                   </button>
                 </div>
               )}
