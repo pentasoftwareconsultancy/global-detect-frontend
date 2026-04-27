@@ -8,6 +8,7 @@ import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { useAuth } from '../../core/contexts/AuthContext';
 import { authService } from '../../core/services/auth.service';
+import { validateEmail, validatePhone } from '../../hooks/validation';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -24,6 +25,7 @@ const Login = () => {
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ const Login = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setFieldErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   // ========== CASE 1: Email + Password Login ==========
@@ -50,29 +53,27 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      // ✅ Call backend with email + password
       const response = await authService.loginWithEmail(
         formData.emailOrPhone,
         formData.password
       );
 
-      // ✅ Parse response
-      const { token, user } = response.data.data;
+      const data = response.data;
+      const token = data?.data?.token || data?.token || data?.accessToken;
+      const user = data?.data?.user || data?.user || data?.data;
 
-      // ✅ Store token and user in context
       login({ token, user });
 
-      // ✅ Store account type
       const roleMap = { User: 'user', Detective: 'detective' };
-      localStorage.setItem('accountType', roleMap[accountType]);
+      localStorage.setItem('accountType', roleMap[accountType] || accountType.toLowerCase());
 
-      // ✅ Redirect based on role
+      const role = (user?.role || '').toLowerCase();
       const routeMap = {
         user: ROUTES.USER_DASHBOARD,
         detective: ROUTES.DETECTIVE_DASHBOARD,
         admin: ROUTES.ADMIN_DASHBOARD,
       };
-      navigate(routeMap[user.role] || ROUTES.USER_DASHBOARD);
+      navigate(routeMap[role] || ROUTES.USER_DASHBOARD);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Login failed';
       setError(errorMsg);
@@ -88,16 +89,11 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      // ✅ Call backend to send OTP to phone
       const response = await authService.loginSendOtp(formData.emailOrPhone);
-      
-      console.log('OTP sent:', response.data.data);
+      console.log('OTP sent:', response.data);
 
-      // ✅ Store phone for next step
       localStorage.setItem('loginPhone', formData.emailOrPhone);
       localStorage.setItem('isFromLogin', 'true');
-
-      // ✅ Show OTP input
       setOtpSent(true);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to send OTP';
@@ -114,32 +110,30 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      // ✅ Call backend to verify OTP and login
       const response = await authService.loginVerifyOtp(
         formData.emailOrPhone,
         formData.password
       );
 
-      const { token, user } = response.data.data;
+      const data = response.data;
+      const token = data?.data?.token || data?.token || data?.accessToken;
+      const user = data?.data?.user || data?.user || data?.data;
 
-      // ✅ Store token and user in context
       login({ token, user });
 
-      // ✅ Store account type
       const roleMap = { User: 'user', Detective: 'detective' };
-      localStorage.setItem('accountType', roleMap[accountType]);
+      localStorage.setItem('accountType', roleMap[accountType] || accountType.toLowerCase());
 
-      // ✅ Clear temporary login flags
       localStorage.removeItem('loginPhone');
       localStorage.removeItem('isFromLogin');
 
-      // ✅ Redirect based on role
+      const role = (user?.role || '').toLowerCase();
       const routeMap = {
         user: ROUTES.USER_DASHBOARD,
         detective: ROUTES.DETECTIVE_DASHBOARD,
         admin: ROUTES.ADMIN_DASHBOARD,
       };
-      navigate(routeMap[user.role] || ROUTES.USER_DASHBOARD);
+      navigate(routeMap[role] || ROUTES.USER_DASHBOARD);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'OTP verification failed';
       setError(errorMsg);
@@ -152,54 +146,50 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    const newErrors = {};
 
     if (!formData.emailOrPhone) {
-      setError('Please enter email or phone number');
+      newErrors.emailOrPhone = 'Please enter email or phone number';
+      setFieldErrors(newErrors);
       return;
     }
 
-    // Check if email or phone
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailOrPhone);
 
     if (isEmail) {
-      // Email login requires password
-      if (!formData.password) {
-        setError('Please enter password');
-        return;
-      }
+      const emailErr = validateEmail(formData.emailOrPhone);
+      if (emailErr) { newErrors.emailOrPhone = emailErr; }
+      if (!formData.password) { newErrors.password = 'Password is required'; }
+      if (Object.keys(newErrors).length) { setFieldErrors(newErrors); return; }
       handleEmailLogin();
     } else {
-      // Phone login uses OTP
+      const phoneErr = validatePhone(formData.emailOrPhone);
+      if (phoneErr) { newErrors.emailOrPhone = phoneErr; setFieldErrors(newErrors); return; }
       if (!otpSent) {
-        handleSendOtp();
-      } else {
-        if (!formData.password) {
-          setError('Please enter OTP');
-          return;
-        }
-
-        if (!/^\d{6}$/.test(formData.password)) {
-          setError('Please enter a valid 6-digit OTP');
-          return;
-        }
-
-        handlePhoneOtpLogin();
+        setError('Please click Get OTP first');
+        return;
       }
+      if (!formData.password) { newErrors.password = 'Please enter OTP'; setFieldErrors(newErrors); return; }
+      if (!/^\d{6}$/.test(formData.password)) { newErrors.password = 'Please enter a valid 6-digit OTP'; setFieldErrors(newErrors); return; }
+      handlePhoneOtpLogin();
     }
   };
 
   const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
-  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
-  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
+  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px', fontSize: '14px' };
+  const inputClass = "autofill-transparent w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
 
   const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
 
   const LangDropdown = () => (
     <div className="relative z-50">
+      {showLangDropdown && (
+        <div className="fixed inset-0 z-40" onClick={() => setShowLangDropdown(false)} />
+      )}
       <button
         onClick={() => setShowLangDropdown(!showLangDropdown)}
         style={{ height: '48px', borderRadius: '10px', paddingLeft: '20px', paddingRight: '20px', fontSize: '15px', fontWeight: 600 }}
-        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px]"
+        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px] cursor-pointer relative z-50"
       >
         {selectedLabel}
         <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -314,15 +304,20 @@ const Login = () => {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
                 <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} disabled={loading} style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }} className={inputClass} autoComplete="off" />
               </div>
+              {fieldErrors.emailOrPhone && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.emailOrPhone}</p>}
               {shouldShowGetOtp && (
                 <div className="flex justify-end mt-2">
                   <button
                     type="button"
-                    onClick={() => setOtpRequested(true)}
-                    className="bg-[#fefafa] text-black rounded-[10px] text-[15px] font-semibold leading-[22.5px] tracking-[0px] text-center"
+                    onClick={async () => {
+                      setOtpRequested(true);
+                      await handleSendOtp();
+                    }}
+                    disabled={loading}
+                    className="bg-[#fefafa] text-black rounded-[10px] text-[15px] font-semibold leading-[22.5px] tracking-[0px] text-center disabled:opacity-50"
                     style={{ width: '142px', height: '37px' }}
                   >
-                    Get OTP
+                    {loading ? 'Sending...' : 'Get OTP'}
                   </button>
                 </div>
               )}
@@ -340,12 +335,13 @@ const Login = () => {
                   onChange={handleInputChange}
                   disabled={loading || isPasswordDisabled}
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
-                  className={`w-full border disabled:opacity-50 border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  className={`autofill-transparent w-full border disabled:opacity-50 border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {fieldErrors.password && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.password}</p>}
             </div>
 
             {/* REMEMBER ME */}

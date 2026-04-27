@@ -1,7 +1,8 @@
-// // import React from 'react'
-// // import { Menu, User, Bell, Search } from "lucide-react";
-// // import { ROUTES } from "../../core/constants/routes.constant";
-// // import GlobalLogo from "../../assets/Global-logo.png";
+ import React from 'react'
+ //import { Menu, User, Bell, Search } from "lucide-react";
+ import { ROUTES } from "../../core/constants/routes.constant";
+ import GlobalLogo from "../../assets/Global-logo.png";
+ import { useNavigate } from "react-router-dom";
 
 // // const UserNavbar = ({
 // //   isRequestInvestigation,
@@ -153,7 +154,12 @@
 
 import { Menu, Bell, Search, User } from "lucide-react";
 
+
+
 const UserNavbar = ({ setSidebarOpen }) => {
+
+    const navigate = useNavigate();
+
   return (
     <div className="flex items-center justify-between px-4 md:px-6 py-3 bg-[#0f1c24] border-b border-white/10">
 
@@ -187,7 +193,9 @@ const UserNavbar = ({ setSidebarOpen }) => {
         </div>
 
         {/* Bell */}
-        <div className="relative bg-white/10 p-2.5 rounded-full cursor-pointer">
+        <div
+         onClick={() => navigate(ROUTES.USER_NOTIFICATION)}
+         className="relative bg-white/10 p-2.5 rounded-full cursor-pointer">
           <Bell size={20} />   {/* ⬅ increased */}
           <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] px-1 rounded-full">
             2
