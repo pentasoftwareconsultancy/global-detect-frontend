@@ -8,6 +8,10 @@ import UserIcon from '../../assets/user_icon.png';
 import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { authService } from '../../core/services/auth.service';
+import {
+  validateOnlyCharacters, validateEmail, validatePhone,
+  validatePassword, validateConfirmPassword, validateAadhaar, validateRequired
+} from '../../hooks/validation';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -20,10 +24,13 @@ const LangDropdown = ({ showLangDropdown, setShowLangDropdown, language, setLang
 
   return (
     <div className="relative z-50">
+      {showLangDropdown && (
+        <div className="fixed inset-0 z-40" onClick={() => setShowLangDropdown(false)} />
+      )}
       <button
         onClick={() => setShowLangDropdown(!showLangDropdown)}
         style={{ height: '48px', borderRadius: '10px', paddingLeft: '20px', paddingRight: '20px', fontSize: '15px', fontWeight: 600 }}
-        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px]"
+        className="bg-white text-red flex items-center justify-between shadow gap-2 min-w-[160px] cursor-pointer relative z-50"
       >
         {selectedLabel}
         <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="#D92B3A" strokeWidth="2" strokeLinecap="round" /></svg>
@@ -67,11 +74,38 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = '';
+    if (name === 'name') error = validateOnlyCharacters(value, 'Name');
+    else if (name === 'email') error = validateEmail(value);
+    else if (name === 'phone') error = validatePhone(value);
+    else if (name === 'password') error = validatePassword(value);
+    else if (name === 'confirmPassword') error = validateConfirmPassword(formData.password, value);
+    else if (name === 'aadharNumber') error = validateAadhaar(value);
+    else if (name === 'city') error = validateOnlyCharacters(value, 'City');
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
+    return error;
+  };
+
+  const validateAll = () => {
+    const fields = ['name', 'email', 'phone', 'password', 'confirmPassword', 'city'];
+    const newErrors = {};
+    let valid = true;
+    fields.forEach(f => {
+      const err = validateField(f, formData[f]);
+      if (err) { newErrors[f] = err; valid = false; }
+    });
+    setFieldErrors(newErrors);
+    return valid;
   };
 
   // ========== STEP 1: Send OTP ==========
@@ -79,16 +113,7 @@ const Signup = () => {
     e.preventDefault();
     setError('');
 
-    // Validate
-    if (!formData.name || !formData.email || !formData.phone) {
-      setError('Please fill all required fields');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    if (!validateAll()) return;
 
     try {
       setLoading(true);
@@ -124,8 +149,8 @@ const Signup = () => {
   };
 
   const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
-  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px' };
-  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
+  const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px', fontSize: '14px' };
+  const inputClass = "autofill-transparent w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
 
   return (
     <div className="min-h-screen flex font-montserrat bg-red overflow-x-hidden overflow-y-hidden">
@@ -227,12 +252,14 @@ const Signup = () => {
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleInputChange}
+                      onBlur={e => validateField(e.target.name, e.target.value)}
                       disabled={loading}
                       placeholder={field.placeholder} 
                       style={inputStyle} 
                       className={inputClass + ' disabled:opacity-50'}
                     />
                   </div>
+                  {fieldErrors[field.name] && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors[field.name]}</p>}
                 </div>
               );
             })}
@@ -242,17 +269,9 @@ const Signup = () => {
               <label style={labelStyle}>City</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 z-10" size={16} />
-                <input 
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                  placeholder="Enter city"
-                  style={inputStyle}
-                  className={inputClass}
-                />
+                <input type="text" name="city" value={formData.city} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} disabled={loading} placeholder="Enter city" style={inputStyle} className={inputClass} />
               </div>
+              {fieldErrors.city && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.city}</p>}
             </div>
 
             {/* PASSWORD */}
@@ -260,20 +279,12 @@ const Signup = () => {
               <label style={labelStyle}>Create Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input 
-                  name="password" 
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                  placeholder="Create password"
-                  type={showPassword ? 'text' : 'password'} 
-                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
-                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" 
-                />
+                <input name="password" value={formData.password} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} disabled={loading} placeholder="Create password" type={showPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="autofill-transparent w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {fieldErrors.password && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.password}</p>}
             </div>
 
             {/* CONFIRM */}
@@ -281,20 +292,12 @@ const Signup = () => {
               <label style={labelStyle}>Confirm Password</label>
               <div className="relative mt-1">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input 
-                  name="confirmPassword" 
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  disabled={loading}
-                  placeholder="Confirm password"
-                  type={showConfirmPassword ? 'text' : 'password'} 
-                  style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} 
-                  className="w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" 
-                />
+                <input name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} disabled={loading} placeholder="Confirm password" type={showConfirmPassword ? 'text' : 'password'} style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }} className="autofill-transparent w-full border border-white/60 pr-11 text-white bg-transparent placeholder-white/50 outline-none focus:border-white" />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {fieldErrors.confirmPassword && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.confirmPassword}</p>}
             </div>
 
             {/* AADHAAR CARD NUMBER */}
@@ -302,8 +305,9 @@ const Signup = () => {
               <label style={labelStyle}>Aadhaar Card Number</label>
               <div className="relative mt-1">
                 <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type="text" placeholder="Enter your Aadhaar card number" style={inputStyle} className={inputClass} />
+                <input type="text" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} placeholder="Enter your Aadhaar card number" style={inputStyle} className={inputClass} />
               </div>
+              {fieldErrors.aadharNumber && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.aadharNumber}</p>}
             </div>
 
             {/* BUTTON */}
