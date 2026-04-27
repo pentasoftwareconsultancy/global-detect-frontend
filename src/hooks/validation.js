@@ -141,3 +141,31 @@ export const validateFileUpload = (file, fieldName, isRequired = true) => {
   
   return "";
 };
+
+// ---------------- ADDRESS ---------------------
+export const validateAddress = (value) => {
+  if (!value || !value.trim()) return "Address is required";
+  if (value.trim().length < 10) return "Please enter a complete address";
+  return "";
+};
+
+// ---------------- TEXTAREA ---------------------
+export const validateTextarea = (value, fieldName, minLength = 20) => {
+  const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  if (!value || !value.trim()) return `${label} is required`;
+  if (value.trim().length < minLength) return `${label} must be at least ${minLength} characters`;
+  return "";
+};
+
+// ---------------- SELECT ---------------------
+export const validateSelect = (value, fieldName) => {
+  const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  if (!value || value === "") return `${label} is required`;
+  return "";
+};
+
+// ---------------- LEGAL CONSENT ---------------------
+export const validateConsent = (checked) => {
+  if (!checked) return "You must accept the legal consent to proceed";
+  return "";
+};
