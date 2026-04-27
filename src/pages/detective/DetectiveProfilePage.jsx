@@ -1,16 +1,49 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Briefcase, MapPin, Calendar, Save } from 'lucide-react';
+import { authService } from "../../core/services/auth.service";
+import { useEffect } from "react";
 
 const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', marginBottom: '16px' };
 const fieldBox = { background: '#1C2B35', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#fff' };
 const lbl = { fontSize: '13px', color: '#9ca3af', marginBottom: '6px'  };
 const dividerRow = { borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' };
 
-const DetectiveProfilePage = () => {
-  const [name, setName] = useState('Detective Emma Watson');
-  const [email, setEmail] = useState('e.watson@detectiveagency.com');
-  const [phone, setPhone] = useState('91-00002 22202');
-  const [specialization, setSpecialization] = useState('Corporate Fraud');
+ const DetectiveProfilePage = () => {
+  const [name, setName] = useState('');
+const [email, setEmail] = useState('');
+const [phone, setPhone] = useState('');
+const [specialization, setSpecialization] = useState('');
+
+const fetchProfile = async () => {
+  try {
+    const res = await authService.getProfile();
+    const data = res.data;
+
+    setName(data.name || "");
+    setEmail(data.email || "");
+    setPhone(data.phone || "");
+    setSpecialization(data.specialization || "");
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+  }
+};
+
+useEffect(() => {
+  fetchProfile();
+}, []);
+
+  const handleUpdateProfile = async () => {
+    try {
+      const body = { name, email, phone, specialization };
+      const res = await authService.updateProfile(body);
+
+      console.log("Profile updated:", res.data);
+      alert("Profile updated successfully");
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
+
 
   return (
     <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6">
@@ -75,7 +108,10 @@ const DetectiveProfilePage = () => {
         </div>
 
         <div className="flex justify-end mt-5">
-          <button style={{ background: '#dc3545', border: 'none', borderRadius: '8px', padding: '9px 20px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button
+            onClick={handleUpdateProfile}
+
+           style={{ background: '#dc3545', border: 'none', borderRadius: '8px', padding: '9px 20px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Save size={15} /> Save Changes
           </button>
         </div>
@@ -116,5 +152,6 @@ const DetectiveProfilePage = () => {
     </div>
   );
 };
+
 
 export default DetectiveProfilePage;
