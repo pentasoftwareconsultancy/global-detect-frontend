@@ -1,15 +1,45 @@
 
 import React from "react";
 import { ROUTES } from "../../core/constants/routes.constant";
-import { useNavigate } from "react-router-dom";
+import  { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {authService} from '../../core/services/auth.service'; // adjust path
+
 
 
 import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy, FileSearch, CheckCircle } from "lucide-react";
 
 const CaseDetails = () => {
+  const { id } = useParams();
 
+  const [caseData, setCaseData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchCaseDetails = async () => {
+      if (!id) {
+        console.error('No case ID provided');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await authService.getCaseDetails(id);
+        setCaseData(res.data);
+      } catch (err) {
+        console.error('Error fetching case details:', err);
+        setCaseData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCaseDetails();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!caseData) return <p>Case not found or failed to load.</p>;
+
 
   return (
     <div className="text-white montserrat w-full max-w-full overflow-x-hidden px-4 md:px-0">
@@ -20,8 +50,12 @@ const CaseDetails = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-base md:text-lg font-semibold mb-2 break-words">          Background verification Investigation - Case ID - SCV2667
-        </h1>
+     <h1 className="text-base md:text-lg font-semibold mb-2 break-words">
+  {caseData
+    ? `${caseData.title} - Case ID - ${caseData.caseId}`
+    : "Loading case details..."}
+</h1> 
+        
 
         {/* Tags */}
         <div className="flex flex-wrap items-center gap-2 mt-3 mb-6">
@@ -89,13 +123,14 @@ const CaseDetails = () => {
           <div className="space-y-4 text-xs text-gray-300">
 
             {/* Case Number */}
-            <div className="flex items-start gap-2">
-              <FileText className="w-4 h-4 mt-0.5 text-gray-400" />
-              <p>
-                <strong>Case Number:</strong><br />
-                #SC002
-              </p>
-            </div>
+         <div className="flex items-start gap-2">
+  <FileText className="w-4 h-4 mt-0.5 text-gray-400" />
+
+  <p>
+    <strong>Case Number:</strong><br />
+    <span>#{caseData?.caseNumber || "N/A"}</span>
+  </p>
+</div>
             <div className="border-b border-gray-600 mt-3"></div>
 
             {/* Client */}
@@ -121,10 +156,11 @@ const CaseDetails = () => {
 
             {/* Investigation Type */}
             <div className="flex items-start gap-2">
-              <FileSearch size={18} className="text-gray-400" /><p>
+              <FileSearch size={18} className="text-gray-400" />
+              <div>
                 <strong>Investigation Type:</strong><br />
-                Background Check
-              </p>
+                <span>{caseData?.investigationType}</span>
+              </div>
             </div>
 
           </div>
@@ -252,7 +288,7 @@ const CaseDetails = () => {
 
             <div>
               <p className="text-gray-400">Full Name</p>
-              <p>Sarah Johnson</p>
+             <p>{caseData?.clientName}</p> 
             </div>
 
             <div>
@@ -311,7 +347,7 @@ const CaseDetails = () => {
                 <p className="text-gray-400 flex items-center gap-1">
                   <Calendar size={12} /> Date
                 </p>
-                <p>01/20/2026</p>
+               <p>{caseData?.createdAt}</p>
               </div>
 
               <div>
