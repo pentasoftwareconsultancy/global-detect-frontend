@@ -134,20 +134,24 @@ const UserNotificationPage = () => {
     </div>
 
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-      <button
-        onClick={markAllRead}
-        className="flex items-center justify-center gap-2 bg-[#1e293b] px-3 py-2 rounded hover:bg-blue-500 w-full sm:w-auto text-sm"
-      >
-         <FaRegCheckCircle />  Mark All Read
-      </button>
 
-      <button
-        onClick={clearAll}
-        className="flex items-center justify-center gap-2 bg-[#1e293b] px-3 py-2 rounded hover:bg-red-500 w-full sm:w-auto text-sm"
-      >
-        <FaTrash /> Clear All
-      </button>
-    </div>
+  <button
+    onClick={markAllRead}
+    className="flex items-center justify-center gap-2 bg-[#1e293b] px-3 py-2 rounded hover:bg-blue-500 w-full sm:w-auto text-sm"
+  >
+    <FaRegCheckCircle />
+    <span className="hidden sm:inline">Mark All Read</span>
+  </button>
+
+  <button
+    onClick={clearAll}
+    className="flex items-center justify-center gap-2 bg-[#1e293b] px-3 py-2 rounded hover:bg-red-500 w-full sm:w-auto text-sm"
+  >
+    <FaTrash />
+    <span className="hidden sm:inline">Clear All</span>
+  </button>
+
+</div>
   </div>
 
   {/* FILTERS */}
