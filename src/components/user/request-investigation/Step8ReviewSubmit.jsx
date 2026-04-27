@@ -103,7 +103,7 @@ const Step8ReviewSubmit = ({ formData }) => {
                   {[...(formData.uploadedFiles1 || []), ...(formData.uploadedFiles2 || [])].map((file, index) => (
                     <div key={index} className="space-y-2">
                       <img src={file.url} alt={file.name} className="w-full h-24 object-cover rounded-lg border border-white/20" />
-                      <p className="text-xs text-gray-400 truncate">{file.name}</p>
+                      <p style={{ fontFamily: 'Montserrat', fontSize: '12px', color: '#9CA3AF' }} className="truncate">{file.name}</p>
                     </div>
                   ))}
                 </div>
@@ -120,7 +120,7 @@ const Step8ReviewSubmit = ({ formData }) => {
                 <p style={labelStyle}>Signature</p>
                 <div className="max-w-xs">
                   <img src={formData.signaturePreview} alt="Signature" className="w-full h-32 object-contain bg-white/5 rounded-lg border border-white/20 p-2" />
-                  <p className="text-xs text-gray-400 mt-2">{formData.signatureFile.name}</p>
+                  <p style={{ fontFamily: 'Montserrat', fontSize: '12px', color: '#9CA3AF', marginTop: '8px' }}>{formData.signatureFile.name}</p>
                 </div>
               </div>
             )}
