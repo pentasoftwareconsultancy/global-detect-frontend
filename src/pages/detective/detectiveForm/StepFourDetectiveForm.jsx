@@ -4,34 +4,39 @@ import { CheckCircle, ArrowLeft, ArrowRight, UploadCloud, User, MapPin, Briefcas
 const StepFourDetectiveForm = ({
   data,
   handleChange,
+  handleFile,
 }) => {
+  const inputCls = "w-full px-4 py-3  border border-white rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#D92B3A] transition"
+  const labelCls = "block text-sm text-gray-300 mb-1"
   return (
     <div>
-      <h3 className="flex items-center gap-2 text-lg font-semibold"><FileText className="text-pink-500" /> Required Documents</h3>
-      <p className="text-sm text-gray-400 mb-4">Upload the following documents for verification</p>
+      <div className="flex items-center gap-2 mb-1"><FileText size={18} className="text-[#D92B3A]" /><h3 className="text-base font-semibold">Required Documents</h3></div>
+      <p className="text-sm text-gray-400 mb-6">Upload the following documents for verification</p>
 
-      <div className="space-y-3">
+      <div className="space-y-5">
         {[
-          ['govId', 'Government-issued ID Proof'],
-          ['licenseCert', 'Detective License Certificate'],
-          ['resume', 'Professional Resume/CV'],
-          ['certs', 'Professional Certifications'],
-          ['background', 'Background Check Report'],
-          ['address', 'Proof of Address']
-        ].map(([key, label]) => (
-          <label key={key} className="flex items-center justify-between p-3 bg-[#081718] rounded border border-gray-700">
-            <div>
-              <div className="text-sm">{label} <span className="text-red-500">*</span></div>
-              <div className="text-xs text-gray-400">Accepted: PDF, JPG, PNG (Max 5MB)</div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-300">{data.documents[key] || 'No file'}</div>
-              <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center">
-                <UploadCloud size={16} />
+          { key: 'govId', label: 'Government-issued ID Proof', required: true },
+          { key: 'licenseCert', label: 'Detective License Certificate', required: true },
+          { key: 'resume', label: 'Professional Resume/CV', required: true },
+          { key: 'certs', label: 'Professional Certifications', required: false },
+          { key: 'background', label: 'Background Check Report', required: true },
+          { key: 'address', label: 'Proof of Address', required: true },
+        ].map(({ key, label, required }) => (
+          <div key={key}>
+            <label className="block text-sm text-gray-300 mb-1">
+              {label} {required && <span className="text-[#D92B3A]">*</span>}
+            </label>
+            <label className="flex items-center cursor-pointer">
+              <div className="flex-1 px-4 py-3  border border-white rounded-lg text-sm text-gray-500 min-h-[46px]">
+                {data.documents[key] || ''}
               </div>
-              <input type="file" onChange={(e) => handleFile(e, key)} className="hidden" />
-            </div>
-          </label>
+              <div className="ml-2 p-3  border border-white rounded-lg hover:border-[#D92B3A]/50 transition">
+                <UploadCloud size={16} className="text-gray-400" />
+              </div>
+              <input type="file" onChange={e => handleFile(e, key)} className="hidden" />
+            </label>
+            <p className="text-xs text-gray-500 mt-1">Accepted formats: PDF, JPG, PNG (Max 5MB)</p>
+          </div>
         ))}
       </div>
     </div>

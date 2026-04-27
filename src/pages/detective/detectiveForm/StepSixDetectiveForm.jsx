@@ -5,17 +5,32 @@ const StepSixDetectiveForm = ({
   data,
   handleChange,
 }) => {
+  const inputCls = "w-full px-4 py-3  border border-white rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#D92B3A] transition"
+  const labelCls = "block text-sm text-gray-300 mb-1"
   return (
     <div>
-      <h3 className="flex items-center gap-2 text-lg font-semibold"><Users className="text-pink-500" /> Professional References</h3>
-      <p className="text-sm text-gray-400 mb-4">Provide at least two professional references</p>
+      <div className="flex items-center gap-2 mb-1"><Users size={18} className="text-[#D92B3A]" /><h3 className="text-base font-semibold">Professional References</h3></div>
+      <p className="text-sm text-gray-400 mb-6">Provide at least two professional references</p>
 
-      {data.references.map((r, idx) => (
-        <div key={idx} className="mb-4 p-3 bg-[#081718] rounded border border-gray-700">
-          <div className="grid grid-cols-3 gap-3">
-            <input placeholder="Full Name" value={r.name} onChange={(e) => handleChange('references', 'name', e.target.value, idx)} className="p-2 bg-transparent" />
-            <input placeholder="Phone Number" value={r.phone} onChange={(e) => handleChange('references', 'phone', e.target.value, idx)} className="p-2 bg-transparent" />
-            <input placeholder="Email Address" value={r.email} onChange={(e) => handleChange('references', 'email', e.target.value, idx)} className="p-2 bg-transparent" />
+      {[
+        { idx: 0, namePh: 'Jane Smith', phonePh: '+1 (555) 000-0000', emailPh: 'jane.smith@example.com' },
+        { idx: 1, namePh: 'Michael Johnson', phonePh: '+1 (555) 000-0000', emailPh: 'michael.johnson@example.com' },
+      ].map(({ idx, namePh, phonePh, emailPh }) => (
+        <div key={idx} className={idx > 0 ? 'mt-8' : ''}>
+          <h4 className="text-base font-semibold mb-4">Reference {idx + 1} *</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div>
+              <label className={labelCls}>Full Name</label>
+              <input placeholder={namePh} value={data.references[idx].name} onChange={e => handleChange('references', 'name', e.target.value, idx)} className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Phone Number</label>
+              <input placeholder={phonePh} value={data.references[idx].phone} onChange={e => handleChange('references', 'phone', e.target.value, idx)} className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Email Address</label>
+              <input placeholder={emailPh} value={data.references[idx].email} onChange={e => handleChange('references', 'email', e.target.value, idx)} className={inputCls} />
+            </div>
           </div>
         </div>
       ))}

@@ -30,6 +30,7 @@ const DetectiveForm = () => {
   ];
 
   const [activeStep, setActiveStep] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [data, setData] = useState({
     personal: { firstName: '', lastName: '', dob: '', gender: '', nationality: '', ssn: '' },
     contact: { email: '', phone: '', altPhone: '', address: '', city: '', state: '', zip: '', country: '', emergency: { name: '', relation: '', phone: '' } },
@@ -39,6 +40,22 @@ const DetectiveForm = () => {
     references: [{ name: '', phone: '', email: '' }, { name: '', phone: '', email: '' }],
     legal: { convicted: false, consentBackground: false, agreeTerms: false }
   });
+
+  const handleFile = (e, key) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setData((prev) => ({
+      ...prev,
+      documents: {
+        ...prev.documents,
+        [key]: file.name
+      }
+    }));
+
+  };
 
   const handleChange = (
     section,
@@ -78,18 +95,18 @@ const DetectiveForm = () => {
 
     try {
 
+      setLoading(true);
+
       console.log('Final Payload:', data);
 
-      // Call API
-      const response = await authService.createDetectiveKYC(data);
+      const response =
+        await authService.createDetectiveKYC(data);
 
       console.log('KYC Success:', response);
 
-      // Mark KYC complete
       setKycComplete(true);
 
-      // Navigate to OTP
-      navigate(ROUTES.OTP);
+      setShowSuccess(true);
 
     }
     catch (error) {
@@ -100,6 +117,11 @@ const DetectiveForm = () => {
         error?.response?.data?.message ||
         'Failed to submit KYC. Please try again.'
       );
+
+    }
+    finally {
+
+      setLoading(false);
 
     }
 
@@ -138,6 +160,7 @@ const DetectiveForm = () => {
           <StepFourDetectiveForm
             data={data}
             handleChange={handleChange}
+            handleFile={handleFile}
           />
         );
 
@@ -180,7 +203,12 @@ const DetectiveForm = () => {
             <h1 className="text-2xl font-bold">Detective KYC Application</h1>
             <p className="text-sm text-gray-300">Complete your verification to join our team</p>
           </div>
-          <button className="text-sm text-gray-400">Cancel</button>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-sm text-gray-400 hover:text-white transition"
+          >
+            Cancel
+          </button>
         </div>
 
         <StepIndicator
@@ -217,6 +245,38 @@ const DetectiveForm = () => {
           </div>
         </div>
       </div>
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+
+          <div className="bg-[#1a2535] rounded-2xl w-full max-w-md p-6">
+
+            <div className="flex justify-center mb-5">
+              <div className="w-16 h-16 rounded-full border-4 border-green-500 flex items-center justify-center">
+                <CheckCircle size={32} className="text-green-500" />
+              </div>
+            </div>
+
+            <h2 className="text-xl font-bold text-center text-white mb-2">
+              Application Submitted Successfully!
+            </h2>
+
+            <p className="text-sm text-gray-400 text-center mb-6">
+              Your detective KYC application is under review.
+            </p>
+
+            <button
+              onClick={() =>
+                navigate(ROUTES.DETECTIVE_DASHBOARD)
+              }
+              className="w-full py-3 bg-green-600 rounded-lg"
+            >
+              Return to Dashboard
+            </button>
+
+          </div>
+
+        </div>
+      )}
     </div>
   )
 }
