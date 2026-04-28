@@ -367,20 +367,27 @@ body {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
 textarea:-webkit-autofill,
-select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #0b1120 inset !important;
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
   -webkit-text-fill-color: white !important;
   caret-color: white;
-  transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
-/* Signup page - transparent autofill */
-.autofill-transparent:-webkit-autofill,
-.autofill-transparent:-webkit-autofill:hover,
-.autofill-transparent:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+/* Dark bg pages - override to match dark background */
+.autofill-dark:-webkit-autofill,
+.autofill-dark:-webkit-autofill:hover,
+.autofill-dark:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #0b1120 inset !important;
+  box-shadow: 0 0 0px 1000px #0b1120 inset !important;
   -webkit-text-fill-color: white !important;
   caret-color: white;
-  transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s !important;
 }

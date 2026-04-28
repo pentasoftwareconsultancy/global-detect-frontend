@@ -177,7 +177,7 @@ const Login = () => {
 
   const labelStyle = { fontSize: '14px', fontWeight: 500, lineHeight: '21px', letterSpacing: '0px', color: '#FFF3EA' };
   const inputStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '44px', fontSize: '14px' };
-  const inputClass = "w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
+  const inputClass = "autofill-transparent w-full bg-transparent border border-white/60 pr-4 text-white outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:tracking-[0px] placeholder:text-white/60";
 
   const selectedLabel = LANGUAGES.find(l => l.key === language)?.label || 'English';
 
@@ -335,7 +335,7 @@ const Login = () => {
                   onChange={handleInputChange}
                   disabled={loading || isPasswordDisabled}
                   style={{ borderRadius: '14px', borderWidth: '2px', paddingLeft: '44px', height: '49px' }}
-                  className={`w-full border disabled:opacity-50 border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  className={`autofill-transparent w-full border disabled:opacity-50 border-white/60 pr-11 text-white bg-transparent outline-none focus:border-white placeholder:font-montserrat placeholder:font-medium placeholder:text-[14px] placeholder:leading-[21px] placeholder:text-white/60 ${isPasswordDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={loading} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 disabled:opacity-50">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

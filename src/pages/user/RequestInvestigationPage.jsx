@@ -14,6 +14,7 @@ import Step6EvidenceSupportingInformation from '../../components/user/request-in
 import Step7LegalConsentDeclaration from '../../components/user/request-investigation/Step7LegalConsentDeclaration';
 import Step8ReviewSubmit from '../../components/user/request-investigation/Step8ReviewSubmit';
 import SuccessScreen from '../../components/user/request-investigation/SuccessScreen';
+import { authService } from '../../core/services/auth.service';
 
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -129,7 +130,7 @@ const RequestInvestigationPage = () => {
 
   // Evidence
   evidence_type: formData.evidenceType,
-existing_evidence: formData.existingEvidence,
+  existing_evidence: formData.existingEvidence,
 
   // Consent
   agreement_confirmed: formData.legalConsent,
@@ -164,10 +165,7 @@ existing_evidence: formData.existingEvidence,
       };
 
       // STEP 1: SAVE DRAFT
-      const draftRes = await axios.post(
-        ServerUrl.DRAFT_REQUEST_FORM_API,
-        payload
-      );
+      const draftRes = await authService.createDraftRequestForm(payload);
 
       const formId =
         draftRes.data?.id ||
@@ -181,10 +179,7 @@ existing_evidence: formData.existingEvidence,
 
       // STEP 2: SUBMIT IF LOGGED IN
       if (isLoggedIn) {
-        await axios.post(
-          ServerUrl.CREATE_REQUEST_FORM_API,
-          { form_id: formId }
-        );
+        await authService.createRequestForm({ form_id: formId });
       }
 
       setSubmitted(true);
