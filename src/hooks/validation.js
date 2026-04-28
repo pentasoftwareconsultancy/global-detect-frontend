@@ -1,8 +1,8 @@
-// Email validation
+// Email validation — must end with @gmail.com
 export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email) return "Email is required";
-  if (!emailRegex.test(email)) return "Enter valid email address";
+  if (!email.endsWith('@gmail.com')) return "Email must end with @gmail.com";
+  if (!/^[^\s@]+@gmail\.com$/.test(email)) return "Enter a valid Gmail address";
   return "";
 };
 
@@ -98,6 +98,16 @@ export const restrictToLetters = (value) =>
 // Restrict to digits only with max length — for Phone(10), Pincode(6), Aadhaar(12)
 export const restrictToDigits = (value, maxLength) =>
   value.replace(/\D/g, '').slice(0, maxLength);
+
+// Restrict email: must start with letter/digit, only allow valid email chars
+export const restrictEmail = (value) => {
+  // If empty, allow it
+  if (!value) return '';
+  // If first char is not letter/digit, block it
+  if (value.length === 1 && !/^[a-zA-Z0-9]$/.test(value)) return '';
+  // Allow only valid email characters: letters, digits, dot, underscore, percent, plus, minus, @
+  return value.replace(/[^a-zA-Z0-9._%+\-@]/g, '');
+};
 
 // Detect if value contains invalid chars for letters-only fields
 export const hasInvalidLetterChars = (value) => /[^A-Za-z\s]/.test(value);
@@ -208,6 +218,20 @@ export const validateConsent = (checked) => {
   if (!checked) return "You must accept the legal consent to proceed";
   return "";
 };
+
+// ---------------- SSN FORMATTER ---------------------
+// Auto-formats digits into XXX-XX-XXXX as user types
+export const formatSSN = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 9);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 5) return `${digits.slice(0,3)}-${digits.slice(3)}`;
+  return `${digits.slice(0,3)}-${digits.slice(3,5)}-${digits.slice(5)}`;
+};
+
+// ---------------- LICENSE NUMBER FORMATTER ---------------------
+// Allows alphanumeric + hyphens only, max 20 chars
+export const formatLicenseNumber = (value) =>
+  value.replace(/[^A-Za-z0-9-]/g, '').slice(0, 20).toUpperCase();
 
 // ---------------- SSN ---------------------
 export const validateSSN = (ssn) => {

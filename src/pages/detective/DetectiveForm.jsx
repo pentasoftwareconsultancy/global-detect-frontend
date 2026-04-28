@@ -43,7 +43,13 @@ const DetectiveForm = () => {
     const file = e.target.files[0];
     if (!file) return;
     setData(prev => ({ ...prev, documents: { ...prev.documents, [key]: file.name } }));
+    // clear the error for this doc key immediately
+    const errKey = key === 'address' ? 'address_doc' : key;
+    setErrors(prev => { const c = { ...prev }; delete c[errKey]; return c; });
   };
+
+  // clears a single error key when user fixes a field
+  const clearError = (key) => setErrors(prev => { const c = { ...prev }; delete c[key]; return c; });
 
   const handleChange = (section, field, value, idx) => {
     setData(prev => {
@@ -129,13 +135,13 @@ const DetectiveForm = () => {
 
   const renderStep = () => {
     switch (activeStep) {
-      case 0: return <StepOneDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
-      case 1: return <StepTwoDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
-      case 2: return <StepThreeDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
+      case 0: return <StepOneDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
+      case 1: return <StepTwoDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
+      case 2: return <StepThreeDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       case 3: return <StepFourDetectiveForm data={data} handleChange={handleChange} handleFile={handleFile} errors={errors} />;
-      case 4: return <StepFiveDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
-      case 5: return <StepSixDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
-      case 6: return <StepSevenDetectiveForm data={data} handleChange={handleChange} errors={errors} />;
+      case 4: return <StepFiveDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
+      case 5: return <StepSixDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
+      case 6: return <StepSevenDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       default: return null;
     }
   };

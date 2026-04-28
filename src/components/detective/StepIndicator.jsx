@@ -50,7 +50,7 @@ const StepIndicator = ({ steps, active }) => {
                       ? 'bg-green-500 border-green-500'
                       : current
                       ? 'bg-[#D92B3A] border-[#D92B3A]'
-                      : 'bg-[#0f1c2a] border-white/20'
+                      : 'bg-[#2D3E4D] border-white/20'
                   }`}
                 >
 
