@@ -1,8 +1,8 @@
-// Email validation
+// Email validation — must end with @gmail.com
 export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email) return "Email is required";
-  if (!emailRegex.test(email)) return "Enter valid email address";
+  if (!email.endsWith('@gmail.com')) return "Email must end with @gmail.com";
+  if (!/^[^\s@]+@gmail\.com$/.test(email)) return "Enter a valid Gmail address";
   return "";
 };
 
@@ -46,6 +46,13 @@ export const validatePhone = (phone) => {
   return "";
 };
 
+// Generic phone validation (any 10-digit number)
+export const validatePhoneGeneric = (phone) => {
+  if (!phone) return "Phone number is required";
+  if (!/^\d{10}$/.test(phone)) return "Enter a valid 10-digit phone number";
+  return "";
+};
+
 // Required field (generic)
 export const validateRequired = (value, fieldName) => {
   const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -79,6 +86,48 @@ export const pinTypingPattern = /^\d{0,6}$/;
 
 // Phone typing pattern
 export const numberTypingPattern = /^\d{0,10}$/;
+
+// ============================================================
+// INPUT RESTRICTION HANDLERS (reusable across all forms)
+// ============================================================
+
+// Restrict to letters & spaces only — for Name, City, State, Country
+export const restrictToLetters = (value) =>
+  value.replace(/[^A-Za-z\s]/g, '');
+
+// Restrict to digits only with max length — for Phone(10), Pincode(6), Aadhaar(12)
+export const restrictToDigits = (value, maxLength) =>
+  value.replace(/\D/g, '').slice(0, maxLength);
+
+// Restrict email: must start with letter/digit, only allow valid email chars
+export const restrictEmail = (value) => {
+  // If empty, allow it
+  if (!value) return '';
+  // If first char is not letter/digit, block it
+  if (value.length === 1 && !/^[a-zA-Z0-9]$/.test(value)) return '';
+  // Allow only valid email characters: letters, digits, dot, underscore, percent, plus, minus, @
+  return value.replace(/[^a-zA-Z0-9._%+\-@]/g, '');
+};
+
+// Detect if value contains invalid chars for letters-only fields
+export const hasInvalidLetterChars = (value) => /[^A-Za-z\s]/.test(value);
+
+// Detect if value contains non-digit chars
+export const hasInvalidDigitChars = (value) => /\D/.test(value);
+
+// Handle paste for letters-only fields
+export const handlePasteLettersOnly = (e, onChange) => {
+  e.preventDefault();
+  const pasted = e.clipboardData.getData('text').replace(/[^A-Za-z\s]/g, '');
+  onChange(pasted);
+};
+
+// Handle paste for digits-only fields
+export const handlePasteDigitsOnly = (e, maxLength, onChange) => {
+  e.preventDefault();
+  const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, maxLength);
+  onChange(pasted);
+};
 
 // Indian PIN code validation
 export const validatePincode = (pincode) => {
@@ -167,5 +216,67 @@ export const validateSelect = (value, fieldName) => {
 // ---------------- LEGAL CONSENT ---------------------
 export const validateConsent = (checked) => {
   if (!checked) return "You must accept the legal consent to proceed";
+  return "";
+};
+
+// ---------------- SSN FORMATTER ---------------------
+// Auto-formats digits into XXX-XX-XXXX as user types
+export const formatSSN = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 9);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 5) return `${digits.slice(0,3)}-${digits.slice(3)}`;
+  return `${digits.slice(0,3)}-${digits.slice(3,5)}-${digits.slice(5)}`;
+};
+
+// ---------------- LICENSE NUMBER FORMATTER ---------------------
+// Allows alphanumeric + hyphens only, max 20 chars
+export const formatLicenseNumber = (value) =>
+  value.replace(/[^A-Za-z0-9-]/g, '').slice(0, 20).toUpperCase();
+
+// ---------------- SSN ---------------------
+export const validateSSN = (ssn) => {
+  if (!ssn) return "Social Security Number is required";
+  if (!/^\d{3}-\d{2}-\d{4}$/.test(ssn)) return "Enter valid SSN in format XXX-XX-XXXX";
+  return "";
+};
+
+// ---------------- DETECTIVE LICENSE NUMBER ---------------------
+export const validateLicenseNumber = (value) => {
+  if (!value || !value.trim()) return "License number is required";
+  if (value.trim().length < 4) return "Enter a valid license number";
+  return "";
+};
+
+// ---------------- BANK ACCOUNT NUMBER ---------------------
+export const validateAccountNumber = (value) => {
+  if (!value || !value.trim()) return "Account number is required";
+  if (!/^\d{6,17}$/.test(value.trim())) return "Enter a valid account number (6-17 digits)";
+  return "";
+};
+
+// ---------------- ROUTING NUMBER ---------------------
+export const validateRoutingNumber = (value) => {
+  if (!value || !value.trim()) return "Routing number is required";
+  if (!/^\d{9}$/.test(value.trim())) return "Enter a valid 9-digit routing number";
+  return "";
+};
+
+// ---------------- LICENSE DATES ---------------------
+export const validateLicenseIssueDate = (value) => {
+  if (!value) return "License issue date is required";
+  if (new Date(value) > new Date()) return "Issue date cannot be in the future";
+  return "";
+};
+
+export const validateLicenseExpiryDate = (value, issueDate) => {
+  if (!value) return "License expiry date is required";
+  if (issueDate && new Date(value) <= new Date(issueDate)) return "Expiry date must be after issue date";
+  return "";
+};
+
+// ---------------- ZIP CODE ---------------------
+export const validateZip = (value) => {
+  if (!value || !value.trim()) return "ZIP/Postal code is required";
+  if (value.trim().length < 3) return "Enter a valid ZIP/Postal code";
   return "";
 };

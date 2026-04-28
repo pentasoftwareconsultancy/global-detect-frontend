@@ -9,8 +9,11 @@ import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { authService } from '../../core/services/auth.service';
 import {
-  validateOnlyCharacters, validateEmail, validatePhone,
-  validatePassword, validateConfirmPassword, validateAadhaar, validateRequired
+  validateOnlyCharacters, validateEmail, validatePhoneGeneric,
+  validatePassword, validateConfirmPassword, validateAadhaar,
+  restrictToLetters, restrictToDigits,
+  hasInvalidLetterChars, hasInvalidDigitChars,
+  handlePasteLettersOnly, handlePasteDigitsOnly
 } from '../../hooks/validation';
 
 const LANGUAGES = [
@@ -79,15 +82,43 @@ const Signup = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
+    let cleaned = value;
+    if (name === 'name' || name === 'city') {
+      if (hasInvalidLetterChars(value)) {
+        setFieldErrors(prev => ({ ...prev, [name]: 'Please enter only letters' }));
+      }
+      cleaned = restrictToLetters(value);
+      if (!hasInvalidLetterChars(value)) validateField(name, cleaned);
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+    if (name === 'phone') {
+      if (hasInvalidDigitChars(value)) {
+        setFieldErrors(prev => ({ ...prev, phone: 'Please enter only numbers' }));
+      }
+      cleaned = restrictToDigits(value, 10);
+      if (!hasInvalidDigitChars(value)) validateField('phone', cleaned);
+      setFormData(prev => ({ ...prev, phone: cleaned }));
+      return;
+    }
+    if (name === 'aadharNumber') {
+      if (hasInvalidDigitChars(value)) {
+        setFieldErrors(prev => ({ ...prev, aadharNumber: 'Only digits are allowed' }));
+      }
+      cleaned = restrictToDigits(value, 12);
+      if (!hasInvalidDigitChars(value)) validateField('aadharNumber', cleaned);
+      setFormData(prev => ({ ...prev, aadharNumber: cleaned }));
+      return;
+    }
+    setFormData((prev) => ({ ...prev, [name]: cleaned }));
+    validateField(name, cleaned);
   };
 
   const validateField = (name, value) => {
     let error = '';
     if (name === 'name') error = validateOnlyCharacters(value, 'Name');
     else if (name === 'email') error = validateEmail(value);
-    else if (name === 'phone') error = validatePhone(value);
+    else if (name === 'phone') error = validatePhoneGeneric(value);
     else if (name === 'password') error = validatePassword(value);
     else if (name === 'confirmPassword') error = validateConfirmPassword(formData.password, value);
     else if (name === 'aadharNumber') error = validateAadhaar(value);
@@ -253,6 +284,7 @@ const Signup = () => {
                       value={formData[field.name]}
                       onChange={handleInputChange}
                       onBlur={e => validateField(e.target.name, e.target.value)}
+                      onPaste={field.name === 'name' ? e => handlePasteLettersOnly(e, v => { setFormData(p => ({...p, name: v})); validateField('name', v); }) : field.name === 'phone' ? e => handlePasteDigitsOnly(e, 10, v => { setFormData(p => ({...p, phone: v})); validateField('phone', v); }) : undefined}
                       disabled={loading}
                       placeholder={field.placeholder} 
                       style={inputStyle} 
@@ -269,7 +301,7 @@ const Signup = () => {
               <label style={labelStyle}>City</label>
               <div className="relative mt-1">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 z-10" size={16} />
-                <input type="text" name="city" value={formData.city} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} disabled={loading} placeholder="Enter city" style={inputStyle} className={inputClass} />
+                <input type="text" name="city" value={formData.city} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} onPaste={e => handlePasteLettersOnly(e, v => { setFormData(p => ({...p, city: v})); validateField('city', v); })} disabled={loading} placeholder="Enter city" style={inputStyle} className={inputClass} />
               </div>
               {fieldErrors.city && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.city}</p>}
             </div>
@@ -305,7 +337,7 @@ const Signup = () => {
               <label style={labelStyle}>Aadhaar Card Number</label>
               <div className="relative mt-1">
                 <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type="text" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} placeholder="Enter your Aadhaar card number" style={inputStyle} className={inputClass} />
+                <input type="text" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} onBlur={e => validateField(e.target.name, e.target.value)} onPaste={e => handlePasteDigitsOnly(e, 12, v => { setFormData(p => ({...p, aadharNumber: v})); validateField('aadharNumber', v); })} placeholder="Enter your Aadhaar card number" style={inputStyle} className={inputClass} />
               </div>
               {fieldErrors.aadharNumber && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.aadharNumber}</p>}
             </div>
