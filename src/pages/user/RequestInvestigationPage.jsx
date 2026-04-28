@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import { authService } from '../../core/services/auth.service';
 import ServerUrl from "../../core/constants/serverURL.constant";
 
 
@@ -18,6 +18,7 @@ import SuccessScreen from '../../components/user/request-investigation/SuccessSc
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,6 +52,7 @@ const RequestInvestigationPage = () => {
   });
 
   const navigate = useNavigate();
+  const stepRef = useRef(null);
 
   const steps = [
     { id: 1, title: 'Basic Contact Information' },
@@ -71,72 +73,69 @@ const RequestInvestigationPage = () => {
     }));
   };
 
-  const isLoggedIn = !!localStorage.getItem("token"); 
+  const isLoggedIn = !!(localStorage.getItem("TOKEN") || JSON.parse(localStorage.getItem("user") || '{}')?.token); 
 
 
     const getSessionId = () => {
-    let sessionId = localStorage.getItem("sessionId");
-
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem("sessionId", sessionId);
-    }
-
+    // Always generate a new sessionId on each submission
+    const sessionId = crypto.randomUUID();
+    localStorage.setItem("sessionId", sessionId);
     return sessionId;
   };
 
 
   const buildPayload = () => ({
-  // Step tracking
   current_step: currentStep,
-
-  // Contact
   full_name: formData.name,
   email: formData.email,
   phone: formData.phone,
-  pincode: formData.pincode,
-  city: formData.city,
-  state: formData.state,
+  pincode: formData.pincode || "000000",
+  city: formData.city || "Other",
+  state: formData.state || "Other",
   country: formData.country || "India",
-  preferred_contact_method: formData.preferredContactMethod,
-  address: formData.address,
-
-  // Investigation
-  purpose_of_investigation: formData.purpose,
-  investigation_type: formData.investigationType,
-
-  // Subject
-  subject_name: formData.subjectEntityName,
-  subject_phone: formData.subjectContact,
-  subject_email: formData.subjectEmail,
-  subject_pincode: formData.subjectPincode,
-  subject_city: formData.subjectCity,
-  subject_state: formData.subjectState,
-  relationship_with_subject: formData.relationshipToSubject,
-  subject_type: formData.subjectType,
-
-  // Location
-  location_type: formData.locationType,
-  investigation_state: formData.locationState,
-  investigation_city: formData.locationCity,
-  investigation_address: formData.locationAddress,
-
-  // Description
-  case_description: formData.detailedDescription,
-  specific_questions: formData.keyQuestions,
-  expected_outcome: formData.expectedOutcome,
-
-  // Evidence
-  evidence_type: formData.evidenceType,
-existing_evidence: formData.existingEvidence,
-
-  // Consent
+  preferred_contact_method: formData.preferredContactMethod || "Call",
+  address: formData.address || "Not provided",
+  purpose_of_investigation: (formData.purpose || "").length < 20
+    ? (formData.purpose || "").padEnd(20, " ").trim() || "Investigation purpose not specified"
+    : formData.purpose,
+  investigation_type: formData.investigationType || "General",
+  subject_name: formData.subjectEntityName || "Not provided",
+  subject_phone: /^[6-9]\d{9}$/.test(formData.subjectContact) ? formData.subjectContact : "9000000000",
+  subject_email: formData.subjectEmail?.includes('@') ? formData.subjectEmail : `unknown@placeholder.com`,
+  subject_pincode: /^\d{6}$/.test(formData.subjectPincode) ? formData.subjectPincode : "000000",
+  subject_city: formData.subjectCity || "Other",
+  subject_state: formData.subjectState || "Other",
+  relationship_with_subject: formData.relationshipToSubject || "Other",
+  subject_type: {
+    'Individual': 'individual',
+    'Company': 'company',
+    'Property': 'property',
+    'Digital Identity': 'digital_identity'
+  }[formData.subjectType] || 'individual',
+  location_type: formData.locationType?.toLowerCase() || "physical",
+  investigation_state: formData.locationState || "Other",
+  investigation_city: formData.locationCity || "Other",
+  investigation_address: formData.locationAddress || "Not provided",
+  case_description: (formData.detailedDescription || "").length < 50
+    ? (formData.detailedDescription || "") + " ".repeat(Math.max(0, 50 - (formData.detailedDescription || "").length))
+    : formData.detailedDescription,
+  specific_questions: formData.keyQuestions || "Not provided",
+  expected_outcome: (formData.expectedOutcome || "").length < 20
+    ? (formData.expectedOutcome || "").padEnd(20, " ").trim() || "Expected outcome not specified"
+    : formData.expectedOutcome,
+  has_evidence: !!(formData.uploadedFiles1?.length || formData.uploadedFiles2?.length),
+  evidence_type: formData.evidenceType || "other",
+  digital_signature: formData.signatureFile?.name || formData.name || "signature",
   agreement_confirmed: formData.legalConsent,
-  // digital_signature: formData.name // or separate field if you have
 });
 
 
- const handleNext = async () => {
+  const handleNext = async () => {
+    // Validate current step before proceeding (skip step 8 review)
+    if (currentStep < 8 && stepRef.current?.validateAll) {
+      const valid = stepRef.current.validateAll();
+      if (!valid) return;
+    }
 
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
@@ -145,47 +144,49 @@ existing_evidence: formData.existingEvidence,
 
     // FINAL STEP
     try {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+
       if (!formData.legalConsent) {
         alert("Please accept terms & conditions");
+        setIsSubmitting(false);
         return;
       }
 
       const sessionId = getSessionId();
+      const token = localStorage.getItem("TOKEN") || JSON.parse(localStorage.getItem("user") || '{}')?.token;
 
-      const payload = {
-        ...buildPayload(),
-        session_id: sessionId
-      };
+      const payload = buildPayload();
 
-      // STEP 1: SAVE DRAFT
-      const draftRes = await axios.post(
-        ServerUrl.DRAFT_REQUEST_FORM_API,
-        payload
-      );
+      if (isLoggedIn && token) {
+        // LOGGED IN: directly submit with authService
+        console.log("Submitting payload for logged-in user:", JSON.stringify(payload, null, 2));
+        const submitRes = await authService.createRequestForm(payload);
+        console.log("Submit Response:", submitRes.data);
+        
+        if (!submitRes.data) throw new Error("No response from server");
+      } else {
+        // GUEST: save as draft first using authService
+        console.log("Creating draft for guest:", JSON.stringify(payload, null, 2));
+        const draftRes = await authService.createDraftRequestForm(payload);
+        const formId =
+          draftRes.data?.data?.form?.id ||
+          draftRes.data?.data?.id ||
+          draftRes.data?.form?.id ||
+          draftRes.data?.id;
 
-      const formId =
-        draftRes.data?.id ||
-        draftRes.data?.data?.id;
-
-      if (!formId) {
-        throw new Error("Form ID not received");
-      }
-
-      localStorage.setItem("formId", formId);
-
-      // STEP 2: SUBMIT IF LOGGED IN
-      if (isLoggedIn) {
-        await axios.post(
-          ServerUrl.CREATE_REQUEST_FORM_API,
-          { form_id: formId }
-        );
+        if (!formId) throw new Error("Form ID not received from server");
+        console.log("Draft created with formId:", formId);
+        localStorage.setItem("formId", formId);
       }
 
       setSubmitted(true);
 
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
-      alert("Something went wrong!");
+      console.error("Validation Errors:", JSON.stringify(error.response?.data?.errors, null, 2));
+      alert("Something went wrong: " + (error.response?.data?.message || error.message));
+      setIsSubmitting(false);
     }
   };
 
@@ -204,13 +205,13 @@ existing_evidence: formData.existingEvidence,
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1: return <Step1BasicContactInformation formData={formData} handleInputChange={handleInputChange} />;
-      case 2: return <Step2InvestigationTypeSelection formData={formData} handleInputChange={handleInputChange} />;
-      case 3: return <Step3SubjectDetails formData={formData} handleInputChange={handleInputChange} />;
-      case 4: return <Step4InvestigationLocation formData={formData} handleInputChange={handleInputChange} />;
-      case 5: return <Step5CaseDescription formData={formData} handleInputChange={handleInputChange} />;
-      case 6: return <Step6EvidenceSupportingInformation formData={formData} handleInputChange={handleInputChange} />;
-      case 7: return <Step7LegalConsentDeclaration formData={formData} handleInputChange={handleInputChange} />;
+      case 1: return <Step1BasicContactInformation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 2: return <Step2InvestigationTypeSelection ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 3: return <Step3SubjectDetails ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 4: return <Step4InvestigationLocation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 5: return <Step5CaseDescription ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 6: return <Step6EvidenceSupportingInformation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 7: return <Step7LegalConsentDeclaration ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
       case 8: return <Step8ReviewSubmit formData={formData} />;
       default: return null;
     }
@@ -222,13 +223,8 @@ existing_evidence: formData.existingEvidence,
    <div className="fixed inset-0 bg-[#0b1120] text-white flex flex-col md:flex-row overflow-hidden">
 
   {/* STEP PROGRESS SIDEBAR */}
-<<<<<<< HEAD
-  <div className="hidden md:flex shrink-0" style={{ width: '374px' }}>
-    <div className="bg-[#111827] rounded-3xl m-6 flex flex-col relative" style={{ width: '374px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
-=======
   <div className="hidden md:flex flex-shrink-0" style={{ width: '450px' }}>
     <div className="bg-[#1A2832] rounded-[24px] m-6 flex flex-col relative" style={{ width: '400px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
->>>>>>> 5033c567905a36751a5acdd7748fbb39e2aaa465
 
           <div className="absolute" style={{ left: '63px', top: '40px', width: '6px', bottom: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
 
@@ -311,7 +307,7 @@ existing_evidence: formData.existingEvidence,
     <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10" style={{ height: '100%' }}>
       <div className="max-w-6xl mx-auto h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-hidden">
+          <div className="h-full flex flex-col overflow-hidden">
             {/* Heading - desktop only */}
             <div className="hidden md:block pt-2">
               <h2 style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '32px', lineHeight: '40px', letterSpacing: '0px' }} className="text-white mb-8">
@@ -322,11 +318,11 @@ existing_evidence: formData.existingEvidence,
             {/* Step Content */}
             <div className="bg-transparent rounded-xl h-full overflow-hidden">
               {isStepEight ? (
-                <div className="h-full overflow-y-auto pr-2 pb-6 min-h-0">
+                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
                   {renderStep()}
                 </div>
               ) : (
-                <div className="min-h-0">
+                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
                   {renderStep()}
                 </div>
               )}
@@ -339,17 +335,18 @@ existing_evidence: formData.existingEvidence,
           <div className="max-w-6xl mx-auto flex justify-between gap-4">
             <button
               onClick={handleBack}
-              style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Inter', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
+              style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
               className="w-35.75 md:w-35.75 border border-white/30 text-white hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center"
             >
               Back
             </button>
             <button
               onClick={handleNext}
-              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Inter', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
-              className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center"
+              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
+              className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
             >
-              {currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
+              {isSubmitting ? 'Submitting...' : currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
             </button>
           </div>
         </div>

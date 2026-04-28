@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "../../core/constants/routes.constant";
 import { authService } from "../../core/services/auth.service";
 
 const UserDashboardPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [investigations, setInvestigations] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // ✅ ON LOAD
+  // ✅ Refetch every time dashboard is visited
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [location.key]);
 
   const fetchAllData = async () => {
     try {
@@ -25,8 +26,32 @@ const UserDashboardPage = () => {
         authService.getCaseStats(),
       ]);
 
-      setInvestigations(casesRes?.data || []);
-      setStats(statsRes?.data || {});
+      console.log("RAW casesRes.data:", JSON.stringify(casesRes?.data, null, 2));
+
+      const raw = casesRes?.data?.data;
+      let formsData = [];
+
+      if (Array.isArray(raw)) {
+        formsData = raw;
+      } else if (raw?.cases && Array.isArray(raw.cases)) {
+        formsData = raw.cases;
+      } else if (raw?.forms && Array.isArray(raw.forms)) {
+        formsData = raw.forms;
+      } else if (raw?.requests && Array.isArray(raw.requests)) {
+        formsData = raw.requests;
+      } else if (raw?.data && Array.isArray(raw.data)) {
+        formsData = raw.data;
+      }
+
+      console.log("Final formsData:", formsData);
+
+      const statsData = {
+        activeCases: statsRes?.data?.data?.activeCases || 0,
+        totalCases: statsRes?.data?.data?.totalCases || formsData.length || 0,
+      };
+
+      setInvestigations(formsData);
+      setStats(statsData);
     } catch (error) {
       console.error("API Error:", error);
     } finally {
@@ -101,8 +126,8 @@ const UserDashboardPage = () => {
 
         {/* IMAGE */}
         <img
-          src={item.image || "https://via.placeholder.com/150"}
-          alt={item.title || "No title"}
+          src={item.image || item.evidence_image || "https://via.placeholder.com/150"}
+          alt={item.investigation_type || "Investigation"}
           className="investigation-image"
         />
 
@@ -113,14 +138,14 @@ const UserDashboardPage = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
-                  {item.priority || "High"} Priority
+                  {item.priority || item.investigation_type || "General"}
                 </span>
                 <p className="text-[11px] text-gray-400">
-                  Case ID: #{item.id || "N/A"}
+                  Case ID: #{item.form_number || item.id || "N/A"}
                 </p>
               </div>
               <h3 className="font-semibold text-white text-lg">
-                {item.title || "No Title"}
+                {item.title || item.purpose_of_investigation || item.investigation_type || "Investigation Request"}
               </h3>
             </div>
 
@@ -150,14 +175,14 @@ const UserDashboardPage = () => {
             </div>
 
             <p className="text-xs text-gray-400 mt-2">
-              {item.status || "No status"}
+              {item.status || item.case_status || "Pending"}
             </p>
           </div>
 
           {/* FOOTER */}
           <div className="investigation-footer">
             <p className="text-xs text-gray-400">
-              {item.daysRemaining || "N/A"}
+              {item.daysRemaining || item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A"}
             </p>
 
             <button
