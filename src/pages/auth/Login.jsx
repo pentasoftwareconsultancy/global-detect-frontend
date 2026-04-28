@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import GlobalLogo from '../../assets/Global-logo.png';
 import NoiseBg from '../../assets/noise.png';
 import UserIcon from '../../assets/user_icon.png';
@@ -29,6 +30,28 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // After login: link any guest forms saved before login, then redirect
+  const handlePostLogin = async (role) => {
+    const routeMap = {
+      user: ROUTES.USER_DASHBOARD,
+      detective: ROUTES.DETECTIVE_DASHBOARD,
+      admin: ROUTES.ADMIN_DASHBOARD,
+    };
+    const destination = routeMap[role] || ROUTES.USER_DASHBOARD;
+
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId) {
+      try {
+        await authService.linkAllGuestForms();
+      } catch (e) {
+        console.warn('Could not link guest forms:', e.message);
+      }
+    }
+
+    navigate(destination);
+  };
 
   const phoneDigits = formData.emailOrPhone.replace(/\D/g, '');
   const isUserPhone = accountType === 'User' && phoneDigits.length >= 10;
@@ -41,10 +64,54 @@ const Login = () => {
     }
   }, [accountType, phoneDigits.length]);
 
+  // Improved input handler from friend's version — digit restriction for phone/OTP
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+    let cleaned = type === 'checkbox' ? checked : value;
+
+    if (name === 'emailOrPhone') {
+      const isAllDigits = /^\d*$/.test(value);
+      const isEmail = value.includes('@') || /[a-zA-Z]/.test(value);
+
+      if (isAllDigits && value.length > 0) {
+        // Phone mode — restrict to 10 digits
+        cleaned = value.slice(0, 10);
+        if (value.length > 10) {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: 'Phone number cannot exceed 10 digits' }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+        }
+      } else if (isEmail) {
+        // Email mode — validate format in real-time
+        cleaned = value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value.includes('@') && !emailRegex.test(value)) {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: 'Enter a valid email address' }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+        }
+      } else {
+        cleaned = value;
+        setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+      }
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+
+    if (name === 'password' && otpSent) {
+      // OTP mode — digits only, max 6
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 6);
+      if (/[^\d]/.test(value)) {
+        setFieldErrors(prev => ({ ...prev, password: 'Please enter a valid 6-digit number' }));
+      } else {
+        setFieldErrors(prev => ({ ...prev, password: '' }));
+      }
+      setFormData(prev => ({ ...prev, password: digitsOnly }));
+      return;
+    }
+
+    setFormData(prev => ({ ...prev, [name]: cleaned }));
+    setFieldErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   // ========== CASE 1: Email + Password Login ==========
@@ -53,11 +120,7 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      const response = await authService.loginWithEmail(
-        formData.emailOrPhone,
-        formData.password
-      );
-
+      const response = await authService.loginWithEmail(formData.emailOrPhone, formData.password);
       const data = response.data;
       const token = data?.data?.token || data?.token || data?.accessToken;
       const user = data?.data?.user || data?.user || data?.data;
@@ -68,12 +131,7 @@ const Login = () => {
       localStorage.setItem('accountType', roleMap[accountType] || accountType.toLowerCase());
 
       const role = (user?.role || '').toLowerCase();
-      const routeMap = {
-        user: ROUTES.USER_DASHBOARD,
-        detective: ROUTES.DETECTIVE_DASHBOARD,
-        admin: ROUTES.ADMIN_DASHBOARD,
-      };
-      navigate(routeMap[role] || ROUTES.USER_DASHBOARD);
+      await handlePostLogin(role);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Login failed';
       setError(errorMsg);
@@ -110,11 +168,7 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      const response = await authService.loginVerifyOtp(
-        formData.emailOrPhone,
-        formData.password
-      );
-
+      const response = await authService.loginVerifyOtp(formData.emailOrPhone, formData.password);
       const data = response.data;
       const token = data?.data?.token || data?.token || data?.accessToken;
       const user = data?.data?.user || data?.user || data?.data;
@@ -128,12 +182,7 @@ const Login = () => {
       localStorage.removeItem('isFromLogin');
 
       const role = (user?.role || '').toLowerCase();
-      const routeMap = {
-        user: ROUTES.USER_DASHBOARD,
-        detective: ROUTES.DETECTIVE_DASHBOARD,
-        admin: ROUTES.ADMIN_DASHBOARD,
-      };
-      navigate(routeMap[role] || ROUTES.USER_DASHBOARD);
+      await handlePostLogin(role);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'OTP verification failed';
       setError(errorMsg);
@@ -165,10 +214,7 @@ const Login = () => {
     } else {
       const phoneErr = validatePhone(formData.emailOrPhone);
       if (phoneErr) { newErrors.emailOrPhone = phoneErr; setFieldErrors(newErrors); return; }
-      if (!otpSent) {
-        setError('Please click Get OTP first');
-        return;
-      }
+      if (!otpSent) { setError('Please click Get OTP first'); return; }
       if (!formData.password) { newErrors.password = 'Please enter OTP'; setFieldErrors(newErrors); return; }
       if (!/^\d{6}$/.test(formData.password)) { newErrors.password = 'Please enter a valid 6-digit OTP'; setFieldErrors(newErrors); return; }
       handlePhoneOtpLogin();
@@ -302,7 +348,17 @@ const Login = () => {
               <label style={labelStyle}>Email or Phone number</label>
               <div className="relative mt-1">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80" size={16} />
-                <input type="text" name="emailOrPhone" placeholder="Enter your email / phone number" value={formData.emailOrPhone} onChange={handleInputChange} disabled={loading} style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }} className={inputClass} autoComplete="off" />
+                <input
+                  type="text"
+                  name="emailOrPhone"
+                  placeholder="Enter your email / phone number"
+                  value={formData.emailOrPhone}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  style={{ ...inputStyle, backgroundColor: 'transparent', boxShadow: 'inset 0 0 0 1000px transparent' }}
+                  className={inputClass}
+                  autoComplete="off"
+                />
               </div>
               {fieldErrors.emailOrPhone && <p style={{ color: 'white', fontSize: '11px', marginTop: '4px', fontWeight: 500 }}>{fieldErrors.emailOrPhone}</p>}
               {shouldShowGetOtp && (
