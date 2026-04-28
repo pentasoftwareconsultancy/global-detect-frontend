@@ -8,7 +8,7 @@ import DetectiveIcon from '../../assets/detective_icon.png';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { useAuth } from '../../core/contexts/AuthContext';
 import { authService } from '../../core/services/auth.service';
-import { validateEmail, validatePhone } from '../../hooks/validation';
+import { validateEmail, validatePhone, restrictToDigits, hasInvalidDigitChars } from '../../hooks/validation';
 
 const LANGUAGES = [
   { key: 'English', label: 'English' },
@@ -43,7 +43,50 @@ const Login = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    let cleaned = type === 'checkbox' ? checked : value;
+
+    if (name === 'emailOrPhone') {
+      const isAllDigits = /^\d*$/.test(value);
+      const isEmail = value.includes('@') || /[a-zA-Z]/.test(value);
+
+      if (isAllDigits && value.length > 0) {
+        // Phone mode — restrict to 10 digits
+        cleaned = value.slice(0, 10);
+        if (value.length > 10) {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: 'Phone number cannot exceed 10 digits' }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+        }
+      } else if (isEmail) {
+        // Email mode — validate format in real-time
+        cleaned = value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value.includes('@') && !emailRegex.test(value)) {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: 'Enter a valid email address' }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+        }
+      } else {
+        cleaned = value;
+        setFieldErrors(prev => ({ ...prev, emailOrPhone: '' }));
+      }
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+
+    if (name === 'password' && otpSent) {
+      // OTP mode — digits only, max 6
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 6);
+      if (hasInvalidDigitChars(value)) {
+        setFieldErrors(prev => ({ ...prev, password: 'Please enter a valid 6-digit number' }));
+      } else {
+        setFieldErrors(prev => ({ ...prev, password: '' }));
+      }
+      setFormData(prev => ({ ...prev, password: digitsOnly }));
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: cleaned }));
     setFieldErrors((prev) => ({ ...prev, [name]: '' }));
   };
 

@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { validateOnlyCharacters, validateSelect } from '../../../hooks/validation';
+import { validateOnlyCharacters, validateSelect, restrictToLetters, hasInvalidLetterChars, handlePasteLettersOnly } from '../../../hooks/validation';
 
 const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
 const fieldStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '16px', fontFamily: 'Montserrat', fontWeight: 400, fontSize: '14px', color: 'white', backgroundColor: '#0b1120', WebkitTextFillColor: 'white' };
@@ -35,6 +35,16 @@ const Step2InvestigationTypeSelection = forwardRef(({ formData, handleInputChang
     }
   }));
 
+  const handlePurposeChange = (e) => {
+    const raw = e.target.value;
+    if (hasInvalidLetterChars(raw)) {
+      setErrors(prev => ({ ...prev, purpose: 'Please enter only letters' }));
+    }
+    const cleaned = restrictToLetters(raw);
+    handleInputChange({ target: { name: 'purpose', value: cleaned } });
+    if (!hasInvalidLetterChars(raw)) validate('purpose', cleaned);
+  };
+
   const handleChange = (e) => {
     handleInputChange(e);
     validate(e.target.name, e.target.value);
@@ -51,7 +61,8 @@ const Step2InvestigationTypeSelection = forwardRef(({ formData, handleInputChang
           style={{ ...textareaStyle, height: 'auto' }}
           className="w-full border border-white/20 placeholder:text-gray-500 focus:outline-none focus:border-white transition-colors resize-none flex-grow"
           value={formData.purpose || ''}
-          onChange={handleChange}
+          onChange={handlePurposeChange}
+          onPaste={e => handlePasteLettersOnly(e, v => handleInputChange({ target: { name: 'purpose', value: v } }))}
           onBlur={e => validate(e.target.name, e.target.value)}
         />
         {errors.purpose && <p className={errorClass}>{errors.purpose}</p>}
@@ -59,7 +70,9 @@ const Step2InvestigationTypeSelection = forwardRef(({ formData, handleInputChang
 
       <div className="space-y-2">
         <label style={labelStyle}>Investigation Type</label>
-        <select name="investigationType" style={fieldStyle} className={fieldClass} value={formData.investigationType || ''} onChange={handleChange} onBlur={e => validate(e.target.name, e.target.value)}>
+        <select name="investigationType" style={fieldStyle} className={fieldClass}
+          value={formData.investigationType || ''} onChange={handleChange}
+          onBlur={e => validate(e.target.name, e.target.value)}>
           <option value="" style={{ backgroundColor: '#0b1120', color: '#6B7280' }}>Select Investigation type</option>
           <option value="Personal" style={{ backgroundColor: '#0b1120' }}>Personal</option>
           <option value="Corporate" style={{ backgroundColor: '#0b1120' }}>Corporate</option>
