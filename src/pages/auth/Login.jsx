@@ -120,7 +120,7 @@ const Login = () => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Login failed';
       setError(errorMsg);
-      console.error('Email login error:', err);
+      console.log('Email login error:', err);
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ const Login = () => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to send OTP';
       setError(errorMsg);
-      console.error('Send OTP error:', err);
+      console.log('Send OTP error:', err);
     } finally {
       setLoading(false);
     }
@@ -180,7 +180,7 @@ const Login = () => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'OTP verification failed';
       setError(errorMsg);
-      console.error('Phone OTP login error:', err);
+      console.log('Phone OTP login error:', err);
     } finally {
       setLoading(false);
     }

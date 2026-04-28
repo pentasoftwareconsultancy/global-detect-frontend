@@ -13,6 +13,7 @@ const Badge = ({ text, color }) => (
   </span>
 );
 
+
 const AdminDetectiveKYC = () => {
   return (
     <div className="p-4 sm:p-6 montserrat text-white bg-[#08141B] min-h-screen">
