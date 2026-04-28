@@ -1,16 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState}from 'react';
+import { useEffect } from 'react';
 import { Mail, Phone, User as UserIcon } from 'lucide-react';
+
+import {authService} from '../../core/services/auth.service'; // adjust path
 
 const UserProfilePage = () => {
   const [formData, setFormData] = useState({
-    fullName: 'Sarah Johnson',
-    email: 'sarah@email.com',
-    phone: '+1-555-0102',
+    name: '',
+    email: '',
+    phone: '',
   });
 
   const [isEditing, setIsEditing] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+
+
+
+
+ // ✅ 1. GET PROFILE API
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const res = await authService.getProfile();
+
+      // 👉 adjust according to your API response
+      const data = res.data || {};
+      const name = data.name ?? '';
+      const email = data.email ?? '';
+      const phone = data.phone ?? '';
+
+      setFormData({
+        name,
+        email,
+        phone,
+      });
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  // INPUT CHANGE
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -20,9 +57,52 @@ const UserProfilePage = () => {
     setSaved(false);
   };
 
-  const handleSaveChanges = () => {
-    setSaved(true);
+  // ✅ 2. UPDATE PROFILE API
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+
+      const payload = {
+        name: formData.name ?? '',
+        email: formData.email ?? '',
+        phone: formData.phone ?? '',
+      };
+
+      await authService.updateProfile(payload);
+
+      setSaved(true);
+      setIsEditing(false);
+
+    } catch (err) {
+      console.error('Error updating profile:', err?.response?.data || err.message || err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // ✅ 3. DELETE PROFILE API
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete your account?");
+
+    if (!confirmDelete) return;
+
+    try {
+      setLoading(true);
+
+      await authService.deleteProfile();
+
+      alert("Account deleted successfully");
+
+      // 👉 redirect after delete
+      window.location.href = '/login';
+
+    } catch (err) {
+      console.error('Error deleting profile:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="w-full text-white">
@@ -45,7 +125,7 @@ const UserProfilePage = () => {
 
             <div className="flex-1 min-w-0">
               <p className="text-[18px] leading-[24px] font-semibold text-white truncate">
-                {formData.fullName}
+                {formData.name}
               </p>
               <p className="text-[14px] leading-[20px] text-gray-400 mt-1 truncate">
                 {formData.email}
@@ -74,8 +154,8 @@ const UserProfilePage = () => {
                   <UserIcon size={16} className="text-gray-400" />
                   <input
                     type="text"
-                    name="fullName"
-                    value={formData.fullName}
+                    name="name"
+                    value={formData.name ?? ''}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}
@@ -93,7 +173,7 @@ const UserProfilePage = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={formData.email ?? ''}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}
@@ -111,7 +191,7 @@ const UserProfilePage = () => {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone}
+                    value={formData.phone ?? ''}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     style={{ fontFamily: 'Montserrat', fontWeight: 400, fontStyle: 'normal', letterSpacing: '0px' }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -14,6 +14,7 @@ import Step6EvidenceSupportingInformation from '../../components/user/request-in
 import Step7LegalConsentDeclaration from '../../components/user/request-investigation/Step7LegalConsentDeclaration';
 import Step8ReviewSubmit from '../../components/user/request-investigation/Step8ReviewSubmit';
 import SuccessScreen from '../../components/user/request-investigation/SuccessScreen';
+import { authService } from '../../core/services/auth.service';
 
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,6 +52,7 @@ const RequestInvestigationPage = () => {
   });
 
   const navigate = useNavigate();
+  const stepRef = useRef(null);
 
   const steps = [
     { id: 1, title: 'Basic Contact Information' },
@@ -128,7 +130,7 @@ const RequestInvestigationPage = () => {
 
   // Evidence
   evidence_type: formData.evidenceType,
-existing_evidence: formData.existingEvidence,
+  existing_evidence: formData.existingEvidence,
 
   // Consent
   agreement_confirmed: formData.legalConsent,
@@ -137,6 +139,11 @@ existing_evidence: formData.existingEvidence,
 
 
  const handleNext = async () => {
+    // Validate current step before proceeding (skip step 8 review)
+    if (currentStep < 8 && stepRef.current?.validateAll) {
+      const valid = stepRef.current.validateAll();
+      if (!valid) return;
+    }
 
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
@@ -158,10 +165,7 @@ existing_evidence: formData.existingEvidence,
       };
 
       // STEP 1: SAVE DRAFT
-      const draftRes = await axios.post(
-        ServerUrl.DRAFT_REQUEST_FORM_API,
-        payload
-      );
+      const draftRes = await authService.createDraftRequestForm(payload);
 
       const formId =
         draftRes.data?.id ||
@@ -175,10 +179,7 @@ existing_evidence: formData.existingEvidence,
 
       // STEP 2: SUBMIT IF LOGGED IN
       if (isLoggedIn) {
-        await axios.post(
-          ServerUrl.CREATE_REQUEST_FORM_API,
-          { form_id: formId }
-        );
+        await authService.createRequestForm({ form_id: formId });
       }
 
       setSubmitted(true);
@@ -204,13 +205,13 @@ existing_evidence: formData.existingEvidence,
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1: return <Step1BasicContactInformation formData={formData} handleInputChange={handleInputChange} />;
-      case 2: return <Step2InvestigationTypeSelection formData={formData} handleInputChange={handleInputChange} />;
-      case 3: return <Step3SubjectDetails formData={formData} handleInputChange={handleInputChange} />;
-      case 4: return <Step4InvestigationLocation formData={formData} handleInputChange={handleInputChange} />;
-      case 5: return <Step5CaseDescription formData={formData} handleInputChange={handleInputChange} />;
-      case 6: return <Step6EvidenceSupportingInformation formData={formData} handleInputChange={handleInputChange} />;
-      case 7: return <Step7LegalConsentDeclaration formData={formData} handleInputChange={handleInputChange} />;
+      case 1: return <Step1BasicContactInformation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 2: return <Step2InvestigationTypeSelection ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 3: return <Step3SubjectDetails ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 4: return <Step4InvestigationLocation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 5: return <Step5CaseDescription ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 6: return <Step6EvidenceSupportingInformation ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
+      case 7: return <Step7LegalConsentDeclaration ref={stepRef} formData={formData} handleInputChange={handleInputChange} />;
       case 8: return <Step8ReviewSubmit formData={formData} />;
       default: return null;
     }
@@ -306,7 +307,7 @@ existing_evidence: formData.existingEvidence,
     <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10" style={{ height: '100%' }}>
       <div className="max-w-6xl mx-auto h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-hidden">
+          <div className="h-full flex flex-col overflow-hidden">
             {/* Heading - desktop only */}
             <div className="hidden md:block pt-2">
               <h2 style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '32px', lineHeight: '40px', letterSpacing: '0px' }} className="text-white mb-8">
@@ -317,11 +318,11 @@ existing_evidence: formData.existingEvidence,
             {/* Step Content */}
             <div className="bg-transparent rounded-xl h-full overflow-hidden">
               {isStepEight ? (
-                <div className="h-full overflow-y-auto pr-2 pb-6 min-h-0">
+                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
                   {renderStep()}
                 </div>
               ) : (
-                <div className="min-h-0">
+                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
                   {renderStep()}
                 </div>
               )}
@@ -334,14 +335,14 @@ existing_evidence: formData.existingEvidence,
           <div className="max-w-6xl mx-auto flex justify-between gap-4">
             <button
               onClick={handleBack}
-              style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Inter', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
+              style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
               className="w-35.75 md:w-35.75 border border-white/30 text-white hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center"
             >
               Back
             </button>
             <button
               onClick={handleNext}
-              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Inter', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
+              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
               className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center"
             >
               {currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
