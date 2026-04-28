@@ -1,8 +1,16 @@
 // Email validation — must end with @gmail.com
 export const validateEmail = (email) => {
   if (!email) return "Email is required";
-  if (!email.endsWith('@gmail.com')) return "Email must end with @gmail.com";
-  if (!/^[^\s@]+@gmail\.com$/.test(email)) return "Enter a valid Gmail address";
+
+  email = email.trim().toLowerCase();
+
+  const emailRegex =
+    /^(?![.])(?!.*[.]{2})[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+
+  if (!emailRegex.test(email)) {
+    return "Please enter a valid email address";
+  }
+
   return "";
 };
 
