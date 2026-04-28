@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,64 +10,43 @@ const UserDashboardPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Read ?status= from URL — defaults to no filter (show all)
+  const queryParams = new URLSearchParams(location.search);
+  const urlStatus = queryParams.get("status") || null;
+
   const [investigations, setInvestigations] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activeStatus, setActiveStatus] = useState(urlStatus);
 
-  // ✅ Refetch every time dashboard is visited
+  // Re-fetch when URL status changes
   useEffect(() => {
-    fetchAllData();
-  }, [location.key]);
+    const params = new URLSearchParams(location.search);
+    setActiveStatus(params.get("status") || null);
+  }, [location.search]);
 
-  const fetchAllData = async () => {
+  useEffect(() => {
+    fetchAllData(activeStatus);
+  }, [activeStatus]);
+
+  const fetchAllData = async (status = null) => {
     try {
       setLoading(true);
 
       const [casesRes, statsRes] = await Promise.all([
-        authService.getMyCases(),
+        authService.getMyCasesFiltered({ status, page: 1, limit: 10 }),
         authService.getCaseStats(),
       ]);
 
-      console.log("RAW casesRes.data:", JSON.stringify(casesRes?.data, null, 2));
-
-      const raw = casesRes?.data?.data;
-      let formsData = [];
-
-      if (Array.isArray(raw)) {
-        formsData = raw;
-      } else if (raw?.cases && Array.isArray(raw.cases)) {
-        formsData = raw.cases;
-      } else if (raw?.forms && Array.isArray(raw.forms)) {
-        formsData = raw.forms;
-      } else if (raw?.requests && Array.isArray(raw.requests)) {
-        formsData = raw.requests;
-      } else if (raw?.data && Array.isArray(raw.data)) {
-        formsData = raw.data;
-      }
-
-      console.log("Final formsData:", formsData);
-
-      const statsData = {
-        activeCases: statsRes?.data?.data?.activeCases || 0,
-        totalCases: statsRes?.data?.data?.totalCases || formsData.length || 0,
-      };
-
-      setInvestigations(formsData);
-      setStats(statsData);
+      // Handle both { data: [...] } and { data: { cases: [...] } } shapes
+      const payload = casesRes?.data?.data || casesRes?.data || {};
+      const casesData = payload.cases || payload;
+      setInvestigations(Array.isArray(casesData) ? casesData : []);
+      setStats(statsRes?.data?.data || statsRes?.data || {});
     } catch (error) {
       console.error("API Error:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // ✅ CASE DETAILS (only when needed)
-  const fetchCaseDetails = async (id) => {
-    try {
-      const res = await authService.getCaseDetails(id);
-      return res.data;
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -115,7 +96,10 @@ const UserDashboardPage = () => {
 
       {/* TITLE */}
       <h2 className="active-investigations-title" style={{ marginBottom: '24px' }}>
-        Active Investigations
+        {activeStatus === 'submitted' ? 'Submitted Investigations' : 
+         activeStatus === 'in_progress' ? 'Active Investigations' :
+         activeStatus === 'completed' ? 'Completed Investigations' :
+         'All Investigations'}
       </h2>
 
       {/* CARDS */}
@@ -126,8 +110,8 @@ const UserDashboardPage = () => {
 
         {/* IMAGE */}
         <img
-          src={item.image || item.evidence_image || "https://via.placeholder.com/150"}
-          alt={item.investigation_type || "Investigation"}
+          src={item.image || "https://via.placeholder.com/150"}
+          alt={item.title || "No title"}
           className="investigation-image"
         />
 
@@ -138,14 +122,14 @@ const UserDashboardPage = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded">
-                  {item.priority || item.investigation_type || "General"}
+                  {item.priority || "High"} Priority
                 </span>
                 <p className="text-[11px] text-gray-400">
-                  Case ID: #{item.form_number || item.id || "N/A"}
+                  Case ID: #{item.id || "N/A"}
                 </p>
               </div>
               <h3 className="font-semibold text-white text-lg">
-                {item.title || item.purpose_of_investigation || item.investigation_type || "Investigation Request"}
+                {item.title || "No Title"}
               </h3>
             </div>
 
@@ -175,14 +159,14 @@ const UserDashboardPage = () => {
             </div>
 
             <p className="text-xs text-gray-400 mt-2">
-              {item.status || item.case_status || "Pending"}
+              {item.status || "No status"}
             </p>
           </div>
 
           {/* FOOTER */}
           <div className="investigation-footer">
             <p className="text-xs text-gray-400">
-              {item.daysRemaining || item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A"}
+              {item.daysRemaining || "N/A"}
             </p>
 
             <button
@@ -218,3 +202,4 @@ const UserDashboardPage = () => {
 };
 
 export default UserDashboardPage;
+
