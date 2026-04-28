@@ -62,7 +62,11 @@ const Step6EvidenceSupportingInformation = forwardRef(({ formData, handleInputCh
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label style={labelStyle}>Existing Evidence Available?</label>
-          <input type="text" name="existingEvidence" placeholder="Yes / No" style={fieldStyle} className={fieldClass} value={formData.existingEvidence || ''} onChange={handleChange} onBlur={e => validate(e.target.name, e.target.value)} />
+          <select name="existingEvidence" style={fieldStyle} className={fieldClass} value={formData.existingEvidence || ''} onChange={handleChange} onBlur={e => validate(e.target.name, e.target.value)}>
+            <option value="" style={{ backgroundColor: '#0b1120', color: '#6B7280' }}>Select</option>
+            <option value="Yes" style={{ backgroundColor: '#0b1120' }}>Yes</option>
+            <option value="No" style={{ backgroundColor: '#0b1120' }}>No</option>
+          </select>
           {errors.existingEvidence && <p className={errorClass}>{errors.existingEvidence}</p>}
         </div>
 
@@ -70,6 +74,7 @@ const Step6EvidenceSupportingInformation = forwardRef(({ formData, handleInputCh
           <label style={labelStyle}>Evidence Type</label>
           <select name="evidenceType" style={fieldStyle} className={fieldClass} value={formData.evidenceType || ''} onChange={handleChange} onBlur={e => validate(e.target.name, e.target.value)}>
             <option value="" style={{ backgroundColor: '#0b1120', color: '#6B7280' }}>Select type</option>
+            <option value="No Evidence" style={{ backgroundColor: '#0b1120' }}>No Evidence</option>
             <option value="Document" style={{ backgroundColor: '#0b1120' }}>Document</option>
             <option value="Photo" style={{ backgroundColor: '#0b1120' }}>Photo</option>
             <option value="Video" style={{ backgroundColor: '#0b1120' }}>Video</option>

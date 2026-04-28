@@ -303,32 +303,22 @@ const RequestInvestigationPage = () => {
   </div>
 
   {/* Main Content */}
-  <div className="flex-1 flex flex-col overflow-hidden">
-    <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10" style={{ height: '100%' }}>
-      <div className="max-w-6xl mx-auto h-full flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full flex flex-col overflow-hidden">
+  <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10">
+      <div className="max-w-6xl mx-auto w-full flex-1 min-h-0 flex flex-col">
+
             {/* Heading - desktop only */}
-            <div className="hidden md:block pt-2">
+            <div className="hidden md:block flex-shrink-0">
               <h2 style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '32px', lineHeight: '40px', letterSpacing: '0px' }} className="text-white mb-8">
                 {steps[currentStep - 1].title}
               </h2>
             </div>
 
-            {/* Step Content */}
-            <div className="bg-transparent rounded-xl h-full overflow-hidden">
-              {isStepEight ? (
-                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
-                  {renderStep()}
-                </div>
-              ) : (
-                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
-                  {renderStep()}
-                </div>
-              )}
+            {/* Step Content - full scroll */}
+            <div className="flex-1 min-h-0 overflow-y-auto pr-1 pb-6">
+              {renderStep()}
             </div>
-          </div>
-        </div>
+
       </div>
 
         <div className="border-t border-white/10 bg-[#0b1120] sticky bottom-0 z-20 py-4">
