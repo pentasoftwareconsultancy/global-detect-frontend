@@ -169,3 +169,51 @@ export const validateConsent = (checked) => {
   if (!checked) return "You must accept the legal consent to proceed";
   return "";
 };
+
+// ---------------- SSN ---------------------
+export const validateSSN = (ssn) => {
+  if (!ssn) return "Social Security Number is required";
+  if (!/^\d{3}-\d{2}-\d{4}$/.test(ssn)) return "Enter valid SSN in format XXX-XX-XXXX";
+  return "";
+};
+
+// ---------------- DETECTIVE LICENSE NUMBER ---------------------
+export const validateLicenseNumber = (value) => {
+  if (!value || !value.trim()) return "License number is required";
+  if (value.trim().length < 4) return "Enter a valid license number";
+  return "";
+};
+
+// ---------------- BANK ACCOUNT NUMBER ---------------------
+export const validateAccountNumber = (value) => {
+  if (!value || !value.trim()) return "Account number is required";
+  if (!/^\d{6,17}$/.test(value.trim())) return "Enter a valid account number (6-17 digits)";
+  return "";
+};
+
+// ---------------- ROUTING NUMBER ---------------------
+export const validateRoutingNumber = (value) => {
+  if (!value || !value.trim()) return "Routing number is required";
+  if (!/^\d{9}$/.test(value.trim())) return "Enter a valid 9-digit routing number";
+  return "";
+};
+
+// ---------------- LICENSE DATES ---------------------
+export const validateLicenseIssueDate = (value) => {
+  if (!value) return "License issue date is required";
+  if (new Date(value) > new Date()) return "Issue date cannot be in the future";
+  return "";
+};
+
+export const validateLicenseExpiryDate = (value, issueDate) => {
+  if (!value) return "License expiry date is required";
+  if (issueDate && new Date(value) <= new Date(issueDate)) return "Expiry date must be after issue date";
+  return "";
+};
+
+// ---------------- ZIP CODE ---------------------
+export const validateZip = (value) => {
+  if (!value || !value.trim()) return "ZIP/Postal code is required";
+  if (value.trim().length < 3) return "Enter a valid ZIP/Postal code";
+  return "";
+};
