@@ -1,4 +1,6 @@
+
 import api from "./api.service";
+import ApiInterceptor from "./interceptor.service";
 import ServerUrl from "../constants/serverURL.constant";
 
 const apiService = new api();
@@ -69,7 +71,11 @@ export const authService = {
   //---------------request form related APIs------------------
   
     createDraftRequestForm: async (formData) => {
-      return apiService.apipost(ServerUrl.DRAFT_REQUEST_FORM_API, formData);
+      const sessionId = localStorage.getItem('sessionId');
+      const axiosInstance = ApiInterceptor.init();
+      return axiosInstance.post(ServerUrl.DRAFT_REQUEST_FORM_API, formData, {
+        headers: sessionId ? { 'x-session-id': sessionId } : {},
+      });
     },
 
     // Update Draft
@@ -130,7 +136,11 @@ export const authService = {
     },
 
     linkAllGuestForms: async () => {
-      return apiService.apipost(ServerUrl.LINK_ALL_GUEST_FORMS_API);
+      const sessionId = localStorage.getItem('sessionId');
+      const axiosInstance = ApiInterceptor.init();
+      return axiosInstance.post(ServerUrl.LINK_ALL_GUEST_FORMS_API, {}, {
+        headers: sessionId ? { 'x-session-id': sessionId } : {},
+      });
     },
 
     getMyForms: async () => {
@@ -145,6 +155,14 @@ export const authService = {
 
     getMyCases: async () => {
       return apiService.apiget(ServerUrl.GET_MY_CASES_API);
+    },
+
+    getMyCasesFiltered: async ({ status, page = 1, limit = 10 } = {}) => {
+      const params = new URLSearchParams();
+      if (status) params.append('status', status);
+      params.append('page', page);
+      params.append('limit', limit);
+      return apiService.apiget(`${ServerUrl.GET_MY_CASES_API}?${params.toString()}`);
     },
 
     getCaseStats: async () => {

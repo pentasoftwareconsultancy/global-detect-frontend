@@ -1,46 +1,52 @@
+
+
 import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "../../core/constants/routes.constant";
 import { authService } from "../../core/services/auth.service";
 
 const UserDashboardPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Read ?status= from URL — defaults to no filter (show all)
+  const queryParams = new URLSearchParams(location.search);
+  const urlStatus = queryParams.get("status") || null;
 
   const [investigations, setInvestigations] = useState([]);
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activeStatus, setActiveStatus] = useState(urlStatus);
 
-  // ✅ ON LOAD
+  // Re-fetch when URL status changes
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    const params = new URLSearchParams(location.search);
+    setActiveStatus(params.get("status") || null);
+  }, [location.search]);
 
-  const fetchAllData = async () => {
+  useEffect(() => {
+    fetchAllData(activeStatus);
+  }, [activeStatus]);
+
+  const fetchAllData = async (status = null) => {
     try {
       setLoading(true);
 
       const [casesRes, statsRes] = await Promise.all([
-        authService.getMyCases(),
+        authService.getMyCasesFiltered({ status, page: 1, limit: 10 }),
         authService.getCaseStats(),
       ]);
 
-      setInvestigations(casesRes?.data || []);
-      setStats(statsRes?.data || {});
+      // Handle both { data: [...] } and { data: { cases: [...] } } shapes
+      const payload = casesRes?.data?.data || casesRes?.data || {};
+      const casesData = payload.cases || payload;
+      setInvestigations(Array.isArray(casesData) ? casesData : []);
+      setStats(statsRes?.data?.data || statsRes?.data || {});
     } catch (error) {
       console.error("API Error:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // ✅ CASE DETAILS (only when needed)
-  const fetchCaseDetails = async (id) => {
-    try {
-      const res = await authService.getCaseDetails(id);
-      return res.data;
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -90,7 +96,10 @@ const UserDashboardPage = () => {
 
       {/* TITLE */}
       <h2 className="active-investigations-title" style={{ marginBottom: '24px' }}>
-        Active Investigations
+        {activeStatus === 'submitted' ? 'Submitted Investigations' : 
+         activeStatus === 'in_progress' ? 'Active Investigations' :
+         activeStatus === 'completed' ? 'Completed Investigations' :
+         'All Investigations'}
       </h2>
 
       {/* CARDS */}
@@ -193,3 +202,4 @@ const UserDashboardPage = () => {
 };
 
 export default UserDashboardPage;
+
