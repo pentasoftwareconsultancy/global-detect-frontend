@@ -19,7 +19,7 @@ const fetchProfile = async () => {
     const res = await authService.getProfile();
     const data = res.data;
 
-    setName(data.name || "");
+    setName(data.name || ""); 
     setEmail(data.email || "");
     setPhone(data.phone || "");
     setSpecialization(data.specialization || "");
