@@ -14,6 +14,7 @@ import Step6EvidenceSupportingInformation from '../../components/user/request-in
 import Step7LegalConsentDeclaration from '../../components/user/request-investigation/Step7LegalConsentDeclaration';
 import Step8ReviewSubmit from '../../components/user/request-investigation/Step8ReviewSubmit';
 import SuccessScreen from '../../components/user/request-investigation/SuccessScreen';
+import { authService } from '../../core/services/auth.service';
 
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -93,49 +94,44 @@ const RequestInvestigationPage = () => {
   city: formData.city || "Other",
   state: formData.state || "Other",
   country: formData.country || "India",
-  preferred_contact_method: formData.preferredContactMethod || "Call",
-  address: formData.address || "Not provided",
-  purpose_of_investigation: (formData.purpose || "").length < 20
-    ? (formData.purpose || "").padEnd(20, " ").trim() || "Investigation purpose not specified"
-    : formData.purpose,
-  investigation_type: formData.investigationType || "General",
-  subject_name: formData.subjectEntityName || "Not provided",
-  subject_phone: /^[6-9]\d{9}$/.test(formData.subjectContact) ? formData.subjectContact : "9000000000",
-  subject_email: formData.subjectEmail?.includes('@') ? formData.subjectEmail : `unknown@placeholder.com`,
-  subject_pincode: /^\d{6}$/.test(formData.subjectPincode) ? formData.subjectPincode : "000000",
-  subject_city: formData.subjectCity || "Other",
-  subject_state: formData.subjectState || "Other",
-  relationship_with_subject: formData.relationshipToSubject || "Other",
-  subject_type: {
-    'Individual': 'individual',
-    'Company': 'company',
-    'Property': 'property',
-    'Digital Identity': 'digital_identity'
-  }[formData.subjectType] || 'individual',
-  location_type: formData.locationType?.toLowerCase() || "physical",
-  investigation_state: formData.locationState || "Other",
-  investigation_city: formData.locationCity || "Other",
-  investigation_address: formData.locationAddress || "Not provided",
-  case_description: (formData.detailedDescription || "").length < 50
-    ? (formData.detailedDescription || "") + " ".repeat(Math.max(0, 50 - (formData.detailedDescription || "").length))
-    : formData.detailedDescription,
-  specific_questions: formData.keyQuestions || "Not provided",
-  expected_outcome: (formData.expectedOutcome || "").length < 20
-    ? (formData.expectedOutcome || "").padEnd(20, " ").trim() || "Expected outcome not specified"
-    : formData.expectedOutcome,
-  has_evidence: !!(formData.uploadedFiles1?.length || formData.uploadedFiles2?.length),
-  evidence_type: formData.evidenceType || "other",
-  digital_signature: formData.signatureFile?.name || formData.name || "signature",
+  preferred_contact_method: formData.preferredContactMethod,
+  address: formData.address,
+
+  // Investigation
+  purpose_of_investigation: formData.purpose,
+  investigation_type: formData.investigationType,
+
+  // Subject
+  subject_name: formData.subjectEntityName,
+  subject_phone: formData.subjectContact,
+  subject_email: formData.subjectEmail,
+  subject_pincode: formData.subjectPincode,
+  subject_city: formData.subjectCity,
+  subject_state: formData.subjectState,
+  relationship_with_subject: formData.relationshipToSubject,
+  subject_type: formData.subjectType,
+
+  // Location
+  location_type: formData.locationType,
+  investigation_state: formData.locationState,
+  investigation_city: formData.locationCity,
+  investigation_address: formData.locationAddress,
+
+  // Description
+  case_description: formData.detailedDescription,
+  specific_questions: formData.keyQuestions,
+  expected_outcome: formData.expectedOutcome,
+
+  // Evidence
+  evidence_type: formData.evidenceType,
+existing_evidence: formData.existingEvidence,
+
+  // Consent
   agreement_confirmed: formData.legalConsent,
 });
 
 
-  const handleNext = async () => {
-    // Validate current step before proceeding (skip step 8 review)
-    if (currentStep < 8 && stepRef.current?.validateAll) {
-      const valid = stepRef.current.validateAll();
-      if (!valid) return;
-    }
+ const handleNext = async () => {
 
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
@@ -154,30 +150,34 @@ const RequestInvestigationPage = () => {
       }
 
       const sessionId = getSessionId();
-      const token = localStorage.getItem("TOKEN") || JSON.parse(localStorage.getItem("user") || '{}')?.token;
 
-      const payload = buildPayload();
+      const payload = {
+        ...buildPayload(),
+        session_id: sessionId
+      };
 
-      if (isLoggedIn && token) {
-        // LOGGED IN: directly submit with authService
-        console.log("Submitting payload for logged-in user:", JSON.stringify(payload, null, 2));
-        const submitRes = await authService.createRequestForm(payload);
-        console.log("Submit Response:", submitRes.data);
-        
-        if (!submitRes.data) throw new Error("No response from server");
-      } else {
-        // GUEST: save as draft first using authService
-        console.log("Creating draft for guest:", JSON.stringify(payload, null, 2));
-        const draftRes = await authService.createDraftRequestForm(payload);
-        const formId =
-          draftRes.data?.data?.form?.id ||
-          draftRes.data?.data?.id ||
-          draftRes.data?.form?.id ||
-          draftRes.data?.id;
+      // STEP 1: SAVE DRAFT
+      const draftRes = await axios.post(
+        ServerUrl.DRAFT_REQUEST_FORM_API,
+        payload
+      );
 
-        if (!formId) throw new Error("Form ID not received from server");
-        console.log("Draft created with formId:", formId);
-        localStorage.setItem("formId", formId);
+      const formId =
+        draftRes.data?.id ||
+        draftRes.data?.data?.id;
+
+      if (!formId) {
+        throw new Error("Form ID not received");
+      }
+
+      localStorage.setItem("formId", formId);
+
+      // STEP 2: SUBMIT IF LOGGED IN
+      if (isLoggedIn) {
+        await axios.post(
+          ServerUrl.CREATE_REQUEST_FORM_API,
+          { form_id: formId }
+        );
       }
 
       setSubmitted(true);
@@ -307,9 +307,9 @@ const RequestInvestigationPage = () => {
     <div className="flex-1 overflow-hidden px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10" style={{ height: '100%' }}>
       <div className="max-w-6xl mx-auto h-full flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden">
-          <div className="h-full flex flex-col overflow-hidden">
+          <div className="h-full overflow-hidden">
             {/* Heading - desktop only */}
-            <div className="hidden md:block pt-2">
+            <div className="hidden md:block flex-shrink-0">
               <h2 style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '32px', lineHeight: '40px', letterSpacing: '0px' }} className="text-white mb-8">
                 {steps[currentStep - 1].title}
               </h2>
@@ -318,17 +318,16 @@ const RequestInvestigationPage = () => {
             {/* Step Content */}
             <div className="bg-transparent rounded-xl h-full overflow-hidden">
               {isStepEight ? (
-                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
+                <div className="h-full overflow-y-auto pr-2 pb-6 min-h-0">
                   {renderStep()}
                 </div>
               ) : (
-                <div className="h-full overflow-y-auto pb-6 min-h-0 pr-1">
+                <div className="min-h-0">
                   {renderStep()}
                 </div>
               )}
             </div>
-          </div>
-        </div>
+
       </div>
 
         <div className="border-t border-white/10 bg-[#0b1120] sticky bottom-0 z-20 py-4">
@@ -342,9 +341,8 @@ const RequestInvestigationPage = () => {
             </button>
             <button
               onClick={handleNext}
-              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
-              className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isSubmitting}
+              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Inter', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
+              className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center"
             >
               {isSubmitting ? 'Submitting...' : currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
             </button>

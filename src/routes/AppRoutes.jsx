@@ -22,12 +22,11 @@ const Signup = lazy(() => import("../pages/auth/Signup"));
 const OTP = lazy(() => import("../pages/auth/OTP"));
 
 const UserForm = lazy(() => import("../pages/auth/UserForm"));
-const DetectiveForm = lazy(() => import("../pages/auth/DetectiveForm"));
+const DetectiveForm = lazy(() => import("../pages/detective/DetectiveForm"));
 
 /* ======================= USER PAGES ======================= */
 const UserDashboardPage = lazy(() => import("../pages/user/UserDashboardPage"));
 const UserDetailsPage = lazy(() => import("../pages/user/UserDetailsPage"));
-const UserBlogDetailPage = lazy(() => import("../pages/user/UserBlogDetailPage"));
 const UserNotificationPage = lazy(() => import("../pages/user/UserNotificationPage"));
 const UserProfilePage = lazy(() => import("../pages/user/UserProfilePage"));
 const UserSettingsPage = lazy(() => import("../pages/user/UserSettingsPage"));
@@ -78,25 +77,24 @@ const AppRoutes = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* ================= PUBLIC ROUTES ================= */}
-          <Route path={ROUTES.SIGNUP} element={<Signup />} />
-          <Route path={ROUTES.LOGIN} element={<Login />} />
-          <Route path={ROUTES.OTP} element={<OTP />} />
+        <Route path={ROUTES.SIGNUP} element={<Signup />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.OTP} element={<OTP />} />
         <Route element={<PublicLayout />}>
           <Route index element={<HomeHero />} />
 
-            {/* NEW ROUTES */}
-            <Route path={ROUTES.ABOUT} element={<AboutUs />} />
-              <Route path={ROUTES.SERVICES} element={<Services />} />
-          
-            <Route path={ROUTES.BLOG} element={<Blogs />} />
-            <Route path="/blogs/:id" element={<BlogDetails />} />
-             <Route path={ROUTES.CONTACT} element={<ContactInfo />} />
-            <Route path={ROUTES.USER_BLOG_DETAIL} element={<UserBlogDetailPage />} />
+          {/* NEW ROUTES */}
+          <Route path={ROUTES.ABOUT} element={<AboutUs />} />
+          <Route path={ROUTES.SERVICES} element={<Services />} />
+
+          <Route path={ROUTES.BLOG} element={<Blogs />} />
+          <Route path="/blogs/:id" element={<BlogDetails />} />
+          <Route path={ROUTES.CONTACT} element={<ContactInfo />} />
         </Route>
 
         {/* ================= REQUEST INVESTIGATION (public - no auth required) ================= */}
         <Route element={<UserLayout />}>
-  <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
+          <Route path={ROUTES.REQUEST_INVESTIGATION} element={<RequestInvestigationPage />} />
         </Route>
 
         {/* ================= USER ROUTES ================= */}
@@ -132,18 +130,18 @@ const AppRoutes = () => {
           <Route element={<AdminLayout />}>
             <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
             <Route
-  path={ROUTES.ADMIN_ALL_CASE_MANAGEMENT}
-  element={<AllCaseManagement />}
-/>
-<Route
-  path={ROUTES.ADMIN_PENDING_CASE_MANAGEMENT}
-  element={<PendingCaseManagement />}
-/>
+              path={ROUTES.ADMIN_ALL_CASE_MANAGEMENT}
+              element={<AllCaseManagement />}
+            />
+            <Route
+              path={ROUTES.ADMIN_PENDING_CASE_MANAGEMENT}
+              element={<PendingCaseManagement />}
+            />
 
-<Route
-  path={ROUTES.ADMIN_REVIEW_INSIGHTS}
-  element={<ReviewInsightsCaseManagement />}
-/>
+            <Route
+              path={ROUTES.ADMIN_REVIEW_INSIGHTS}
+              element={<ReviewInsightsCaseManagement />}
+            />
             <Route path={ROUTES.ADMIN_USER_MANAGEMENT} element={<AdminUserManagementPage />} />
             <Route path={ROUTES.ADMIN_USER_MANAGEMENT_DETAIL} element={<AdminUserDetailsPage />} />
 
@@ -155,9 +153,9 @@ const AppRoutes = () => {
             <Route path={ROUTES.ADMIN_DETECTIVE_KYC} element={<AdminDetectiveKYC />} />
             <Route path={ROUTES.ADMIN_DETECTIVE_MANAGEMENT_ONCASE} element={<AdminDetectiveManagementOnCasePage />} />
             <Route path={ROUTES.ADMIN_DETECTIVE_MANAGEMENT} element={<AdminDetectiveManagementPage />} />
-            
+
             <Route path={ROUTES.ADMIN_HISTORY} element={<AdminHistoryPage />} />
-            
+
             <Route path={ROUTES.ADMIN_NOTIFICATION} element={<AdminNotification />} />
             <Route path={ROUTES.ADMIN_BLOG} element={<AdminBlogPage />} />
             <Route path={ROUTES.ADMIN_PROFILE} element={<AdminProfilePage />} />

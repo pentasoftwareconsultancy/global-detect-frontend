@@ -46,6 +46,13 @@ export const validatePhone = (phone) => {
   return "";
 };
 
+// Generic phone validation (any 10-digit number)
+export const validatePhoneGeneric = (phone) => {
+  if (!phone) return "Phone number is required";
+  if (!/^\d{10}$/.test(phone)) return "Enter a valid 10-digit phone number";
+  return "";
+};
+
 // Required field (generic)
 export const validateRequired = (value, fieldName) => {
   const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -79,6 +86,38 @@ export const pinTypingPattern = /^\d{0,6}$/;
 
 // Phone typing pattern
 export const numberTypingPattern = /^\d{0,10}$/;
+
+// ============================================================
+// INPUT RESTRICTION HANDLERS (reusable across all forms)
+// ============================================================
+
+// Restrict to letters & spaces only — for Name, City, State, Country
+export const restrictToLetters = (value) =>
+  value.replace(/[^A-Za-z\s]/g, '');
+
+// Restrict to digits only with max length — for Phone(10), Pincode(6), Aadhaar(12)
+export const restrictToDigits = (value, maxLength) =>
+  value.replace(/\D/g, '').slice(0, maxLength);
+
+// Detect if value contains invalid chars for letters-only fields
+export const hasInvalidLetterChars = (value) => /[^A-Za-z\s]/.test(value);
+
+// Detect if value contains non-digit chars
+export const hasInvalidDigitChars = (value) => /\D/.test(value);
+
+// Handle paste for letters-only fields
+export const handlePasteLettersOnly = (e, onChange) => {
+  e.preventDefault();
+  const pasted = e.clipboardData.getData('text').replace(/[^A-Za-z\s]/g, '');
+  onChange(pasted);
+};
+
+// Handle paste for digits-only fields
+export const handlePasteDigitsOnly = (e, maxLength, onChange) => {
+  e.preventDefault();
+  const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, maxLength);
+  onChange(pasted);
+};
 
 // Indian PIN code validation
 export const validatePincode = (pincode) => {
@@ -139,5 +178,33 @@ export const validateFileUpload = (file, fieldName, isRequired = true) => {
   if (file.size > maxSize) return `${label} must be less than 5MB`;
   if (!allowedTypes.includes(file.type)) return `${label} must be JPG, PNG, or PDF`;
   
+  return "";
+};
+
+// ---------------- ADDRESS ---------------------
+export const validateAddress = (value) => {
+  if (!value || !value.trim()) return "Address is required";
+  if (value.trim().length < 10) return "Please enter a complete address";
+  return "";
+};
+
+// ---------------- TEXTAREA ---------------------
+export const validateTextarea = (value, fieldName, minLength = 20) => {
+  const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  if (!value || !value.trim()) return `${label} is required`;
+  if (value.trim().length < minLength) return `${label} must be at least ${minLength} characters`;
+  return "";
+};
+
+// ---------------- SELECT ---------------------
+export const validateSelect = (value, fieldName) => {
+  const label = fieldName.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  if (!value || value === "") return `${label} is required`;
+  return "";
+};
+
+// ---------------- LEGAL CONSENT ---------------------
+export const validateConsent = (checked) => {
+  if (!checked) return "You must accept the legal consent to proceed";
   return "";
 };
