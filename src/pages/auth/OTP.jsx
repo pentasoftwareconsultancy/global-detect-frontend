@@ -66,12 +66,24 @@ const OTP = () => {
       // ✅ Call backend - Verify OTP and create account
       const response = await authService.registerVerifyOtp(phone, otpString);
 
-      console.log('Registration completed:', response.data);
+      // ✅ Extract token and log user in
+      const data = response.data;
+      const token = data.data?.token || data.data?.accessToken || data.token;
+      const userObj = data.data?.user || data.data || null;
 
-      // ✅ Extract token from response
-      const token = response.data.data?.token || response.data.data?.accessToken;
       if (token) {
+        login({ token, user: userObj });
         localStorage.setItem('TOKEN', token);
+      }
+
+      // ✅ Link any guest form saved before signup
+      const sessionId = localStorage.getItem('sessionId');
+      if (sessionId && token) {
+        try {
+          await authService.linkAllGuestForms();
+        } catch (e) {
+          console.warn('Could not link guest forms:', e.message);
+        }
       }
 
       // ✅ Clear registration data
@@ -126,11 +138,11 @@ const OTP = () => {
               OTP Verification has been completed
             </p>
             <button
-              onClick={() => navigate(ROUTES.LOGIN)}
+              onClick={() => navigate(ROUTES.USER_DASHBOARD)}
               style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A' }}
               className="bg-[#D92B3A] text-white w-full max-w-[500px]"
             >
-              Back to Login
+              Go to Dashboard
             </button>
           </div>
         </div>
