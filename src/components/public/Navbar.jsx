@@ -12,6 +12,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const isBlogDetails = location.pathname.startsWith("/blogs/");
+  const storedUser = localStorage.getItem("user");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,11 +23,28 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLoginClick = () => {
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+
+      if (user.role === "admin")
+        navigate("/admin-dashboard");
+
+      else if (user.role === "detective")
+        navigate("/detective-dashboard");
+
+      else
+        navigate("/user-dashboard");
+
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <nav
-      className={`sticky top-0 z-[999] w-full px-4 sm:px-6 md:px-12 lg:px-20 py-3 transition-all duration-300 ${
-        scrolled ? "bg-[#121F27]/60 backdrop-blur-md" : ""
-      }`}
+      className={`sticky top-0 z-[999] w-full px-4 sm:px-6 md:px-12 lg:px-20 py-3 transition-all duration-300 ${scrolled ? "bg-[#121F27]/60 backdrop-blur-md" : ""
+        }`}
     >
       <div className="flex items-center justify-between">
 
@@ -72,11 +90,10 @@ const Navbar = () => {
                           ?.scrollIntoView({ behavior: "smooth" });
                       }
                     }}
-                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      active === item
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${active === item
                         ? "bg-[#e7dfd7] text-black shadow-md"
                         : "text-white/80 hover:text-white"
-                    }`}
+                      }`}
                   >
                     {item === "home"
                       ? "Home"
@@ -142,7 +159,7 @@ const Navbar = () => {
           ))}
 
           <button
-            onClick={() => navigate("/login")}
+            onClick={handleLoginClick}
             className="w-full bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl"
           >
             Login/ Register

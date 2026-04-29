@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTES } from "../core/constants/routes.constant";
+import PublicRoute from "./PublicRoute";
 
 
 
@@ -77,9 +78,11 @@ const AppRoutes = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* ================= PUBLIC ROUTES ================= */}
-        <Route path={ROUTES.SIGNUP} element={<Signup />} />
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.OTP} element={<OTP />} />
+        <Route element={<PublicRoute />}>
+          <Route path={ROUTES.SIGNUP} element={<Signup />} />
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.OTP} element={<OTP />} />
+        </Route>
         <Route element={<PublicLayout />}>
           <Route index element={<HomeHero />} />
 

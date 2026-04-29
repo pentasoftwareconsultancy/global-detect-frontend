@@ -31,7 +31,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const phoneDigits = formData.emailOrPhone.replace(/\D/g, '');
-  const isUserPhone = accountType === 'User' && phoneDigits.length >= 10;
+  const isUserPhone = phoneDigits.length >= 10;
   const shouldShowGetOtp = isUserPhone && !otpRequested;
   const isPasswordDisabled = accountType === 'User' && isUserPhone && !otpRequested;
 
