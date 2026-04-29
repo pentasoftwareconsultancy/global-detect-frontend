@@ -17,7 +17,7 @@ const StepSevenDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) 
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
-              checked={data.legal.convicted}
+              checked={data.legal.convicted}  
               onChange={e => handleChange('legal', 'convicted', e.target.checked)}
               className="w-4 h-4 accent-[#D92B3A]"
             />

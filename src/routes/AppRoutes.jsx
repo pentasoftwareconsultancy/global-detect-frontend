@@ -149,8 +149,8 @@ const AppRoutes = () => {
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT_UNASSIGNED} element={<AdminCaseDetailsUnassignedPage />} />
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT} element={<AdminCaseManagementPage />} />
 
-            <Route path={ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL} element={<AdminDetectiveDetailsPage />} />
-            <Route path={ROUTES.ADMIN_DETECTIVE_KYC} element={<AdminDetectiveKYC />} />
+            <Route path={`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL}/:id`} element={<AdminDetectiveDetailsPage />} />
+            <Route path={`${ROUTES.ADMIN_DETECTIVE_KYC}/:id`} element={<AdminDetectiveKYC />} />
             <Route path={ROUTES.ADMIN_DETECTIVE_MANAGEMENT_ONCASE} element={<AdminDetectiveManagementOnCasePage />} />
             <Route path={ROUTES.ADMIN_DETECTIVE_MANAGEMENT} element={<AdminDetectiveManagementPage />} />
 
