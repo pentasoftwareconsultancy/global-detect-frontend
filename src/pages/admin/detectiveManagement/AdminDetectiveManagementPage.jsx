@@ -42,12 +42,12 @@ const filterDetectives = (tab, search) => {
 
 const StatusBadge = ({ status }) => {
   const map = {
-    "On Case":   "bg-blue-500/20 text-blue-400",
-    "Available": "bg-green-500/20 text-green-400",
-    "Offline":   "bg-[#1e2a35] text-gray-400",
+    "On Case":   "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
+    "Available": "bg-[#00C9501A] text-green-400 border border-[#00C95033]",
+    "Offline":   "bg-[#6A72821A] text-gray-400 border border-[#6A72821A]",
   };
   return (
-    <span className={`px-3 py-1 text-xs rounded-full ${map[status] || "bg-gray-500/20 text-gray-400"}`}>
+    <span className={`px-3 py-1 text-xs rounded-lg ${map[status] || "bg-gray-500/20 text-gray-400"}`}>
       {status}
     </span>
   );
@@ -55,12 +55,12 @@ const StatusBadge = ({ status }) => {
 
 const KYCBadge = ({ kyc }) => {
   if (kyc === "Approved") return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-400">
+    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]">
       <CheckCircle size={10} /> Approved
     </span>
   );
   return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-400">
+    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]">
       <Clock size={10} /> Pending
     </span>
   );
@@ -74,7 +74,7 @@ const AdminDetectiveManagementPage = () => {
   const filtered = filterDetectives(activeTab, search);
 
   return (
-    <div className="p-6 text-white bg-[#08141B] min-h-screen">
+    <div className="p-6 text-white bg-[#08141B] min-h-screen font-[Montserrat]">
 
       {/* Page Header */}
       <div className="mb-6">
@@ -105,13 +105,13 @@ const AdminDetectiveManagementPage = () => {
         {/* Card top row: title + search */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-white">{activeTab}</h2>
-          <div className="flex items-center gap-2 bg-[#08141B] border border-white/10 rounded-lg px-3 py-1.5">
-            <Search size={13} className="text-gray-500" />
+          <div className="flex items-center gap-2 bg-[#1A2832] border border-white/10 rounded-lg px-3 py-1.5">
+            <Search size={13} className="text-[#9CA3AF]" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search detectives..."
-              className="bg-transparent text-xs text-white placeholder-gray-500 outline-none w-40"
+              className="bg-transparent text-xs text-white placeholder:text-[#9CA3AF] outline-none w-40"
             />
           </div>
         </div>
@@ -124,10 +124,10 @@ const AdminDetectiveManagementPage = () => {
               <button
                 key={t.key}
                 onClick={() => setActiveTab(t.key)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full whitespace-nowrap transition font-medium ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border border-white/20 whitespace-nowrap transition font-medium ${
                   active
-                    ? "bg-[#D92B3A] text-white"
-                    : "bg-[#132735] text-gray-400 hover:text-white"
+                    ? "bg-[#FF4959] text-white"
+                    : "bg-[#FFFFFF08] text-white"
                 }`}
               >
                 {t.icon}
@@ -141,7 +141,7 @@ const AdminDetectiveManagementPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[900px]">
             <thead>
-              <tr className="border-b border-white/10 text-gray-400 text-xs">
+              <tr className="border-b border-white/10 text-white text-sm">
                 <th className="text-left py-3 font-medium w-[22%]">Detective</th>
                 <th className="text-left py-3 font-medium w-[16%]">Specialization</th>
                 <th className="text-left py-3 font-medium w-[9%]">Status</th>
@@ -165,7 +165,9 @@ const AdminDetectiveManagementPage = () => {
                   </td>
 
                   {/* Specialization */}
-                  <td className="py-3.5 text-sm text-gray-300">{d.specialization}</td>
+                  <td className="py-3.5">
+                    <span className="text-xs text-white border border-white/10 rounded-lg px-3 py-1">{d.specialization}</span>
+                  </td>
 
                   {/* Status */}
                   <td className="py-3.5"><StatusBadge status={d.status} /></td>
@@ -175,14 +177,14 @@ const AdminDetectiveManagementPage = () => {
 
                   {/* Cases */}
                   <td className="py-3.5 text-xs text-gray-300 leading-5">
-                    <p>Active: <span className="text-white font-semibold">{d.activeCases}</span></p>
-                    <p>Completed: {d.completedCases}</p>
+                    <p><span className="text-[#F9FAFB] font-semibold">Active: {d.activeCases}</span></p>
+                    <p><span className="text-[#9CA3AF] font-semibold">Completed: {d.completedCases}</span></p>
                   </td>
 
                   {/* Rating */}
                   <td className="py-3.5 text-sm">
                     {d.rating != null
-                      ? <span className="text-yellow-400">★ {d.rating}</span>
+                      ? <span className="flex items-center gap-1"><span className="text-yellow-400">★</span> {d.rating}</span>
                       : <span className="text-gray-500 text-xs">No rating</span>
                     }
                   </td>
@@ -197,23 +199,29 @@ const AdminDetectiveManagementPage = () => {
                       <div className="w-[90px] flex items-center gap-1.5">
                         {d.kyc === "Pending" ? (
                           <>
-                            <button className="w-7 h-7 rounded-md bg-[#D92B3A] flex items-center justify-center hover:bg-[#b82231] transition" title="Approve">
+                            <button
+                              onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_KYC}/${i}`)}
+                              className="w-7 h-7 rounded-md bg-[#FF4959] flex items-center justify-center hover:bg-[#b82231] transition" title="Approve">
                               <CheckCircle size={13} className="text-white" />
                             </button>
-                            <button className="w-7 h-7 rounded-md bg-[#D92B3A] flex items-center justify-center hover:bg-[#b82231] transition" title="Reject">
+                            <button
+                              onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_KYC}/${i}`)}
+                              className="w-7 h-7 rounded-md bg-[#DC262699] flex items-center justify-center hover:bg-[#b82231] transition" title="Reject">
                               <X size={13} className="text-white" />
                             </button>
                           </>
                         ) : (
-                          <button className="flex items-center gap-1 text-xs text-gray-300 hover:text-white border border-white/20 hover:border-white/50 rounded px-2 py-1 transition">
-                            <Navigation size={11} className="text-gray-400" /> Track
+                          <button
+                            onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL}/${i}`)}
+                            className="flex items-center gap-1 text-xs text-white border border-white/20 hover:border-white/50 rounded px-2 py-1 transition bg-[#FFFFFF08]">
+                            <MapPin size={11} className="text-[#F9FAFB]" /> Track
                           </button>
                         )}
                       </div>
                       {/* Eye — always in same column */}
                       <button
-                        onClick={() => navigate(ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL)}
-                        className="text-gray-400 hover:text-white transition"
+                        onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL}/${i}`)}
+                        className="text-white transition"
                         title="View"
                       >
                         <Eye size={15} />
