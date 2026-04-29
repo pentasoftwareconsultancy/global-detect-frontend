@@ -1,9 +1,10 @@
+
 import React, { useState, useRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
-import ServerUrl from "../../core/constants/serverURL.constant";
-
+import { ROUTES } from '../../core/constants/routes.constant';
+import { useAuth } from '../../core/contexts/AuthContext';
+import { authService } from '../../core/services/auth.service';
 
 import Step1BasicContactInformation from '../../components/user/request-investigation/Step1BasicContactInformation';
 import Step2InvestigationTypeSelection from '../../components/user/request-investigation/Step2InvestigationTypeSelection';
@@ -13,12 +14,9 @@ import Step5CaseDescription from '../../components/user/request-investigation/St
 import Step6EvidenceSupportingInformation from '../../components/user/request-investigation/Step6EvidenceSupportingInformation';
 import Step7LegalConsentDeclaration from '../../components/user/request-investigation/Step7LegalConsentDeclaration';
 import Step8ReviewSubmit from '../../components/user/request-investigation/Step8ReviewSubmit';
-import SuccessScreen from '../../components/user/request-investigation/SuccessScreen';
-import { authService } from '../../core/services/auth.service';
 
 const RequestInvestigationPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -52,6 +50,10 @@ const RequestInvestigationPage = () => {
   });
 
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isLoggedIn = !!(user?.token || localStorage.getItem('TOKEN'));
+
+  // ref for per-step validation (from friend's version)
   const stepRef = useRef(null);
 
   const steps = [
@@ -73,73 +75,50 @@ const RequestInvestigationPage = () => {
     }));
   };
 
-  const isLoggedIn = !!localStorage.getItem("token"); 
-
-
-    const getSessionId = () => {
-    let sessionId = localStorage.getItem("sessionId");
-
+  const getSessionId = () => {
+    let sessionId = localStorage.getItem('sessionId');
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      localStorage.setItem("sessionId", sessionId);
+      localStorage.setItem('sessionId', sessionId);
     }
-
     return sessionId;
   };
 
-
   const buildPayload = () => ({
-  // Step tracking
-  current_step: currentStep,
+    current_step: currentStep,
+    full_name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    pincode: formData.pincode,
+    city: formData.city,
+    state: formData.state,
+    country: formData.country || 'India',
+    preferred_contact_method: formData.preferredContactMethod,
+    address: formData.address,
+    purpose_of_investigation: formData.purpose,
+    investigation_type: formData.investigationType,
+    subject_name: formData.subjectEntityName,
+    subject_phone: formData.subjectContact,
+    subject_email: formData.subjectEmail,
+    subject_pincode: formData.subjectPincode,
+    subject_city: formData.subjectCity,
+    subject_state: formData.subjectState,
+    relationship_with_subject: formData.relationshipToSubject,
+    subject_type: formData.subjectType,
+    location_type: formData.locationType,
+    investigation_state: formData.locationState,
+    investigation_city: formData.locationCity,
+    investigation_address: formData.locationAddress,
+    case_description: formData.detailedDescription,
+    specific_questions: formData.keyQuestions,
+    expected_outcome: formData.expectedOutcome,
+    evidence_type: formData.evidenceType,
+    existing_evidence: formData.existingEvidence,
+    agreement_confirmed: formData.legalConsent,
+  });
 
-  // Contact
-  full_name: formData.name,
-  email: formData.email,
-  phone: formData.phone,
-  pincode: formData.pincode,
-  city: formData.city,
-  state: formData.state,
-  country: formData.country || "India",
-  preferred_contact_method: formData.preferredContactMethod,
-  address: formData.address,
-
-  // Investigation
-  purpose_of_investigation: formData.purpose,
-  investigation_type: formData.investigationType,
-
-  // Subject
-  subject_name: formData.subjectEntityName,
-  subject_phone: formData.subjectContact,
-  subject_email: formData.subjectEmail,
-  subject_pincode: formData.subjectPincode,
-  subject_city: formData.subjectCity,
-  subject_state: formData.subjectState,
-  relationship_with_subject: formData.relationshipToSubject,
-  subject_type: formData.subjectType,
-
-  // Location
-  location_type: formData.locationType,
-  investigation_state: formData.locationState,
-  investigation_city: formData.locationCity,
-  investigation_address: formData.locationAddress,
-
-  // Description
-  case_description: formData.detailedDescription,
-  specific_questions: formData.keyQuestions,
-  expected_outcome: formData.expectedOutcome,
-
-  // Evidence
-  evidence_type: formData.evidenceType,
-  existing_evidence: formData.existingEvidence,
-
-  // Consent
-  agreement_confirmed: formData.legalConsent,
-  // digital_signature: formData.name // or separate field if you have
-});
-
-
- const handleNext = async () => {
-    // Validate current step before proceeding (skip step 8 review)
+  const handleNext = async () => {
+    // Run per-step validation before advancing (from friend's version)
     if (currentStep < 8 && stepRef.current?.validateAll) {
       const valid = stepRef.current.validateAll();
       if (!valid) return;
@@ -150,46 +129,42 @@ const RequestInvestigationPage = () => {
       return;
     }
 
-    // FINAL STEP
+    // FINAL STEP — Save and Submit
     try {
       if (!formData.legalConsent) {
-        alert("Please accept terms & conditions");
+        alert('Please accept terms & conditions');
         return;
       }
 
       const sessionId = getSessionId();
+      const payload = { ...buildPayload(), session_id: sessionId };
 
-      const payload = {
-        ...buildPayload(),
-        session_id: sessionId
-      };
-
-      // STEP 1: SAVE DRAFT
+      // Save as draft (works for both guest and logged-in via optionalAuth)
       const draftRes = await authService.createDraftRequestForm(payload);
 
       const formId =
-        draftRes.data?.id ||
-        draftRes.data?.data?.id;
+        draftRes.data?.data?.form?.id ||
+        draftRes.data?.data?.id ||
+        draftRes.data?.id;
 
-      if (!formId) {
-        throw new Error("Form ID not received");
-      }
+      if (!formId) throw new Error('Form ID not received from server');
 
-      localStorage.setItem("formId", formId);
+      localStorage.setItem('formId', formId);
 
-      // STEP 2: SUBMIT IF LOGGED IN
       if (isLoggedIn) {
-        await authService.createRequestForm({ form_id: formId });
+        // Logged-in: submit immediately → dashboard shows submitted cases
+        await authService.submitRequestFormById(formId);
+        navigate(`${ROUTES.USER_DASHBOARD}?status=submitted`);
+      } else {
+        // Guest: redirect to login — login page will link the form after auth
+        navigate(`${ROUTES.LOGIN}?pendingForm=${formId}`);
       }
-
-      setSubmitted(true);
-
     } catch (error) {
-      console.error("API Error:", error.response?.data || error.message);
-      alert("Something went wrong!");
+      console.error('Submit error:', error.response?.data || error.message);
+      const msg = error.response?.data?.message || error.message || 'Something went wrong!';
+      alert(msg);
     }
   };
-
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -198,10 +173,6 @@ const RequestInvestigationPage = () => {
       navigate(-1);
     }
   };
-
-  if (submitted) {
-    return <SuccessScreen />;
-  }
 
   const renderStep = () => {
     switch (currentStep) {
@@ -217,28 +188,26 @@ const RequestInvestigationPage = () => {
     }
   };
 
-  const isStepEight = currentStep === 8;
-
   return (
-   <div className="fixed inset-0 bg-[#0b1120] text-white flex flex-col md:flex-row overflow-hidden">
+    <div className="fixed inset-0 bg-[#0b1120] text-white flex flex-col md:flex-row overflow-hidden">
 
-  {/* STEP PROGRESS SIDEBAR */}
-  <div className="hidden md:flex flex-shrink-0" style={{ width: '450px' }}>
-    <div className="bg-[#1A2832] rounded-[24px] m-6 flex flex-col relative" style={{ width: '400px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
+      {/* STEP PROGRESS SIDEBAR */}
+      <div className="hidden md:flex flex-shrink-0" style={{ width: '450px' }}>
+        <div className="bg-[#1A2832] rounded-[24px] m-6 flex flex-col relative" style={{ width: '400px', maxHeight: 'calc(100vh - 48px)', padding: '40px 32px', overflow: 'hidden' }}>
 
           <div className="absolute" style={{ left: '63px', top: '40px', width: '6px', bottom: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
 
-      {/* Filled progress line */}
-      <div className="absolute transition-all duration-500" style={{
-        left: '63px',
-        top: '40px',
-        width: '6px',
-        height: 'calc(100% - 80px)',
-        transform: `scaleY(${(currentStep - 1) / (steps.length - 1)})`,
-        transformOrigin: 'top',
-        background: 'white',
-        borderRadius: '3px'
-      }}></div>
+          {/* Filled progress line */}
+          <div className="absolute transition-all duration-500" style={{
+            left: '63px',
+            top: '40px',
+            width: '6px',
+            height: 'calc(100% - 80px)',
+            transform: `scaleY(${(currentStep - 1) / (steps.length - 1)})`,
+            transformOrigin: 'top',
+            background: 'white',
+            borderRadius: '3px',
+          }}></div>
 
           <div className="flex flex-col justify-between h-full relative z-10">
             {steps.map((step) => (
@@ -257,8 +226,10 @@ const RequestInvestigationPage = () => {
                     }
                   </div>
                 </div>
-                <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '17px', lineHeight: '20px', letterSpacing: '0px', width: '310px' }}
-                  className={`transition-colors duration-300 ${currentStep === step.id ? 'text-white' : currentStep > step.id ? 'text-white/60' : 'text-gray-500'}`}>
+                <span
+                  style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '17px', lineHeight: '20px', letterSpacing: '0px', width: '310px' }}
+                  className={`transition-colors duration-300 ${currentStep === step.id ? 'text-white' : currentStep > step.id ? 'text-white/60' : 'text-gray-500'}`}
+                >
                   {step.title}
                 </span>
               </div>
@@ -267,45 +238,38 @@ const RequestInvestigationPage = () => {
         </div>
       </div>
 
-  {/* MOBILE PROGRESS BAR */}
-  <div className="md:hidden bg-[#0b1120] px-4 pt-4 pb-2 shrink-0">
-    <div style={{ width: '100%', gap: '11.99px' }} className="flex flex-col">
-
-      {/* Step X of 8 + percentage */}
-      <div className="flex items-center justify-between">
-        <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: 'white' }}>
-          Step {currentStep} of {steps.length}
-        </span>
-        <span style={{ fontFamily: 'Montserrat', fontWeight: 500, fontSize: '12px', lineHeight: '18px', letterSpacing: '0px', color: '#9CA3AF' }}>
-          {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}% Complete
-        </span>
+      {/* MOBILE PROGRESS BAR */}
+      <div className="md:hidden bg-[#0b1120] px-4 pt-4 pb-2 shrink-0">
+        <div style={{ width: '100%', gap: '11.99px' }} className="flex flex-col">
+          <div className="flex items-center justify-between">
+            <span style={{ fontFamily: 'Montserrat', fontWeight: 600, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: 'white' }}>
+              Step {currentStep} of {steps.length}
+            </span>
+            <span style={{ fontFamily: 'Montserrat', fontWeight: 500, fontSize: '12px', lineHeight: '18px', letterSpacing: '0px', color: '#9CA3AF' }}>
+              {Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}% Complete
+            </span>
+          </div>
+          <div style={{ width: '100%', height: '7.98px', borderRadius: '42431300px', background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+            <div
+              className="transition-all duration-500"
+              style={{
+                height: '100%',
+                width: `${Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%`,
+                background: '#D92B3A',
+                borderRadius: '42431300px',
+              }}
+            />
+          </div>
+          <span style={{ fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#9CA3AF' }}>
+            {steps[currentStep - 1].title}
+          </span>
+        </div>
       </div>
 
-      {/* Progress bar */}
-      <div style={{ width: '100%', height: '7.98px', borderRadius: '42431300px', background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
-        <div
-          className="transition-all duration-500"
-          style={{
-            height: '100%',
-            width: `${Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%`,
-            background: '#D92B3A',
-            borderRadius: '42431300px'
-          }}
-        />
-      </div>
-
-      {/* Step title */}
-      <span style={{ fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#9CA3AF' }}>
-        {steps[currentStep - 1].title}
-      </span>
-
-    </div>
-  </div>
-
-  {/* Main Content */}
-  <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-    <div className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10">
-      <div className="max-w-6xl mx-auto w-full flex-1 min-h-0 flex flex-col">
+      {/* Main Content — improved scroll layout from friend's version */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 md:px-4 lg:px-6 py-4 md:py-10">
+          <div className="max-w-6xl mx-auto w-full flex-1 min-h-0 flex flex-col">
 
             {/* Heading - desktop only */}
             <div className="hidden md:block flex-shrink-0">
@@ -314,34 +278,35 @@ const RequestInvestigationPage = () => {
               </h2>
             </div>
 
-            {/* Step Content - full scroll */}
+            {/* Step Content - scrollable */}
             <div className="flex-1 min-h-0 overflow-y-auto pr-1 pb-6">
               {renderStep()}
             </div>
+          </div>
 
-      </div>
-
-        <div className="border-t border-white/10 bg-[#0b1120] sticky bottom-0 z-20 py-4">
-          <div className="max-w-6xl mx-auto flex justify-between gap-4">
-            <button
-              onClick={handleBack}
-              style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
-              className="w-35.75 md:w-35.75 border border-white/30 text-white hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center"
-            >
-              Back
-            </button>
-            <button
-              onClick={handleNext}
-              style={{ height: '54px', borderRadius: '8px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
-              className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center"
-            >
-              {currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
-            </button>
+          {/* Navigation Buttons */}
+          <div className="border-t border-white/10 bg-[#0b1120] sticky bottom-0 z-20 py-4">
+            <div className="max-w-6xl mx-auto flex justify-between gap-4">
+              <button
+                onClick={handleBack}
+                style={{ height: '54px', borderRadius: '8px', borderWidth: '2px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px' }}
+                className="w-35.75 md:w-35.75 border border-white/30 text-white hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                style={{ height: '54px', borderRadius: '8px', fontFamily: 'Montserrat', fontWeight: 600, fontSize: '20px', lineHeight: '100%', letterSpacing: '0px', background: '#D92B3A' }}
+                className="flex-1 md:flex-none md:w-54.25 text-white hover:bg-[#b0222f] transition-all active:scale-95 flex items-center justify-center"
+              >
+                {currentStep === steps.length ? 'Save and Submit' : 'Save and next'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
-  </div>
   );
 };
 

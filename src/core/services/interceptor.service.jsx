@@ -9,38 +9,35 @@ class ApiInterceptor {
   });
 
   static requestCounts = 0;
+  static interceptorsRegistered = false;
 
   static init() {
-    ApiInterceptor.axiosReference.interceptors.request.use((config) => {
-      ApiInterceptor.requestCounts++;
+    // Only register interceptors once — prevents stacking on repeated calls
+    if (!ApiInterceptor.interceptorsRegistered) {
+      ApiInterceptor.interceptorsRegistered = true;
 
-      // console.log("Requesting to:", config.baseURL); // Logs actual base URL
-      config.headers = {
-        ...config.headers,
-        ...this.generateHeader(),
-      };
+      ApiInterceptor.axiosReference.interceptors.request.use((config) => {
+        ApiInterceptor.requestCounts++;
+        // Merge auth header without overwriting existing custom headers
+        const authHeader = this.generateHeader();
+        config.headers = {
+          ...authHeader,
+          ...config.headers, // custom headers (like x-session-id) take precedence
+        };
+        return config;
+      });
 
-      return config;
-    });
-
-    ApiInterceptor.axiosReference.interceptors.response.use(
-      (response) => {
-        ApiInterceptor.requestCounts--;
-        return response;
-      },
-      (error) => {
-        ApiInterceptor.requestCounts--;
-        // console.log("API ERROR =>", {
-        //   url: error.config.url,
-        //   method: error.config.method,
-        //   status: error.response?.status,
-        //   response: error.response?.data,
-        //   requestHeaders: error.config.headers,
-        //   payload: error.config.data   // <-- add this
-        // });
-        return Promise.reject(error);
-      }
-    );
+      ApiInterceptor.axiosReference.interceptors.response.use(
+        (response) => {
+          ApiInterceptor.requestCounts--;
+          return response;
+        },
+        (error) => {
+          ApiInterceptor.requestCounts--;
+          return Promise.reject(error);
+        }
+      );
+    }
 
     return ApiInterceptor.axiosReference;
   }
