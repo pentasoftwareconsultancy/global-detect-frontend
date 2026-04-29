@@ -12,6 +12,7 @@ const StepThreeDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) 
 
   const today = new Date().toISOString().split('T')[0]
 
+  
   const onIssueDateChange = (val) => {
     handleChange('professional', 'issueDate', val)
     const err = validateLicenseIssueDate(val)

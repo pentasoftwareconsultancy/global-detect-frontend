@@ -68,7 +68,7 @@ const StepIndicator = ({ steps, active }) => {
                       className={
                         current
                           ? 'text-white'
-                          : 'text-gray-500'
+                          : 'text-white'
                       }
                     />
 
