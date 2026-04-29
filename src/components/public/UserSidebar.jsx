@@ -95,12 +95,12 @@
 //       </div>
 
 //       {/* LOGOUT (ALWAYS VISIBLE) */}
-      
+
 
 //     </div>
 //   </div>
 
- 
+
 
 // </div>
 //   );
@@ -112,6 +112,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboard, User, Settings, LogOut, X } from "lucide-react";
 import { ROUTES } from "../../core/constants/routes.constant";
+import { useAuth } from "../../core/contexts/AuthContext";
 
 const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
@@ -124,6 +125,13 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   ];
 
   const isActive = (path) => location.pathname === path;
+  const { logout } = useAuth();
+
+  // ✅ Proper logout function
+  const handleLogout = () => {
+    logout(); // clears state + storage
+    navigate(ROUTES.LOGIN, { replace: true });
+  };
 
   return (
     <div
@@ -168,7 +176,7 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
         {/* Logout */}
         <div className="pt-3 border-t border-white/10">
           <div
-            onClick={() => navigate(ROUTES.LOGIN)}
+            onClick={handleLogout}
             className="bg-[#2a3b44] px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-[#344954]"
           >
             <LogOut size={18} />
