@@ -123,13 +123,78 @@ const DetectiveForm = () => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
-    setShowSuccess(true);
+
+    const payload = {
+      personalInfo: {
+        firstName: data.personal.firstName,
+        lastName: data.personal.lastName,
+        dateOfBirth: data.personal.dob,
+        gender: data.personal.gender.toLowerCase(),
+        nationality: data.personal.nationality,
+        socialSecurityNumber: "123456789"
+      },
+
+      contactInfo: {
+        email: data.contact.email,
+        phoneNumber: data.contact.phone,
+        streetAddress: data.contact.address,
+        city: data.contact.city,
+        stateProvince: data.contact.state,
+        zipPostalCode: data.contact.zip,
+        country: data.contact.country
+      },
+
+      emergencyContact: {
+        fullName: data.contact.emergency.name,
+        relationship: data.contact.emergency.relation,
+        phoneNumber: data.contact.emergency.phone
+      },
+
+      professionalInfo: {
+        detectiveLicenseNumber: data.professional.licenseNumber,
+        specialization: data.professional.specialization,
+        licenseIssueDate: data.professional.issueDate,
+        licenseExpiryDate: data.professional.expiryDate,
+        yearsOfExperience: data.professional.experience
+      },
+
+      documents: {
+        governmentIdProof: data.documents.govId,
+        detectiveLicenseCertificate: data.documents.licenseCert,
+        professionalResume: data.documents.resume
+      },
+
+      bankingInfo: {
+        bankName: data.banking.bankName,
+        accountHolderName: data.banking.holderName,
+        accountNumber: data.banking.accountNumber,
+        routingNumber: data.banking.routingNumber
+      },
+
+      references: data.references.map((ref, i) => ({
+        referenceNumber: i + 1,
+        fullName: ref.name,
+        phoneNumber: ref.phone,
+        email: ref.email
+      })),
+
+      legalCompliance: {
+        hasCriminalRecord: data.legal.convicted,
+        consentBackgroundCheck: data.legal.consentBackground,
+        termsAccepted: data.legal.agreeTerms
+      }
+    };
+
     try {
-      const response = await authService.createDetectiveKYC(data);
-      console.log('KYC Success:', response);
+      const response = await authService.createDetectiveKYC(payload);
+
+      console.log("KYC Success:", response);
+
+      setShowSuccess(true);
       setKycComplete(true);
+
     } catch (error) {
-      console.error('KYC Failed:', error);
+      console.error("KYC Failed:", error);
     }
   };
 
