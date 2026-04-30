@@ -231,11 +231,12 @@ const AdminDetectiveDetailsPage = () => {
 
   const { lat, lng } = detective;
 
+  
   return (
     <div className="text-white bg-[#121F27] min-h-screen font-[Montserrat]">
 
       {/* ── MAP ── */}
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 'clamp(200px, 40vw, 400px)', width: "100%" }}>
         <MapContainer
           center={[lat, lng]}
           zoom={4}
@@ -253,7 +254,7 @@ const AdminDetectiveDetailsPage = () => {
       </div>
 
       {/* ── CONTENT ── */}
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
 
         {/* Back + Name */}
         <button
@@ -266,7 +267,7 @@ const AdminDetectiveDetailsPage = () => {
         <p className="text-sm text-[#9CA3AF] mb-5">{detective.specialization}</p>
 
         {/* ── STATUS CARDS ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
             <p className="text-xs text-[#9CA3AF] mb-3">Current Status</p>
             <span className={`px-3 py-1 text-xs rounded-lg ${statusStyle[detective.status]}`}>{detective.status}</span>
@@ -293,7 +294,7 @@ const AdminDetectiveDetailsPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
 
           <SectionCard icon={<User size={14} />} title="Personal Information">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-4">
               <InfoBlock label="Full Name" value={detective.personal.fullName} />
               <InfoBlock label="Date of Birth" value={detective.personal.dob} />
               <InfoBlock label="Phone" value={detective.personal.phone} prefix={<FiPhone />} />
@@ -305,7 +306,7 @@ const AdminDetectiveDetailsPage = () => {
             </div>
             <div className="mt-5 pt-4 border-t border-white/10">
               <p className="text-xs font-semibold text-white mb-3">Emergency Contact</p>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                 <InfoBlock label="Name" value={detective.personal.emergencyName} />
                 <InfoBlock label="Relationship" value={detective.personal.emergencyRelation} />
               </div>
@@ -316,7 +317,7 @@ const AdminDetectiveDetailsPage = () => {
           </SectionCard>
 
           <SectionCard icon={<Briefcase size={14} />} title="Professional Information">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-4">
               <InfoBlock label="License Number" value={detective.professional.licenseNumber} />
               <InfoBlock label="License State" value={detective.professional.licenseState} />
               <InfoBlock label="License Expiry" value={detective.professional.licenseExpiry} />

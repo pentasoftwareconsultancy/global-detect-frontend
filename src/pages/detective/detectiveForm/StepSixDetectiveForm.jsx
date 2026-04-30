@@ -15,6 +15,7 @@ const StepSixDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =>
     { idx: 1, namePh: 'Michael Johnson', phonePh: '10-digit number', emailPh: 'michael.johnson@gmail.com', nameErr: 'ref1Name', phoneErr: 'ref1Phone', emailErr: 'ref1Email' },
   ]
 
+  
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">

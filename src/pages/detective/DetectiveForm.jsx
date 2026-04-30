@@ -5,6 +5,7 @@ import { ROUTES } from '../../core/constants/routes.constant'
 import { authService } from '../../core/services/auth.service';
 import StepIndicator from '../../components/detective/StepIndicator';
 
+
 import StepOneDetectiveForm from './detectiveForm/StepOneDetectiveForm';
 import StepTwoDetectiveForm from './detectiveForm/StepTwoDetectiveForm';
 import StepThreeDetectiveForm from './detectiveForm/StepThreeDetectiveForm';
@@ -212,7 +213,7 @@ const DetectiveForm = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-[#121F27] text-white">
+    <div className="min-h-screen p-4 sm:p-8 bg-[#121F27] text-white montserrat">
       <div className="mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3 min-w-0">
@@ -226,7 +227,7 @@ const DetectiveForm = () => {
           </div>
           <button onClick={() => navigate(-1)} className="ml-2 flex-shrink-0 text-gray-400 hover:text-white transition">
             <X size={20} className="sm:hidden" />
-            <span className="hidden sm:inline text-sm">Cancel</span>
+            <span className="hidden sm:inline text-sm text-[#F9FAFB]">Cancel</span>
           </button>
         </div>
 
@@ -260,7 +261,7 @@ const DetectiveForm = () => {
 
       {showSuccess && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-          <div className="bg-[#121F27] rounded-2xl w-full sm:max-w-md max-h-[90vh] overflow-y-auto py-6 px-6 relative my-4 sm:my-0">
+          <div className="bg-[#121F27] rounded-2xl w-full sm:max-w-md max-h-[90vh] overflow-hidden py-6 px-6 relative my-4 sm:my-0">
             <button onClick={() => setShowSuccess(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition">
               <X size={18} />
             </button>
