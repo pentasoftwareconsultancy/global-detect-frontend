@@ -69,6 +69,7 @@ const StepSevenDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) 
         </div>
       </div>
 
+
       <div className="flex items-start gap-3 mt-4 p-4 bg-[#D92B3A]/10 border border-[#D92B3A]/30 rounded-lg">
         <div className="w-5 h-5 rounded-full border-2 border-[#D92B3A] flex items-center justify-center flex-shrink-0 mt-0.5">
           <div className="w-1.5 h-1.5 rounded-full bg-[#D92B3A]" />

@@ -1,3 +1,4 @@
+
 // import React, { useState } from 'react';
 // import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 // import { LayoutGrid, Bell, User, Settings, LogOut, Menu, Search, LayoutDashboard, X } from 'lucide-react';
@@ -128,8 +129,8 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const { logout } = useAuth();
 
   // ✅ Proper logout function
-  const handleLogout = () => {
-    logout(); // clears state + storage
+  const handleLogout = async () => {
+    await logout(); // clears state + storage + calls backend API
     navigate(ROUTES.LOGIN, { replace: true });
   };
 
@@ -190,3 +191,6 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 };
 
 export default UserSidebar;
+
+
+

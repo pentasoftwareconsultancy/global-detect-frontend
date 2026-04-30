@@ -5,8 +5,12 @@ import { ROUTES } from '../../core/constants/routes.constant';
 import { LuSend } from "react-icons/lu";
 
 
+
 const DetectiveDashboardPage = () => {
   const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [priorityFilter, setPriorityFilter] = useState('All Priority');
+  const [search, setSearch] = useState('');
   const [cases] = useState([
     {
       id: 1,
@@ -31,9 +35,26 @@ const DetectiveDashboardPage = () => {
     }
   ]);
 
+  const filteredCases = cases.filter(c => {
+    const matchSearch = !search ||
+      c.title.toLowerCase().includes(search.toLowerCase()) ||
+      c.client.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'All Status' || c.status === statusFilter;
+    const matchPriority = priorityFilter === 'All Priority' || c.type === priorityFilter.toLowerCase();
+    return matchSearch && matchStatus && matchPriority;
+  });
+
+  const selectCls = {
+    background: '#1C2B35', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
+    color: '#fff', fontSize: '13px', outline: 'none', cursor: 'pointer',
+    padding: '7px 32px 7px 10px', appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center',
+  };
+
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-5 md:px-8 py-4 sm:py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-5 md:px-8 py-4 sm:py-6 montserrat">
 
       {/* Header */}
       <div className="mb-6">
@@ -98,27 +119,43 @@ const DetectiveDashboardPage = () => {
           <p className="text-sm text-gray-400">2 cases assigned</p>
         </div>
 
-        {/* SEARCH + FILTERS - separate row */}
+        {/* SEARCH + FILTERS */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
           <div className="relative flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Search by case number, title, or client name..."
-              className="bg-[#1C2B35] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm w-full focus:outline-none text-white placeholder:text-gray-400"
+              className="bg-[#121F27] border border-white/10 rounded-lg py-2 pl-9 pr-3 text-sm w-full focus:outline-none text-white placeholder:text-gray-400"
             />
           </div>
-          <button className="flex items-center gap-2 bg-[#1C2B35] border border-white/10 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white whitespace-nowrap">
-            <Filter size={14} /> All Status
-          </button>
-          <button className="flex items-center gap-2 bg-[#1C2B35] border border-white/10 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm text-white whitespace-nowrap">
-            <Filter size={14} /> All Priority
-          </button>
+          <div className="relative flex items-center">
+            <Filter size={13} className="absolute left-3 text-gray-400 pointer-events-none z-10" />
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...selectCls, paddingLeft: '28px' }}>
+              <option>All Status</option>
+              <option>Insights Submitted</option>
+              <option>Report Ready</option>
+              <option>In Progress</option>
+            </select>
+          </div>
+          <div className="relative flex items-center">
+            <Filter size={13} className="absolute left-3 text-gray-400 pointer-events-none z-10" />
+            <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)} style={{ ...selectCls, paddingLeft: '28px' }}>
+              <option>All Priority</option>
+              <option>Urgent</option>
+              <option>High</option>
+              <option>New</option>
+            </select>
+          </div>
         </div>
 
         {/* CARDS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {cases.map((caseItem) => (
+          {filteredCases.length === 0 ? (
+            <p className="text-sm text-gray-400 col-span-2 text-center py-8">No cases match the selected filters.</p>
+          ) : filteredCases.map((caseItem) => (
             <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px' }}>
 
               {/* Title + badge */}

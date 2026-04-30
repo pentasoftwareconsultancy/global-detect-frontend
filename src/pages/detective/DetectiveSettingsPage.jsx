@@ -5,6 +5,7 @@ const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', mar
 const divider = { borderBottom: '1px solid rgba(255,255,255,0.07)' };
 const rowStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0' };
 
+
 const Toggle = ({ value, onChange }) => (
   <div
     onClick={() => onChange(!value)}
@@ -42,7 +43,7 @@ const DetectiveSettingsPage = () => {
   };
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6 montserrat">
 
       {/* Page header */}
       <div className="mb-5">
