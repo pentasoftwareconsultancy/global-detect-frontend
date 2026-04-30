@@ -14,9 +14,10 @@ const NOTIFICATIONS = [
   { id: 10, icon: <Settings size={16} style={{ color: '#3b82f6' }} />, title: 'System Maintenance', unread: false, tag: 'system', time: '3 days ago', desc: 'Scheduled maintenance on Saturday 10 PM - 2 AM', actions: ['Delete'] },
 ];
 
+
 const actionBtn = (label) => {
-  if (label === 'Delete') return { background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 0' };
-  if (label === 'Mark as Read') return { background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: '#9ca3af', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 10px' };
+  if (label === 'Delete') return { background: 'transparent', border: 'none', color: '#F9FAFB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 0' };
+  if (label === 'Mark as Read') return { background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: '#F9FAFB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 10px' };
   return { background: '#dc3545', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer', fontSize: '13px', fontWeight: '600', padding: '5px 14px' };
 };
 
@@ -50,10 +51,10 @@ const DetectiveNotificationPage = () => {
   const clearAll = () => setNotifications([]);
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6 montserrat">
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Bell size={20} style={{ color: '#dc3545' }} />
@@ -61,11 +62,11 @@ const DetectiveNotificationPage = () => {
           </div>
           <p className="text-sm text-gray-400">{unreadCount} unread notifications</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={markAllRead} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#9ca3af', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={markAllRead} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
             <Eye size={14} /> Mark All Read
           </button>
-          <button onClick={clearAll} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#9ca3af', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
+          <button onClick={clearAll} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
             <Trash2 size={14} /> Clear All
           </button>
         </div>
@@ -77,8 +78,8 @@ const DetectiveNotificationPage = () => {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           <span className="text-sm font-medium text-gray-300">Filters</span>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             {filters.map(f => (
               <button key={f} onClick={() => setFilter(f)} style={{
                 background: filter === f ? '#dc3545' : '#243340',
@@ -87,14 +88,14 @@ const DetectiveNotificationPage = () => {
                 display: 'flex', alignItems: 'center', gap: '6px',
               }}>
                 {f}
-                {f === 'All' && <span style={{ background: filter === 'All' ? 'rgba(255,255,255,0.3)' : '#3a4651', borderRadius: '999px', padding: '0 6px', fontSize: '11px' }}>{notifications.length}</span>}
+                {f === 'All' && <span style={{ background: filter === 'All' ? '#2D3E4D' : '#3a4651', borderRadius: '999px', padding: '0 6px', fontSize: '11px' }}>{notifications.length}</span>}
               </button>
             ))}
           </div>
           <button onClick={() => setUnreadOnly(!unreadOnly)} style={{
             background: unreadOnly ? '#dc3545' : '#243340', border: 'none', borderRadius: '6px',
             padding: '5px 12px', color: '#fff', fontSize: '13px', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: '6px',
+            display: 'flex', alignItems: 'center', gap: '6px', alignSelf: 'flex-start',
           }}>
             <Bell size={13} /> Unread Only
           </button>
@@ -109,19 +110,19 @@ const DetectiveNotificationPage = () => {
             border: n.unread ? '1px solid rgba(220,53,69,0.25)' : '1px solid rgba(255,255,255,0.06)',
             borderRadius: '12px', padding: '16px 20px',
           }}>
-            <div className="flex items-start justify-between mb-1">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 mb-1">
               <div className="flex items-center gap-2">
                 {n.icon}
                 <span className="text-sm font-semibold text-white">{n.title}</span>
                 {n.unread && <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#dc3545', display: 'inline-block' }} />}
               </div>
-              <div className="flex items-center gap-2">
-                <span style={{ background: '#243340', borderRadius: '4px', padding: '2px 8px', fontSize: '11px', color: '#9ca3af' }}>{n.tag}</span>
+              <div className="flex items-center gap-2 ml-6 sm:ml-0">
+                <span style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '2px 8px', fontSize: '11px', color: '#F9FAFB' }}>{n.tag}</span>
                 <span style={{ fontSize: '12px', color: '#6b7280' }}>{n.time}</span>
               </div>
             </div>
             <p className="text-xs text-gray-400 mb-3">{n.desc}</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {n.actions.map((label, i) => (
                 <button key={i} onClick={() => { if (label === 'Delete') deleteNotif(n.id); if (label === 'Mark as Read') markRead(n.id); }} style={actionBtn(label)}>
                   <ActionIcon label={label} />

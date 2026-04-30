@@ -23,6 +23,7 @@ const StepTwoDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =>
     err ? set(errKey, err) : clear(errKey)
   }
 
+  
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">

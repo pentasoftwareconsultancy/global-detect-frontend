@@ -8,6 +8,7 @@ const fieldBox = { background: '#1C2B35', border: '1px solid rgba(255,255,255,0.
 const lbl = { fontSize: '13px', color: '#9ca3af', marginBottom: '6px'  };
 const dividerRow = { borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '14px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' };
 
+
  const DetectiveProfilePage = () => {
   const [name, setName] = useState('');
 const [email, setEmail] = useState('');
@@ -46,7 +47,7 @@ useEffect(() => {
 
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6 montserrat">
 
       {/* Page header */}
       <div className="mb-5">
