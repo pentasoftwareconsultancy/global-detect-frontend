@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, MapPin, Clock, CheckCircle, Users, Eye, Navigation, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTES } from "../../../core/constants/routes.constant";
 
 const ALL_DETECTIVES = [
@@ -70,6 +70,12 @@ const AdminDetectiveManagementPage = () => {
   const [activeTab, setActiveTab] = useState("All Detectives");
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && TABS.find(t => t.key === tab)) setActiveTab(tab);
+  }, [searchParams]);
 
   const filtered = filterDetectives(activeTab, search);
 
