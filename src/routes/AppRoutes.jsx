@@ -61,6 +61,7 @@ const AdminHistoryPage = lazy(() => import("../pages/admin/history/AdminHistoryP
 
 const AdminNotification = lazy(() => import("../pages/admin/AdminNotification"));
 const AdminBlogPage = lazy(() => import("../pages/admin/AdminBlogPage"));
+const AdminCreateBlogPage = lazy(() => import("../pages/admin/AdminCreateBlogPage"));
 const AdminProfilePage = lazy(() => import("../pages/admin/AdminProfilePage"));
 const AdminSettings = lazy(() => import("../pages/admin/AdminSettings"));
 const PendingCaseManagement = lazy(() =>
@@ -146,7 +147,7 @@ const AppRoutes = () => {
               element={<ReviewInsightsCaseManagement />}
             />
             <Route path={ROUTES.ADMIN_USER_MANAGEMENT} element={<AdminUserManagementPage />} />
-            <Route path={ROUTES.ADMIN_USER_MANAGEMENT_DETAIL} element={<AdminUserDetailsPage />} />
+            <Route path={`${ROUTES.ADMIN_USER_MANAGEMENT_DETAIL}`} element={<AdminUserDetailsPage />} />
 
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL} element={<AdminCaseDetailsPage />} />
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT_UNASSIGNED} element={<AdminCaseDetailsUnassignedPage />} />
@@ -161,6 +162,7 @@ const AppRoutes = () => {
 
             <Route path={ROUTES.ADMIN_NOTIFICATION} element={<AdminNotification />} />
             <Route path={ROUTES.ADMIN_BLOG} element={<AdminBlogPage />} />
+            <Route path={ROUTES.ADMIN_BLOG_CREATE} element={<AdminCreateBlogPage />} />
             <Route path={ROUTES.ADMIN_PROFILE} element={<AdminProfilePage />} />
             <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettings />} />
           </Route>
