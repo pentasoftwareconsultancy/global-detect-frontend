@@ -102,16 +102,6 @@ const OTP = () => {
     }
   };
 
-  const getRedirectRoute = () => {
-    const accountType = localStorage.getItem('accountType');
-    const routeMap = {
-      user: ROUTES.USER_DASHBOARD,
-      detective: ROUTES.DETECTIVE_DASHBOARD,
-      admin: ROUTES.ADMIN_DASHBOARD,
-    };
-    return routeMap[accountType] || ROUTES.USER_DASHBOARD;
-  };
-
   const cardClass = "bg-white border shadow-lg flex flex-col items-center justify-center text-center w-full max-w-[900px] px-6 py-10";
   const cardStyle = { borderRadius: '24px', borderWidth: '2px', borderColor: '#e5e7eb' };
 
@@ -138,11 +128,11 @@ const OTP = () => {
               OTP Verification has been completed
             </p>
             <button
-              onClick={() => navigate(ROUTES.USER_DASHBOARD)}
+              onClick={() => navigate(ROUTES.LOGIN)}
               style={{ height: '56px', borderRadius: '16px', fontSize: '16px', fontWeight: 700, lineHeight: '24px', boxShadow: '0px 10px 15px -3px #0000001A, 0px 4px 6px -4px #0000001A' }}
               className="bg-[#D92B3A] text-white w-full max-w-[500px]"
             >
-              Go to Dashboard
+              Go to Login
             </button>
           </div>
         </div>

@@ -51,6 +51,7 @@ ADMIN_REVIEW_INSIGHTS: "/admin-review-insights",
   ADMIN_DETECTIVE_MANAGEMENT_ONCASE: "/admin-detective-management-oncase", // admin detective management oncase
   ADMIN_DETECTIVE_KYC: "/admin-detective-kyc", // admin detective kyc
   ADMIN_DETECTIVE_MANAGEMENT_DETAIL: "/admin-detective-management-detail", // admin detective management details
+  ADMIN_DETECTIVE_TRACK: "/admin-detective-track", // admin detective track page
 
   ADMIN_CASE_MANAGEMENT: "/admin-case-management", // admin case management page
   ADMIN_CASE_MANAGEMENT_DETAIL: "/admin-case-management-detail", // admin case details page
