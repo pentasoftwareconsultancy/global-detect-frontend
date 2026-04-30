@@ -1,15 +1,23 @@
+
 import React from 'react';
 import { LayoutGrid, User, Settings, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../core/constants/routes.constant';
+import { useAuth } from '../../core/contexts/AuthContext';
 
 const DetectiveSidbar = ({ onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleNav = (route) => {
     navigate(route);
     if (onClose) onClose();
+  };
+
+  const handleLogout = async () => {
+    await logout(); // Call backend API and clear storage
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   const menuItems = [
@@ -77,7 +85,7 @@ const DetectiveSidbar = ({ onClose }) => {
 
         {/* Logout */}
         <button
-          onClick={() => navigate(ROUTES.LOGIN)}
+          onClick={handleLogout}
           style={{
             display: 'flex',
             alignItems: 'center',
