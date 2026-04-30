@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Search, Plus, Calendar, User, Tag, Eye, Edit, Trash2, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../core/constants/routes.constant";
 import img1 from "../../assets/img1.png";
 import img2 from "../../assets/img2.png";
 import img3 from "../../assets/img3.png";
@@ -46,6 +48,7 @@ const BLOGS = [
 const AdminBlogPage = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
+  const navigate = useNavigate();
 
   const filtered = BLOGS.filter(b => {
     const matchSearch = !search || b.title.toLowerCase().includes(search.toLowerCase());
@@ -65,7 +68,7 @@ const AdminBlogPage = () => {
             <p className="text-sm text-gray-400 mt-0.5">Create, edit, and manage blog posts</p>
           </div>
         </div>
-        <button className="flex items-center gap-2 bg-[#D92B3A] hover:bg-[#b82231] px-4 py-2 rounded-lg text-sm font-medium transition">
+        <button onClick={() => navigate(ROUTES.ADMIN_BLOG_CREATE)} className="flex items-center gap-2 bg-[#D92B3A] hover:bg-[#b82231] px-4 py-2 rounded-lg text-sm font-medium transition">
           <Plus size={14} /> New Post
         </button>
       </div>

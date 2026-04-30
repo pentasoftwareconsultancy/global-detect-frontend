@@ -62,6 +62,7 @@ ADMIN_REVIEW_INSIGHTS: "/admin-review-insights",
   ADMIN_PROFILE: "/admin-profile", // admin profile
   ADMIN_NOTIFICATION: "/admin-notification", // admin notification
   ADMIN_BLOG: "/admin-blog", // admin blog management
+  ADMIN_BLOG_CREATE: "/admin-blog-create", // admin create blog post
   ADMIN_SETTINGS: "/admin-settings", // admin settings
 
   
