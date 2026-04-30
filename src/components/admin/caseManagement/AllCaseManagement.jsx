@@ -1,26 +1,30 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { casesData } from "./caseManagementData";
 import { Eye, Search } from "lucide-react";
 import { FiFileText } from "react-icons/fi";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
-import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const CaseManagement = () => {
   const [activeTab, setActiveTab] = useState("all");
-
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [type, setType] = useState("All");
   const [priority, setPriority] = useState("All");
-
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState(null);
   const [selectedDetective, setSelectedDetective] = useState("");
-
   const [dateSort, setDateSort] = useState("All");
-
   const [showReportModal, setShowReportModal] = useState(false);
+  const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "pending") setActiveTab("pending");
+    else if (tab === "review") setActiveTab("review");
+    const action = searchParams.get("action");
+    if (action === "generate-report") { setActiveTab("review"); setShowReportModal(true); }
+  }, [searchParams]);
 
   const [cases, setCases] = useState(() => {
     const saved = localStorage.getItem("cases");
@@ -84,14 +88,14 @@ const CaseManagement = () => {
     if (status !== "All") data = data.filter((i) => i.status === status);
     if (type !== "All") data = data.filter((i) => i.type === type);
 
-    // ✅ FIX PRIORITY (case-insensitive)
+    //  FIX PRIORITY (case-insensitive)
     if (priority !== "All") {
       data = data.filter(
         (i) => i.priority.toLowerCase() === priority.toLowerCase()
       );
     }
 
-    // ✅ ADD DATE SORTING (MISSING PART)
+    //  ADD DATE SORTING (MISSING PART)
     if (dateSort === "Newest") {
       data.sort((a, b) => new Date(b.date) - new Date(a.date));
     } else if (dateSort === "Oldest") {

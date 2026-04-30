@@ -1,3 +1,4 @@
+
 import { API_MODULE } from "../models/api.module";
 class ServerUrl {
     
@@ -9,6 +10,7 @@ class ServerUrl {
 
         static REGISTER_API = `${ServerUrl.AUTH_API}/register`; //endpoint is same for both sending OTP and verifying OTP for registration, backend will differentiate based on request body
         static LOGIN_API = `${ServerUrl.AUTH_API}/login`; //endpoint is same for all login flows (email/password, send OTP, verify OTP), backend will differentiate based on request body
+        static LOGOUT_API = `${ServerUrl.AUTH_API}/logout`; //endpoint to logout user and set is_online to false
     
     // ------------------------- all detective side related api endpoints -------------------------------------------
     // detective kyc api endpoint
@@ -74,3 +76,7 @@ class ServerUrl {
 }
 
 export default ServerUrl;
+
+
+
+

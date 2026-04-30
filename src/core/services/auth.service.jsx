@@ -1,4 +1,5 @@
 
+
 import api from "./api.service";
 import ApiInterceptor from "./interceptor.service";
 import ServerUrl from "../constants/serverURL.constant";
@@ -53,6 +54,24 @@ export const authService = {
         phone,
         otp,
       });
+    },
+
+    // Logout - Clear token and set user offline
+    logout: async () => {
+      try {
+        // Call backend to set is_online = false
+        await apiService.apipost(ServerUrl.LOGOUT_API, {});
+      } catch (error) {
+        console.error('Logout API error:', error);
+        // Continue with local cleanup even if API fails
+      } finally {
+        // Clear local storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        // Clear session ID if exists
+        localStorage.removeItem('sessionId');
+      }
     },
 
 // ========== PUBLIC FLOWS ==========

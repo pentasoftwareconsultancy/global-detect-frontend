@@ -1,4 +1,6 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
+import { authService } from "../services/auth.service";
 
 const AuthContext = createContext();
 
@@ -70,18 +72,20 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      // Clear storage
-      localStorage.removeItem("user");
-      localStorage.removeItem("TOKEN");
-
+      // Call backend to set is_online = false
+      await authService.logout();
+      
       // Reset auth state
       setUser(null);
-      setIsLoggedIn(false);
 
     } catch (error) {
       console.error("Logout failed:", error);
+      // Even if API fails, clear local data
+      localStorage.removeItem("user");
+      localStorage.removeItem("TOKEN");
+      setUser(null);
     }
   };
 
@@ -95,3 +99,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
