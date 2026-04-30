@@ -25,9 +25,12 @@ const UserProfilePage = () => {
       setLoading(true);
       const res = await authService.getProfile();
 
+
+
+
+      console.log("PROFILE API:", res);
       // 👉 adjust according to your API response
-      const data = res.data || {};
-      const name = data.name ?? '';
+const data = res.data?.data || {};      const name = data.name ?? '';
       const email = data.email ?? '';
       const phone = data.phone ?? '';
 
@@ -120,8 +123,9 @@ const UserProfilePage = () => {
         <div className="w-full bg-[#1A2832] rounded-[12px] border border-white/10" style={{ borderWidth: '0.67px' }}>
           <div className="flex items-center gap-4 py-4 px-4 sm:px-6">
             <div className="w-[70px] h-[70px] rounded-full bg-gradient-to-br from-[#D92B3A] to-[#a0202a] flex items-center justify-center flex-shrink-0">
-              <span className="text-[24px] leading-[28px] font-bold text-white">S</span>
-            </div>
+<span className="text-[24px] leading-[28px] font-bold text-white">
+  {formData.name ? formData.name.charAt(0).toUpperCase() : 'U'}
+</span>            </div>
 
             <div className="flex-1 min-w-0">
               <p className="text-[18px] leading-[24px] font-semibold text-white truncate">
