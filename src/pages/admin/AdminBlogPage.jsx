@@ -37,9 +37,9 @@ const AdminBlogPage = () => {
         </div>
         <button
           onClick={() => navigate(ROUTES.ADMIN_BLOG_CREATE)}
-          className="flex items-center gap-1.5 bg-[#D92B3A] hover:bg-[#b82231] px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition flex-shrink-0"
+          className="flex items-center gap-1.5 bg-[#FF4959] hover:bg-[#b82231] px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition flex-shrink-0"
         >
-          <Plus size={13} /> <span className="hidden xs:inline">New Post</span><span className="xs:hidden">New</span>
+          <Plus size={13} /> <span className="hidden xs:inline">New Post</span><span className="xs:hidden">New Post</span>
         </button>
       </div>
 

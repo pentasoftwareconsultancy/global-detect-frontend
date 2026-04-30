@@ -147,7 +147,7 @@ const AppRoutes = () => {
               element={<ReviewInsightsCaseManagement />}
             />
             <Route path={ROUTES.ADMIN_USER_MANAGEMENT} element={<AdminUserManagementPage />} />
-            <Route path={ROUTES.ADMIN_USER_MANAGEMENT_DETAIL} element={<AdminUserDetailsPage />} />
+            <Route path={`${ROUTES.ADMIN_USER_MANAGEMENT_DETAIL}`} element={<AdminUserDetailsPage />} />
 
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL} element={<AdminCaseDetailsPage />} />
             <Route path={ROUTES.ADMIN_CASE_MANAGEMENT_UNASSIGNED} element={<AdminCaseDetailsUnassignedPage />} />
