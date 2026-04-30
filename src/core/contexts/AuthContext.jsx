@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   // Login
   const login = (data) => {
     // console.log("LOGIN DATA IN CONTEXT:", data);
-    
+
     // Extract token (works for all backend formats)
     const token =
       data.token ||
@@ -26,22 +26,22 @@ export const AuthProvider = ({ children }) => {
       data?.accessToken ||
       data?.jwt ||
       null;
-    
+
     // Extract user
     const userObj =
       data.user ||
       data?.data?.user ||
       data?.data ||
       null;
-    
+
     // Get role from stored accountType or from user object
     const storedAccountType = localStorage.getItem('accountType');
     const role = userObj?.role || storedAccountType;
-    
+
     if (!token) {
       console.error("❌ NO TOKEN RECEIVED FROM BACKEND");
     }
-  
+
     // Determine kyc status: backends may provide it, otherwise default
     const kycComplete =
       userObj?.kycComplete ?? data?.kycComplete ?? (role === 'detective' ? false : true);
@@ -51,9 +51,9 @@ export const AuthProvider = ({ children }) => {
       token: token,
       kycComplete,
     };
-  
+
     // console.log("SAVING USER TO LS:", userData);
-  
+
     localStorage.setItem("user", JSON.stringify(userData));
 
     // save token separately (important!)
@@ -69,11 +69,20 @@ export const AuthProvider = ({ children }) => {
     setUser(updated);
   };
 
- 
+
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("TOKEN");
-    setUser(null);
+    try {
+      // Clear storage
+      localStorage.removeItem("user");
+      localStorage.removeItem("TOKEN");
+
+      // Reset auth state
+      setUser(null);
+      setIsLoggedIn(false);
+
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const isLoggedIn = !!user;
