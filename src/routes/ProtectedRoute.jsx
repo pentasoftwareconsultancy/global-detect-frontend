@@ -11,7 +11,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
   // Not logged in → go to login
   if (!isLoggedIn || !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
   // Role mismatch → redirect based on actual role
