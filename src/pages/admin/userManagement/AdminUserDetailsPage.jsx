@@ -7,6 +7,7 @@ const Card = ({ title, children }) => (
   </div>
 );
 
+
 const Badge = ({ text, color }) => (
   <span className={`px-2 py-1 text-xs rounded-full ${color}`}>
     {text}

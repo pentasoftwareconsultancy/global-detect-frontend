@@ -11,6 +11,7 @@ const StepFourDetectiveForm = ({ data, handleFile, errors = {} }) => {
     { key: 'address',     label: 'Proof of Address',               required: true,  errKey: 'address_doc' },
   ]
 
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">
@@ -26,10 +27,10 @@ const StepFourDetectiveForm = ({ data, handleFile, errors = {} }) => {
               {label} {required && <span className="text-[#D92B3A]">*</span>}
             </label>
             <label className="flex items-center cursor-pointer">
-              <div className={`flex-1 px-4 py-3 border ${errKey && errors[errKey] ? 'border-[#D92B3A]' : 'border-white/10'} rounded-lg text-sm text-gray-500 min-h-[46px] bg-[#0d1b2a]`}>
+              <div className={`flex-1 px-4 py-3 border ${errKey && errors[errKey] ? 'border-[#D92B3A]' : 'border-white/50'} rounded-lg text-sm text-gray-500 min-h-[46px] bg-[#1A2832]`}>
                 {data.documents[key] || ''}
               </div>
-              <div className="ml-2 p-3 border border-white/10 rounded-lg hover:border-[#D92B3A]/50 transition bg-[#0d1b2a]">
+              <div className="ml-2 p-3 border border-white/50 rounded-lg hover:border-[#D92B3A]/50 transition bg-[#1A2832]">
                 <UploadCloud size={16} className="text-gray-400" />
               </div>
               <input type="file" onChange={e => handleFile(e, key)} className="hidden" />
