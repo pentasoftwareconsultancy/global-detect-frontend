@@ -1,5 +1,6 @@
 import React from 'react'
 import { User, Lock } from 'lucide-react'
+import { IoPersonOutline } from "react-icons/io5";
 import { restrictToLetters, handlePasteLettersOnly, formatSSN, validateOnlyCharacters, validateDOB, validateGender, validateRequired, validateSSN } from '../../../hooks/validation'
 
 const StepOneDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) => {
@@ -41,7 +42,7 @@ const StepOneDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =>
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">
-        <User size={18} className="text-[#D92B3A]" />
+        <IoPersonOutline className="text-[#D92B3A]" size={18} />
         <h3 className="text-base font-semibold">Personal Information</h3>
       </div>
       <p className="text-sm text-gray-400 mb-6">Please provide your basic personal details</p>
@@ -131,3 +132,4 @@ const StepOneDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =>
 }
 
 export default StepOneDetectiveForm
+

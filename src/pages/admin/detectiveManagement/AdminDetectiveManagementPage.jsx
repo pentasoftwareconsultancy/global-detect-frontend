@@ -14,6 +14,7 @@ const ALL_DETECTIVES = [
   
 ];
 
+
 const TABS = [
   { key: "All Detectives", label: "All Detectives", icon: null },
   { key: "Live Tracking",  label: "Live Tracking",  icon: <MapPin size={11} />,      count: 4 },
@@ -80,11 +81,11 @@ const AdminDetectiveManagementPage = () => {
   const filtered = filterDetectives(activeTab, search);
 
   return (
-    <div className="p-6 text-white bg-[#08141B] min-h-screen font-[Montserrat]">
+    <div className="p-3 sm:p-6 text-white bg-[#08141B] min-h-screen font-[Montserrat]">
 
       {/* Page Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Detective Management</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">Detective Management</h1>
         <p className="text-sm text-gray-400 mt-1">
           Manage all detectives, review KYC documents, and monitor performance
         </p>
@@ -109,15 +110,15 @@ const AdminDetectiveManagementPage = () => {
       <div className="bg-[#1A2832] border border-white/5 rounded-xl p-5">
 
         {/* Card top row: title + search */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <h2 className="text-sm font-semibold text-white">{activeTab}</h2>
-          <div className="flex items-center gap-2 bg-[#1A2832] border border-white/10 rounded-lg px-3 py-1.5">
+          <div className="flex items-center gap-2 bg-[#1A2832] border border-white/10 rounded-lg px-3 py-1.5 w-full sm:w-auto">
             <Search size={13} className="text-[#9CA3AF]" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search detectives..."
-              className="bg-transparent text-xs text-white placeholder:text-[#9CA3AF] outline-none w-40"
+              className="bg-transparent text-xs text-white placeholder:text-[#9CA3AF] outline-none w-full sm:w-40"
             />
           </div>
         </div>
@@ -143,8 +144,8 @@ const AdminDetectiveManagementPage = () => {
           })}
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Table — hidden on mobile, shown on md+ */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm min-w-[900px]">
             <thead>
               <tr className="border-b border-white/10 text-white text-sm">
@@ -239,6 +240,61 @@ const AdminDetectiveManagementPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile card list — shown only on small screens */}
+        <div className="md:hidden flex flex-col gap-2">
+          {filtered.map((d, i) => (
+            <div key={i} className="bg-[#132735] rounded-xl p-3 border border-white/5">
+
+              {/* Row 1: name + status */}
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <p className="font-semibold text-sm text-white truncate">{d.name}</p>
+                <StatusBadge status={d.status} />
+              </div>
+
+              {/* Row 2: email */}
+              <p className="text-xs text-gray-400 mb-2 truncate">{d.email}</p>
+
+              {/* Row 3: specialization + KYC */}
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-xs text-white border border-white/10 rounded-md px-2 py-0.5">{d.specialization}</span>
+                <KYCBadge kyc={d.kyc} />
+              </div>
+
+              {/* Row 4: cases + rating + date in one line */}
+              <div className="flex items-center gap-3 text-xs text-gray-400 mb-2">
+                <span>Active: <span className="text-white font-medium">{d.activeCases}</span></span>
+                <span>Done: <span className="text-white font-medium">{d.completedCases}</span></span>
+                {d.rating != null
+                  ? <span className="flex items-center gap-0.5"><span className="text-yellow-400">★</span>{d.rating}</span>
+                  : <span>—</span>}
+                <span className="ml-auto">{d.date}</span>
+              </div>
+
+              {/* Row 5: actions */}
+              <div className="flex items-center gap-2">
+                {d.kyc === "Pending" ? (
+                  <>
+                    <button onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_KYC}/${i}`)} className="flex items-center gap-1 text-xs bg-[#FF4959] text-white rounded-md px-2.5 py-1">
+                      <CheckCircle size={11} /> Approve
+                    </button>
+                    <button onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_KYC}/${i}`)} className="flex items-center gap-1 text-xs bg-[#DC262699] text-white rounded-md px-2.5 py-1">
+                      <X size={11} /> Reject
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL}/${i}`)} className="flex items-center gap-1 text-xs text-white border border-white/20 rounded-md px-2.5 py-1 bg-[#FFFFFF08]">
+                    <Navigation size={11} /> Track
+                  </button>
+                )}
+                <button onClick={() => navigate(`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT_DETAIL}/${i}`)} className="flex items-center gap-1 text-xs text-white border border-white/20 rounded-md px-2.5 py-1 bg-[#FFFFFF08]">
+                  <Eye size={11} /> View
+                </button>
+              </div>
+
+            </div>
+          ))}
         </div>
       </div>
     </div>

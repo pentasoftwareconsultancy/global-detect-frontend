@@ -4,10 +4,11 @@ import { ArrowLeft, Eye, FileText, Download, Calendar, Clock, MapPin, User, Mail
 import { ROUTES } from '../../core/constants/routes.constant';
 import InsightFormModal from '../../components/detective/InsightFormModal';
 
-const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', marginBottom: '16px' };
+const card = { background: '#1C2B35', borderRadius: '14px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' };
 const lbl = { fontSize: '12px', color: '#9ca3af', marginBottom: '2px' };
 const val = { fontSize: '14px', color: '#ffffff', fontWeight: '500' };
 const divider = { borderBottom: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' };
+
 
 // Extended mock data keyed by case id
 const CASE_DATA = {
@@ -92,10 +93,14 @@ const CaseDetailsPage = () => {
   }
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6 pr-3 sm:pr-6">
+    <div className="bg-[#121F27] text-white min-h-screen px-3 sm:px-6 py-4 sm:py-6 pr-3 sm:pr-6 montserrat">
       {showInsightForm && <InsightFormModal onClose={() => setShowInsightForm(false)} />}
 
-      {/* Top bar */}
+      
+
+      {/* Case header */}
+      <div className="mb-5" style={{ background: '#1C2B35', borderRadius: '0px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' }}>
+        {/* Top bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
         <button onClick={() => navigate(ROUTES.DETECTIVE_DASHBOARD)} className="flex items-center gap-2 text-sm text-gray-300 hover:text-white mb-2 sm:mb-0">
           <ArrowLeft size={16} /> Back
@@ -104,15 +109,13 @@ const CaseDetailsPage = () => {
           <Eye size={15} /> Open Insight Form
         </button>
       </div>
-
-      {/* Case header */}
-      <div className="mb-5" style={{ background: '#1C2B35', borderRadius: '0px', padding: '24px', marginBottom: '16px'  }}>
+        
         <div className="flex flex-wrap items-center gap-2 mb-2">
           <span className="text-sm text-gray-300 border border-gray-500 rounded px-2 py-1">Case {data.caseNumber}</span>
           <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', fontWeight: '600' }}>{data.priority}</span>
           <span className="text-sm text-gray-300 border border-gray-500 rounded px-2 py-1">{data.insightStatus}</span>
         </div>
-        <h1 className="text-2xl font-bold text-white mb-1">{data.title}</h1>
+        <h1 className="text-lg sm:text-2xl font-bold text-white mb-1 break-words">{data.title}</h1>
         <p className="text-sm text-gray-400">{data.description}</p>
       </div>
 
@@ -285,7 +288,7 @@ const CaseDetailsPage = () => {
 
       {/* Full-width Detective Insights with Admin Feedback */}
       {data.insight.adminFeedback && (
-        <div style={{ ...card, marginTop: '4px' }}>
+        <div style={{ ...card, marginTop: '4px', padding: 'clamp(14px, 4vw, 24px)' }}>
           <p className="font-semibold text-base mb-1">Detective Insights</p>
           <p className="text-xs text-gray-400 mb-4">Investigation findings and observations</p>
           <div className="flex items-start justify-between mb-3">
