@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Drawer,
@@ -21,13 +22,20 @@ import {
 } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "../../core/constants/routes.constant";
+import { useAuth } from "../../core/contexts/AuthContext";
 
 const drawerWidth = 260;
 
 const DashboardSidbar = ({ role, mobileOpen, handleDrawerToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
   const isAdmin = role === "ADMIN";
+
+  const handleLogout = async () => {
+    await logout(); // Call backend API and clear storage
+    navigate(ROUTES.LOGIN, { replace: true });
+  };
 
   const adminMenu = [
     { name: "Dashboard", path: ROUTES.ADMIN_DASHBOARD, icon: <FiGrid /> },
@@ -127,7 +135,10 @@ const DashboardSidbar = ({ role, mobileOpen, handleDrawerToggle }) => {
 
         {/* LOGOUT */}
         <div className="mx-1 mb-2">
-          <div className="flex items-center justify-center gap-2 border border-[#1f2f3a] rounded-xl py-2.5 cursor-pointer hover:bg-[#1a1a1a] transition">
+          <div 
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-2 border border-[#1f2f3a] rounded-xl py-2.5 cursor-pointer hover:bg-[#1a1a1a] transition"
+          >
             <FiLogOut />
             <span className="text-sm">Logout</span>
           </div>
@@ -179,3 +190,6 @@ const DashboardSidbar = ({ role, mobileOpen, handleDrawerToggle }) => {
 };
 
 export default DashboardSidbar;
+
+
+
