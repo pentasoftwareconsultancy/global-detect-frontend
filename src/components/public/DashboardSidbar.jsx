@@ -62,7 +62,7 @@ const DashboardSidbar = ({ role, mobileOpen, handleDrawerToggle }) => {
 
   const drawer = (
     <Box className="h-[calc(100vh-64px)] flex flex-col bg-gradient-to-b from-[#0B1220] to-[#060A13] text-white px-3 py-3">
-      {/* 🔴 TOP (FIXED) */}
+      {/*  TOP (FIXED) */}
       <div>
         <div className="flex items-center gap-3 mb-4 px-2">
           <div className="w-10 h-10 rounded-full bg-[#590202] flex items-center justify-center">

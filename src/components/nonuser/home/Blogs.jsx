@@ -70,41 +70,10 @@ const Blogs = () => {
                   />
                 </div>
 
-                {/* Title */}
-                <h4 className="text-sm lg:text-lg font-semibold mb-3 lg:mb-4 leading-snug">
+                {/* Title only */}
+                <h4 className="text-sm lg:text-lg font-semibold leading-snug">
                   {blog.title}
                 </h4>
-
-                {/* Author + Date */}
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-
-                  <img
-                    src={blog.author?.avatar || undefined}
-                    alt={blog.author?.name || "Author"}
-                    className="w-6 h-6 rounded-full"
-                  />
-
-                  <span className="text-white">
-                    {blog.author?.name || "Unknown"}
-                  </span>
-
-                  <span>
-                    {blog.published_at
-                      ? new Date(blog.published_at).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
-                      : blog.created_at
-                        ? new Date(blog.created_at).toLocaleDateString("en-IN", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })
-                        : ""}
-                  </span>
-
-                </div>
 
               </div>
             ))
