@@ -1,5 +1,3 @@
-
-
 import api from "./api.service";
 import ApiInterceptor from "./interceptor.service";
 import ServerUrl from "../constants/serverURL.constant";
@@ -225,12 +223,27 @@ export const authService = {
 
   // ----------------------- Blogs -----------------------
 
+    uploadBlogImage: async (imageFile) => {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      const axiosInstance = ApiInterceptor.init();
+      return axiosInstance.post(ServerUrl.UPLOAD_BLOG_IMAGE_API, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+
     createBlog: async (blogData) => {
       return apiService.apipost(ServerUrl.CREATE_BLOG_API, blogData);
     },
   
-    getAllBlogsAdmin: async () => {
-      return apiService.apiget(ServerUrl.GET_ALL_BLOGS_API);
+    getAllBlogsAdmin: async ({ page = 1, limit = 10, status = 'all', search = '', sort = 'newest' } = {}) => {
+      const params = new URLSearchParams({ page, limit, status, sort });
+      if (search) params.append('search', search);
+      return apiService.apiget(`${ServerUrl.GET_ALL_BLOGS_API}?${params.toString()}`);
+    },
+
+    getBlogStats: async () => {
+      return apiService.apiget(ServerUrl.GET_BLOG_STATS_API);
     },
   
     getBlogByIdAdmin: async (blogId) => {
@@ -244,12 +257,12 @@ export const authService = {
     },
   
     updateBlog: async (blogId, blogData) => {
-      const endpoint = ServerUrl.CREATE_BLOG_API + `/${blogId}`;
+      const endpoint = ServerUrl.UPDATE_BLOG_API.replace(':id', blogId);
       return apiService.apiput(endpoint, blogData);
     },
   
     deleteBlog: async (blogId) => {
-      const endpoint = ServerUrl.CREATE_BLOG_API + `/${blogId}`;
+      const endpoint = ServerUrl.DELETE_BLOG_API.replace(':id', blogId);
       return apiService.apidelete(endpoint);
     },
 };
