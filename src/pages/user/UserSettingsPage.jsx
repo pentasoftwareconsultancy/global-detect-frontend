@@ -51,38 +51,37 @@ const BorderedSelect = ({ value, onChange, options, icons }) => {
 
   return (
     <div className="relative">
-      {/* Trigger — bordered pill */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 bg-[#0d1820] border border-[#2a3a48] rounded-lg px-3 py-1.5 cursor-pointer focus:outline-none hover:border-gray-500 transition-colors duration-200"
-        style={rowLabelStyle}
+        className="flex items-center justify-between gap-2 w-full sm:w-32 h-9 px-3 rounded-md bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus:outline-none font-['Montserrat'] font-medium text-sm text-white"
+        style={{ border: '0.67px solid #FFFFFF1A' }}
       >
-        {CurrentIcon && (
-          <CurrentIcon size={14} className="text-gray-400 flex-shrink-0" />
-        )}
-        <span className="text-gray-300">{value}</span>
+        <div className="flex items-center gap-2">
+          {CurrentIcon && <CurrentIcon size={14} className="text-[#9CA3AF] flex-shrink-0" />}
+          <span>{value}</span>
+        </div>
         <MdChevronRight
           size={15}
-          className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-90" : "rotate-0"
-            }`}
+          className={`text-[#9CA3AF] transition-transform duration-200 ${open ? "rotate-90" : "rotate-0"}`}
         />
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 min-w-[140px] bg-[#1a2832] border border-[#2a3a48] rounded-lg overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
+          <div
+            className="absolute right-0 top-full mt-1 z-20 w-32 bg-[#1A2832] rounded-lg overflow-hidden"
+            style={{ border: '0.67px solid #FFFFFF1A' }}
+          >
             {options.map((opt) => {
               const OptIcon = icons?.[opt];
               return (
                 <button
                   key={opt}
                   onClick={() => { onChange(opt); setOpen(false); }}
-                  className={`flex items-center gap-2 w-full text-left px-4 py-2 border-none cursor-pointer transition-colors duration-150 ${value === opt
-                    ? "bg-[#2a3a48] text-white"
-                    : "bg-transparent text-gray-400 hover:bg-[#2a3a48] hover:text-white"
-                    }`}
-                  style={rowLabelStyle}
+                  className={`flex items-center gap-2 w-full text-left px-3 py-2 font-['Montserrat'] text-sm cursor-pointer transition-colors ${
+                    value === opt ? "bg-white/10 text-white" : "text-[#9CA3AF] hover:bg-white/5 hover:text-white"
+                  }`}
                 >
                   {OptIcon && <OptIcon size={14} className="flex-shrink-0" />}
                   {opt}
@@ -98,30 +97,21 @@ const BorderedSelect = ({ value, onChange, options, icons }) => {
 
 // ─── Section Card ─────────────────────────────────────────────────────────────
 const Section = ({ title, subtitle, children }) => (
-  <div className="bg-[#1A2832] border border-[#2a3a48] rounded-xl p-4 sm:p-6 mb-5">
-    <h2 className="text-white mb-1.5" style={sectionTitleStyle}>
-      {title}
-    </h2>
-    <p className="text-gray-500 text-xs font-['Montserrat'] mb-5">{subtitle}</p>
+  <div className="bg-[#1A2832] rounded-xl p-4 sm:p-6 mb-5" style={{ border: '0.67px solid #FFFFFF1A' }}>
+    <h2 className="font-['Montserrat'] font-medium text-base leading-4 text-[#F9FAFB] mb-1.5">{title}</h2>
+    <p className="font-['Montserrat'] font-normal text-base leading-6 text-[#9CA3AF] mb-5">{subtitle}</p>
     {children}
   </div>
 );
 
 // ─── Row Item ─────────────────────────────────────────────────────────────────
 const RowItem = ({ icon, label, desc, right, noBorder = false }) => (
-  <div
-    className={`flex items-center justify-between py-3.5 ${!noBorder ? "border-b border-[#2a3a48]" : ""
-      }`}
-  >
+  <div className={`flex items-center justify-between py-3.5 ${!noBorder ? "border-b border-white/10" : ""}`}>
     <div className="flex items-center gap-3 min-w-0">
-      <span className="text-gray-400 flex-shrink-0">{icon}</span>
+      <span className="text-[#9CA3AF] flex-shrink-0">{icon}</span>
       <div className="min-w-0">
-        <p className="text-white" style={rowLabelStyle}>
-          {label}
-        </p>
-        <p className="text-gray-500 text-[11px] font-['Montserrat'] mt-1 leading-tight">
-          {desc}
-        </p>
+        <p className="font-['Montserrat'] font-medium text-sm leading-none text-white">{label}</p>
+        <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mt-1">{desc}</p>
       </div>
     </div>
     <div className="flex-shrink-0 ml-4">{right}</div>
@@ -175,16 +165,12 @@ const UserSettingsPage = () => {
         subtitle="Customize the look and feel of the application"
       >
         {/* Theme */}
-        <div className="flex items-center justify-between py-3.5 border-b border-[#2a3a48]">
+        <div className="flex items-center justify-between py-3.5 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <MdWbSunny size={16} className="text-gray-400 flex-shrink-0" />
+            <MdWbSunny size={16} className="text-[#9CA3AF] flex-shrink-0" />
             <div>
-              <p className="text-white" style={rowLabelStyle}>
-                Theme
-              </p>
-              <p className="text-gray-500 text-[11px] font-['Montserrat'] mt-1 leading-tight">
-                Choose your preferred color scheme
-              </p>
+              <p className="font-['Montserrat'] font-medium text-sm leading-none text-white">Theme</p>
+              <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mt-1">Choose your preferred color scheme</p>
             </div>
           </div>
           <BorderedSelect
@@ -198,14 +184,10 @@ const UserSettingsPage = () => {
         {/* Language */}
         <div className="flex items-center justify-between py-3.5">
           <div className="flex items-center gap-3">
-            <MdLanguage size={16} className="text-gray-400 flex-shrink-0" />
+            <MdLanguage size={16} className="text-[#9CA3AF] flex-shrink-0" />
             <div>
-              <p className="text-white" style={rowLabelStyle}>
-                Language
-              </p>
-              <p className="text-gray-500 text-[11px] font-['Montserrat'] mt-1 leading-tight">
-                Select your preferred language
-              </p>
+              <p className="font-['Montserrat'] font-medium text-sm leading-none text-white">Language</p>
+              <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mt-1">Select your preferred language</p>
             </div>
           </div>
           <BorderedSelect
@@ -256,32 +238,28 @@ const UserSettingsPage = () => {
         />
         <button
           onClick={() => alert("Redirect to change password")}
-          className="w-full text-left bg-[#0d1820] hover:bg-[#151e2a] text-white px-4 py-3 rounded-lg border border-[#2a3a48] transition-colors duration-200 mt-4 flex items-center gap-2.5 cursor-pointer"
-          style={rowLabelStyle}
+          className="w-full h-9 text-left font-['Montserrat'] font-medium text-sm text-white bg-white/5 hover:bg-white/10 transition-colors mt-4 flex items-center gap-3 px-4 rounded-md cursor-pointer"
+          style={{ border: '0.67px solid #FFFFFF1A' }}
         >
-          <MdLock size={15} className="text-gray-400 flex-shrink-0" />
+          <MdLock size={15} className="text-[#9CA3AF] flex-shrink-0" />
           Change Password
         </button>
       </Section>
 
       {/* ── Danger Zone ── */}
-      <div className="border border-red-500/30 bg-red-500/5 rounded-xl p-4 sm:p-6 mb-6">
+      <div
+        className="bg-[#1A2832] rounded-xl p-4 sm:p-6 mb-6"
+        style={{ border: '0.67px solid #FF4959' }}
+      >
         <div className="flex items-center gap-2 mb-1.5">
-          <MdWarning size={18} className="text-red-500 flex-shrink-0" />
-          <h2 className="text-red-500" style={sectionTitleStyle}>
-            Danger Zone
-          </h2>
+          <MdWarning size={18} className="text-[#FF4959] flex-shrink-0" />
+          <h2 className="font-['Montserrat'] font-medium text-base leading-4 text-[#FF4959]">Danger Zone</h2>
         </div>
-        <p className="text-gray-500 text-xs font-['Montserrat'] mb-4">
-          Irreversible actions
-        </p>
+        <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mb-4">Irreversible actions</p>
         <button
-          onClick={() =>
-            window.confirm("Are you sure you want to delete your account?") &&
-            alert("Account deleted!")
-          }
-          className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 cursor-pointer border-none"
-          style={rowLabelStyle}
+          onClick={() => window.confirm("Are you sure you want to delete your account?") && alert("Account deleted!")}
+        className="h-9 px-4 rounded-md font-['Montserrat'] font-medium text-sm leading-5 text-white bg-red flex items-center gap-2 cursor-pointer transition-colors hover:opacity-90"
+          style={{ border: '0.67px solid #FF495933', width: '207px' }}
         >
           <MdDelete size={15} />
           Delete Account
@@ -292,8 +270,8 @@ const UserSettingsPage = () => {
       <div className="flex justify-center pb-8">
         <button
           onClick={() => alert("Settings saved successfully!")}
-          className="bg-red-500 hover:bg-red-600 text-white px-8 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2 shadow-lg cursor-pointer border-none"
-          style={rowLabelStyle}
+          className="flex items-center justify-center gap-2 bg-[#D92B3A] hover:bg-[#b0222f] transition-colors text-white font-['Montserrat'] font-medium text-sm leading-5 rounded-md h-10 cursor-pointer"
+          style={{ width: '181px' }}
         >
           <MdSave size={16} />
           Save All Settings

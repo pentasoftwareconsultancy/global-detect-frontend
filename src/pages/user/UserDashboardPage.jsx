@@ -81,10 +81,10 @@ const UserDashboardPage = () => {
         {/* Request Investigation */}
         <div
           onClick={() => navigate(ROUTES.REQUEST_INVESTIGATION)}
-          className="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl cursor-pointer p-3 flex flex-col justify-between transition hover:shadow-lg"
-          style={{minHeight: 'unset'}}
+          className="rounded-2xl cursor-pointer p-3 flex flex-col justify-between transition hover:shadow-lg hover:opacity-95"
+          style={{ minHeight: 'unset', background: 'linear-gradient(180.53deg, #D92B3A 21.02%, #FF6774 99.55%)' }}
         >
-          <p className="investigation-label">Request investigation</p>
+          <p className="investigation-label" style={{ fontSize: 'clamp(11px, 1.4vw, 18px)' }}>Request investigation</p>
           <div className="flex items-center gap-2">
             <div className="request-investigation-icon">
               <Plus className="w-7 h-7 text-white" strokeWidth={3} />
