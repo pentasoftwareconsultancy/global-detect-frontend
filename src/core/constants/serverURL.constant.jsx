@@ -1,4 +1,3 @@
-
 import { API_MODULE } from "../models/api.module";
 class ServerUrl {
     
@@ -68,7 +67,9 @@ class ServerUrl {
 
         // Admin routes
         static CREATE_BLOG_API = `${ServerUrl.BLOGS_API}/`;
+        static UPLOAD_BLOG_IMAGE_API = `${ServerUrl.BLOGS_API}/upload-image`;
         static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/admin/list`;
+        static GET_BLOG_STATS_API = `${ServerUrl.BLOGS_API}/admin/stats`;
         static GET_BLOG_BY_ID_ADMIN_API = `${ServerUrl.BLOGS_API}/admin/preview/:id`;
         static GET_BLOG_BY_STATUS_API = `${ServerUrl.BLOGS_API}/admin/status`;
         static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
@@ -76,7 +77,3 @@ class ServerUrl {
 }
 
 export default ServerUrl;
-
-
-
-
