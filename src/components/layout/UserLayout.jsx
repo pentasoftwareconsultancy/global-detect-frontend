@@ -73,7 +73,7 @@ const UserLayout = () => {
       {/* Navbar */}
       <UserNavbar setSidebarOpen={setSidebarOpen} />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden items-stretch">
 
         {/* Overlay (mobile) */}
         {sidebarOpen && (
@@ -85,6 +85,16 @@ const UserLayout = () => {
 
         {/* Sidebar */}
         {showSidebar && (
+          <div className="hidden md:block flex-shrink-0">
+            <UserSidebar
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+            />
+          </div>
+        )}
+
+        {/* Mobile sidebar — rendered outside flow */}
+        {showSidebar && sidebarOpen && (
           <UserSidebar
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
