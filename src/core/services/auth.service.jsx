@@ -34,17 +34,19 @@ export const authService = {
 // ========== LOGIN FLOWS ==========
   
     // Case 1: Login with Email + Password
-    loginWithEmail: async (email, password) => {
+    loginWithEmail: async (email, password, role = null) => {
       return apiService.apipost(ServerUrl.LOGIN_API, {
         email,
         password,
+        role,
       });
     },
 
     // Case 2: Send OTP for Phone-based Login
-    loginSendOtp: async (phone) => {
+    loginSendOtp: async (phone, role = null) => {
       return apiService.apipost(ServerUrl.LOGIN_API, {
         phone,
+        role,  // Pass selected role to backend
       });
     },
 
@@ -69,6 +71,7 @@ export const authService = {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
+        localStorage.removeItem('accountType');
         // Clear session ID if exists
         localStorage.removeItem('sessionId');
       }

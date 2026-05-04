@@ -1,4 +1,4 @@
-
+ 
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -120,15 +120,22 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      const response = await authService.loginWithEmail(formData.emailOrPhone, formData.password);
+      // Map frontend account type to backend role
+      const roleMap = { User: 'user', Detective: 'detective' };
+      const selectedRole = roleMap[accountType];
+
+      const response = await authService.loginWithEmail(
+        formData.emailOrPhone, 
+        formData.password,
+        selectedRole  // Pass selected role to backend
+      );
       const data = response.data;
       const token = data?.data?.token || data?.token || data?.accessToken;
       const user = data?.data?.user || data?.user || data?.data;
 
       login({ token, user });
 
-      const roleMap = { User: 'user', Detective: 'detective' };
-      localStorage.setItem('accountType', roleMap[accountType] || accountType.toLowerCase());
+      localStorage.setItem('accountType', selectedRole);
 
       const role = (user?.role || '').toLowerCase();
       await handlePostLogin(role);
@@ -147,7 +154,14 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      const response = await authService.loginSendOtp(formData.emailOrPhone);
+      // Map frontend account type to backend role
+      const roleMap = { User: 'user', Detective: 'detective' };
+      const selectedRole = roleMap[accountType];
+
+      const response = await authService.loginSendOtp(
+        formData.emailOrPhone,
+        selectedRole  // Pass selected role to backend
+      );
       console.log('OTP sent:', response.data);
 
       localStorage.setItem('loginPhone', formData.emailOrPhone);
