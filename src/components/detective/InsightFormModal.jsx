@@ -33,10 +33,31 @@ const InsightFormModal = ({ onClose }) => {
   const fileInputRefs = useRef([]);
   const [recommendations, setRecommendations] = useState('');
   const [nextSteps, setNextSteps] = useState('');
+  const statusRef = useRef(null);
+  const summaryRef = useRef(null);
+  const keyFindingsRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+
+  const validate = () => {
+    const errs = {};
+    if (!status) errs.status = 'Investigation status is required';
+    if (!summary.trim()) errs.summary = 'Investigation summary is required';
+    if (!keyFindings.trim()) errs.keyFindings = 'Key findings are required';
+    return errs;
+  };
 
   const handleSubmit = () => {
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setFormErrors(errs);
+      if (errs.status) statusRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else if (errs.summary) summaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else if (errs.keyFindings) keyFindingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setFormErrors({});
     setSubmitting(true);
     let secs = 2;
     setCountdown(secs);
@@ -77,11 +98,11 @@ const InsightFormModal = ({ onClose }) => {
           </div>
 
           {/* Investigation Status */}
-          <div className="mb-5">
+          <div className="mb-5" ref={statusRef}>
             <SectionLabel icon={<FileText size={15} />} text="Investigation Status" required />
             <select
               value={status}
-              onChange={e => setStatus(e.target.value)}
+              onChange={e => { setStatus(e.target.value); setFormErrors(p => ({ ...p, status: '' })); }}
               className={inputCls}
               style={dropdownStyle}
             >
@@ -91,34 +112,37 @@ const InsightFormModal = ({ onClose }) => {
               <option value="report_ready">Report Ready</option>
               <option value="completed">Completed</option>
             </select>
+            {formErrors.status && <p className="text-xs text-[#dc3545] mt-1">{formErrors.status}</p>}
           </div>
 
           <Divider />
 
           {/* Investigation Summary */}
-          <div className="mb-5">
+          <div className="mb-5" ref={summaryRef}>
             <SectionLabel icon={<FileText size={15} />} text="Investigation Summary" required />
             <textarea
               rows={3}
               value={summary}
-              onChange={e => setSummary(e.target.value)}
+              onChange={e => { setSummary(e.target.value); setFormErrors(p => ({ ...p, summary: '' })); }}
               placeholder="Provide a brief overview of your investigation activities and progress..."
               className={textareaCls}
             />
+            {formErrors.summary && <p className="text-xs text-[#dc3545] mt-1">{formErrors.summary}</p>}
           </div>
 
           <Divider />
 
           {/* Key Findings */}
-          <div className="mb-5">
+          <div className="mb-5" ref={keyFindingsRef}>
             <SectionLabel icon={<FileText size={15} />} text="Key Findings" required />
             <textarea
               rows={3}
               value={keyFindings}
-              onChange={e => setKeyFindings(e.target.value)}
+              onChange={e => { setKeyFindings(e.target.value); setFormErrors(p => ({ ...p, keyFindings: '' })); }}
               placeholder="List the most important discoveries, evidence, and observations from your investigation..."
               className={textareaCls}
             />
+            {formErrors.keyFindings && <p className="text-xs text-[#dc3545] mt-1">{formErrors.keyFindings}</p>}
           </div>
 
           <Divider />
@@ -295,7 +319,7 @@ const InsightFormModal = ({ onClose }) => {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition"
+              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition cursor-pointer"
             >
               <Send size={13} /> {submitting ? `Submitting... (${countdown}s)` : 'Submit Insights'}
             </button>
