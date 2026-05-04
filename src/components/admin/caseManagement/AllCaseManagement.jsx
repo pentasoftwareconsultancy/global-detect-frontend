@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { casesData } from "./caseManagementData";
 import { Eye, Search } from "lucide-react";
-import { FiFileText } from "react-icons/fi";
+import { FiFileText, FiClock, FiClipboard } from "react-icons/fi";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 
@@ -64,9 +64,9 @@ const CaseManagement = () => {
 
 
   const tabs = [
-    { name: " All Cases", key: "all" },
-    { name: "Pending Cases", key: "pending" },
-    { name: "Review Insights", key: "review" },
+    { name: "All Cases",      key: "all",     icon: <FiFileText size={14} /> },
+    { name: "Pending Cases",  key: "pending", icon: <FiClock size={14} /> },
+    { name: "Review Insights",key: "review",  icon: <FiClipboard size={14} /> },
   ];
 
   // 🔥 DATA CONTROL
@@ -106,7 +106,7 @@ const CaseManagement = () => {
   }, [cases,activeTab, search, status, type, priority, dateSort]);
 
   return (
-    <div className="text-white  p-4">
+    <div className="text-white bg-[#121F27] p-4 font-monserrat ">
 
       {/* HEADER */}
       <div className="mb-6">
@@ -121,16 +121,18 @@ const CaseManagement = () => {
 
       {/* TABS */}
       <div className="mb-6">
-        <div className="flex gap-2 p-1 border-2 border-[#2a3a44] rounded-xl w-fit">
+        <div className="inline-flex gap-1 p-1 border border-[#2a3a44] rounded-xl">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 text-sm rounded-lg ${activeTab === tab.key
-                ? "bg-red text-white"
-                : "text-lightGray hover:text-white"
-                }`}
+              className={`flex items-center gap-2 px-5 py-2 text-sm rounded-lg font-medium transition whitespace-nowrap ${
+                activeTab === tab.key
+                  ? "bg-red text-white"
+                  : "text-[#8FA3B0] hover:text-white"
+              }`}
             >
+              {tab.icon}
               {tab.name}
             </button>
           ))}
@@ -142,7 +144,7 @@ const CaseManagement = () => {
         <div className="bg-[#1A2832] border border-[#22313d] rounded-xl p-5 mb-6">
 
           {/* 🔍 SEARCH */}
-          <div className="flex items-center bg-[#0f1a1f] px-4 py-3 rounded-lg border border-[#22313d] mb-5">
+          <div className="flex items-center bg-[#1A2832] px-4 py-3 rounded-lg border border-white/50 mb-5">
             <Search size={16} className="text-[#8FA3B0]" />
             <input
               value={search}
@@ -157,11 +159,11 @@ const CaseManagement = () => {
 
             {/* STATUS */}
             <div>
-              <p className="text-xs text-[#8FA3B0] mb-2">Status</p>
+              <p className="text-sm text-white mb-2">Status</p>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full bg-[#0f1a1f] border border-[#22313d] px-3 py-2.5 rounded-lg text-sm text-white"
+                className="w-full bg-[#1A2832] border border-white/50 px-3 py-2.5 rounded-lg text-sm text-white"
               >
                 <option value="All">All Status</option>
                 <option>Pending</option>
@@ -175,11 +177,11 @@ const CaseManagement = () => {
 
             {/* TYPE */}
             <div>
-              <p className="text-xs text-[#8FA3B0] mb-2">Investigation Type</p>
+              <p className="text-sm text-white mb-2">Investigation Type</p>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full bg-[#0f1a1f] border border-[#22313d] px-3 py-2.5 rounded-lg text-sm text-white"
+                className="w-full bg-[#1A2832] border border-white/50 px-3 py-2.5 rounded-lg text-sm text-white"
               >
                 <option>All Types</option>
                 <option>Financial Fraud</option>
@@ -198,11 +200,11 @@ const CaseManagement = () => {
 
             {/* PRIORITY */}
             <div>
-              <p className="text-xs text-[#8FA3B0] mb-2">Priority</p>
+              <p className="text-sm text-white mb-2">Priority</p>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full bg-[#0f1a1f] border border-[#22313d] px-3 py-2.5 rounded-lg text-sm text-white"
+                className="w-full bg-[#1A2832] border border-white/50 px-3 py-2.5 rounded-lg text-sm text-white"
               >
                 <option>All Priorities</option>
                 <option>urgent</option>
@@ -213,11 +215,11 @@ const CaseManagement = () => {
 
             {/* DATE */}
             <div>
-              <p className="text-xs text-[#8FA3B0] mb-2">Date Range</p>
+              <p className="text-sm text-white mb-2">Date Range</p>
               <select
                 value={dateSort}
                 onChange={(e) => setDateSort(e.target.value)}
-                className="w-full bg-[#0f1a1f] border border-[#22313d] px-3 py-2.5 rounded-lg text-sm text-white"
+                className="w-full bg-[#1A2832] border border-white/50 px-3 py-2.5 rounded-lg text-sm text-white"
               >
                 <option>All Time</option>
                 <option>Newest</option>
@@ -228,13 +230,13 @@ const CaseManagement = () => {
 
           {/* FOOTER */}
           <div className="flex justify-between items-center mt-5">
-            <p className="text-xs text-[#8FA3B0]">
+            <p className="text-sm text-[#8FA3B0]">
               Showing {filteredData.length} of {cases.length} cases
             </p>
 
             <button
               onClick={clearFilters}
-              className="text-xs px-4 py-2 border border-[#22313d] rounded-lg text-white hover:bg-[#22313d]"
+              className="text-sm px-4 py-2 border border-white/50 rounded-lg text-white hover:bg-[#22313d]"
             >
               Clear Filters
             </button>
