@@ -225,9 +225,9 @@ const DetectiveForm = () => {
               <p className="text-xs sm:text-sm text-gray-400">Complete your verification to join our team</p>
             </div>
           </div>
-          <button onClick={() => navigate(-1)} className="ml-2 flex-shrink-0 text-gray-400 hover:text-white transition">
+          <button onClick={() => navigate(ROUTES.DETECTIVE_DASHBOARD)} className="ml-2 flex-shrink-0 text-gray-400 hover:text-white transition p-2 cursor-pointer">
             <X size={20} className="sm:hidden" />
-            <span className="hidden sm:inline text-sm text-[#F9FAFB]">Cancel</span>
+            <span className="hidden sm:inline text-sm text-[#F9FAFB] cursor-pointer">Cancel</span>
           </button>
         </div>
 
