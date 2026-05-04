@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Calendar, Clock, AlertCircle, CheckCircle, Download } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, MapPin, FileText, Calendar, Clock, AlertCircle, CheckCircle, Download, X, Receipt } from 'lucide-react';
 import { ROUTES } from '../../../core/constants/routes.constant';
 
 const card = 'bg-[#1A2832] border border-white/10 rounded-xl p-5 mb-4';
@@ -130,9 +130,55 @@ const statusStyle = {
   'Pending':            'bg-gray-500/20 text-gray-300',
 };
 
+const PaymentModal = ({ onClose }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+    <div className="bg-[#1A2832] rounded-2xl w-full max-w-2xl p-6 relative">
+      <button onClick={onClose} className="absolute top-4 right-4 text-[#8FA3B0] hover:text-white"><X size={16} /></button>
+
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-1">
+        <Receipt size={18} className="text-[#dc3545]" />
+        <h2 className="text-lg font-bold text-white">Payment Details</h2>
+      </div>
+      <p className="text-xs text-[#8FA3B0] mb-6">Unless and until you don't make 50% of payment case will not be started.</p>
+
+      {/* Payment Breakdown */}
+      <p className="text-sm text-white mb-3">Payment Breakdown</p>
+      <div className="space-y-3">
+        {[
+          { label: 'Total payment as per your case studied', amount: '1,00,000/-', bold: true },
+          { label: 'Detective charge', amount: '70,000/-', bold: false },
+          { label: 'Platform Charge', amount: '30,000/-', bold: false },
+        ].map(({ label, amount, bold }) => (
+          <div key={label} className="flex items-center justify-between gap-4">
+            <div className={`flex-1 border border-white/20 rounded-lg px-4 py-3 text-sm ${bold ? 'font-bold text-white' : 'text-white'}`}>{label}</div>
+            <div className={`w-36 border border-white/20 rounded-lg px-4 py-3 text-sm text-right ${bold ? 'font-bold text-white' : 'text-white'}`}>{amount}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t border-white/10 my-4" />
+
+      {/* Total to pay now */}
+      <div className="flex items-center justify-between gap-4 bg-[#FF495917]">
+        <div className="flex-1 border border-white/20 rounded-lg px-4 py-3 text-sm font-bold text-white">Total payment to pay now (50%)</div>
+        <div className="w-36 border border-white/20 rounded-lg px-4 py-3 text-sm font-bold text-white text-right">50,000/-</div>
+      </div>
+      <p className="text-xs text-[#8FA3B0] mt-2 mb-6">50% payment should be paid now to start your Case</p>
+
+      {/* Actions */}
+      <div className="flex items-center justify-between">
+        <button onClick={onClose} className="border border-white/20 text-white text-sm px-5 py-2 rounded-lg hover:bg-white/5 transition">Cancel</button>
+        <button onClick={onClose} className="bg-[#dc3545] hover:bg-[#b82231] text-white text-sm font-semibold px-6 py-2 rounded-lg transition">Send</button>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminCaseDetailsPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [showPayment, setShowPayment] = useState(false);
   const caseItem = state?.caseItem;
   const data = caseItem ? (CASE_DETAILS[caseItem.id] || null) : null;
 
@@ -147,13 +193,14 @@ const AdminCaseDetailsPage = () => {
 
   return (
     <div className="bg-[#121F27] text-white min-h-screen px-4 sm:px-6 py-5 font-[Montserrat]">
+      {showPayment && <PaymentModal onClose={() => setShowPayment(false)} />}
 
       {/* Top bar */}
       <div className="flex items-center justify-between mb-4">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-[#8FA3B0] hover:text-white transition">
           <ArrowLeft size={15} /> Back
         </button>
-        <button className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+        <button onClick={() => setShowPayment(true)} className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
           Add Payment details
         </button>
       </div>
