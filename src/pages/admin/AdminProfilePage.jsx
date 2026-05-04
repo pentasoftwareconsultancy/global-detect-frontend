@@ -1,88 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { FiUser, FiMail, FiSave, FiLoader } from "react-icons/fi";
-import { useProfile } from "../../hooks/useProfile";
+import React from "react";
+import { FiUser, FiMail, FiSave } from "react-icons/fi";
 
 const AdminProfilePage = () => {
-  const { profile, loading, error, updating, updateProfile } = useProfile();
-  
-  // Form state
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-  });
-  
-  const [isEdited, setIsEdited] = useState(false);
-
-  // Update form data when profile is loaded
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        name: profile.name || "",
-        email: profile.email || "",
-      });
-    }
-  }, [profile]);
-
-  // Handle input change
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setIsEdited(true);
-  };
-
-  // Handle form submit
-  const handleSaveChanges = async () => {
-    if (!isEdited) return;
-
-    const success = await updateProfile(formData);
-    if (success) {
-      setIsEdited(false);
-    }
-  };
-
-  // Get first letter of name for avatar
-  const getInitial = () => {
-    if (!profile?.name) return "A";
-    return profile.name.charAt(0).toUpperCase();
-  };
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="p-6 text-white montserrat flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-3">
-          <FiLoader className="animate-spin text-4xl text-red" />
-          <p className="text-lightGray">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="p-6 text-white montserrat">
-        <div className="bg-red/10 border border-red/30 rounded-xl p-4 text-center">
-          <p className="text-red">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // No profile data
-  if (!profile) {
-    return (
-      <div className="p-6 text-white montserrat">
-        <div className="bg-[#0E1F2B] rounded-xl p-4 text-center">
-          <p className="text-lightGray">No profile data available</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-6 text-white montserrat">
 
@@ -97,15 +16,15 @@ const AdminProfilePage = () => {
         
         {/* Avatar */}
         <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center text-lg font-semibold">
-          {getInitial()}
+          A
         </div>
 
         {/* Info */}
         <div>
-          <p className="text-sm font-medium">{profile.name}</p>
-          <p className="text-xs lightGray">{profile.email}</p>
+          <p className="text-sm font-medium">Admin Director</p>
+          <p className="text-xs lightGray">admin@detectiveagency.com</p>
           <span className="text-[10px] px-2 py-1 bg-[#132B3A] rounded mt-1 inline-block">
-            {profile.role}
+            Admin
           </span>
         </div>
       </div>
@@ -127,11 +46,9 @@ const AdminProfilePage = () => {
               <FiUser className="text-lightGray" />
               <input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
+                value="Admin Director"
                 className="bg-transparent outline-none text-sm w-full"
-                placeholder="Enter your name"
+                readOnly
               />
             </div>
           </div>
@@ -142,12 +59,10 @@ const AdminProfilePage = () => {
             <div className="flex items-center gap-2 bg-[#0B1A24] px-3 py-2 rounded-lg mt-1">
               <FiMail className="text-lightGray" />
               <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
+                type="text"
+                value="admin@detectiveagency.com"
                 className="bg-transparent outline-none text-sm w-full"
-                placeholder="Enter your email"
+                readOnly
               />
             </div>
           </div>
@@ -156,26 +71,9 @@ const AdminProfilePage = () => {
 
         {/* SAVE BUTTON */}
         <div className="flex justify-end mt-4">
-          <button 
-            onClick={handleSaveChanges}
-            disabled={!isEdited || updating}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${
-              !isEdited || updating
-                ? "bg-gray/30 text-lightGray cursor-not-allowed"
-                : "bg-red hover:bg-red/80"
-            }`}
-          >
-            {updating ? (
-              <>
-                <FiLoader className="animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <FiSave />
-                Save Changes
-              </>
-            )}
+          <button className="flex items-center gap-2 bg-red px-4 py-2 rounded-lg text-sm hover:bg-red/80 transition">
+            <FiSave />
+            Save Changes
           </button>
         </div>
       </div>
@@ -187,12 +85,12 @@ const AdminProfilePage = () => {
 
         <div className="flex justify-between border-t border-gray/20 py-3 text-sm">
           <span className="lightGray">Account ID</span>
-          <span>{profile.account_id}</span>
+          <span>admin-1</span>
         </div>
 
         <div className="flex justify-between border-t border-gray/20 py-3 text-sm">
           <span className="lightGray">Role</span>
-          <span>{profile.role}</span>
+          <span>Admin</span>
         </div>
 
       </div>
