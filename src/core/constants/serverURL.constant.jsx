@@ -67,13 +67,27 @@ class ServerUrl {
 
         // Admin routes
         static CREATE_BLOG_API = `${ServerUrl.BLOGS_API}/`;
-        static UPLOAD_BLOG_IMAGE_API = `${ServerUrl.BLOGS_API}/upload-image`;
         static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/admin/list`;
-        static GET_BLOG_STATS_API = `${ServerUrl.BLOGS_API}/admin/stats`;
         static GET_BLOG_BY_ID_ADMIN_API = `${ServerUrl.BLOGS_API}/admin/preview/:id`;
         static GET_BLOG_BY_STATUS_API = `${ServerUrl.BLOGS_API}/admin/status`;
         static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
         static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
+
+    // ------------------------- Admin - User Management -----------------------
+    static ADMIN_USERS_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.ADMIN_USERS}`;
+
+        static GET_USER_STATS_API = `${ServerUrl.ADMIN_USERS_API}/stats`;
+        static GET_ALL_USERS_API = `${ServerUrl.ADMIN_USERS_API}/`;
+        static GET_USER_BY_ID_API = `${ServerUrl.ADMIN_USERS_API}/:id`;
+        static BLOCK_USER_API = `${ServerUrl.ADMIN_USERS_API}/:id/block`;
+        static UNBLOCK_USER_API = `${ServerUrl.ADMIN_USERS_API}/:id/unblock`;
+
+    // ------------------------- Admin - Detective Management ------------------
+    static ADMIN_DETECTIVES_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.ADMIN_DETECTIVES}`;
+
+        static GET_DETECTIVE_STATS_API = `${ServerUrl.ADMIN_DETECTIVES_API}/stats`;
+        static GET_ALL_DETECTIVES_API = `${ServerUrl.ADMIN_DETECTIVES_API}/`;
+        static GET_DETECTIVE_BY_ID_API = `${ServerUrl.ADMIN_DETECTIVES_API}/:id`;
 }
 
 export default ServerUrl;
