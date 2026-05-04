@@ -321,7 +321,7 @@ const AdminUserDetailsPage = () => {
                     {c.assigned_at ? "Assigned" : "Unassigned"}
                   </p>
                   <button
-                    onClick={() => navigate(`${ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL}/${c.id}`)}
+                    onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: { id: c.id } } })}
                     className="flex items-center gap-1 text-xs text-white hover:text-white transition"
                   >
                     <Eye size={13} /> View
@@ -366,7 +366,7 @@ const AdminUserDetailsPage = () => {
                     </td>
                     <td className="py-3">
                       <button
-                        onClick={() => navigate(`${ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL}/${c.id}`)}
+                        onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: { id: c.id } } })}
                         className="flex items-center gap-1 text-xs text-white hover:text-white transition"
                       >
                         <Eye size={13} /> View
