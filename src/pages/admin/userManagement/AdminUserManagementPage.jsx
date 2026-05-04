@@ -246,7 +246,7 @@ const AdminUserManagementPage = () => {
                       loading={actionLoadingId === u.id}
                     />
                     <button
-                      onClick={() => navigate(`${ROUTES.ADMIN_USER_MANAGEMENT_DETAIL}/${u.id}`)}
+                      onClick={() => navigate(ROUTES.ADMIN_USER_MANAGEMENT_DETAIL.replace(':userId', u.id))}
                       className="text-white hover:text-white transition"
                     >
                       <Eye size={15} />
@@ -315,7 +315,7 @@ const AdminUserManagementPage = () => {
                           />
                         </div>
                         <button
-                          onClick={() => navigate(`${ROUTES.ADMIN_USER_MANAGEMENT_DETAIL}/${u.id}`)}
+                          onClick={() => navigate(ROUTES.ADMIN_USER_MANAGEMENT_DETAIL.replace(':userId', u.id))}
                           className="text-white hover:text-white transition"
                         >
                           <Eye size={15} />

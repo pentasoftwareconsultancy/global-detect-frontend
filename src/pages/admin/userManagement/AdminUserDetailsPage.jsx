@@ -292,7 +292,7 @@ const AdminUserDetailsPage = () => {
         <div className="flex items-center gap-2 mb-4">
           <Briefcase size={15} className="text-white" />
           <h3 className="text-sm font-semibold">
-            Case History ({user.recentCases?.length || 0})
+            Case History ({user.recentCases?.length || 0} of {user.caseStats?.total || 0})
           </h3>
         </div>
 
