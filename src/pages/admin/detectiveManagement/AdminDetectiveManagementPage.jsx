@@ -54,6 +54,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+
 const KYCBadge = ({ kyc }) => {
   if (kyc === "Approved") return (
     <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]">
