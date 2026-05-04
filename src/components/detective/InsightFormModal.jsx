@@ -38,7 +38,7 @@ const InsightFormModal = ({ onClose }) => {
 
   const handleSubmit = () => {
     setSubmitting(true);
-    let secs = 5;
+    let secs = 2;
     setCountdown(secs);
     const interval = setInterval(() => {
       secs -= 1;
