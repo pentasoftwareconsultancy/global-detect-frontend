@@ -19,10 +19,11 @@ class ServerUrl {
         static SUBMIT_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/submit-application`;
         static GET_MY_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/my-application`; // Assuming the endpoint is /detective-kyc/status
         // Admin routes
-        static GET_ALL_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/`;
-        static UPDATE_KYC_STATUS_API = `${ServerUrl.DETECTIVE_KYC_API}/:id/status`; // Assuming the endpoint is /detective-kyc/update-status
+        static GET_ALL_KYC_API         = `${ServerUrl.DETECTIVE_KYC_API}/`;
+        static UPDATE_KYC_STATUS_API   = `${ServerUrl.DETECTIVE_KYC_API}/:id/status`;
         // Get specific application
-        static GET_KYC_APPLICATION_API = `${ServerUrl.DETECTIVE_KYC_API}/:id`; // Assuming the endpoint is /detective-kyc/:id
+        static GET_KYC_APPLICATION_API = `${ServerUrl.DETECTIVE_KYC_API}/:id`;
+        static GET_KYC_BY_USER_API     = `${ServerUrl.DETECTIVE_KYC_API}/user/:userId`;
     
     // ------------------------- all user side related api endpoints -----------------------------------------------  
     // user request form api endpoint
@@ -66,12 +67,14 @@ class ServerUrl {
         static GET_BLOG_BY_ID_API = `${ServerUrl.BLOGS_API}/:id`;
 
         // Admin routes
-        static CREATE_BLOG_API = `${ServerUrl.BLOGS_API}/`;
-        static GET_ALL_BLOGS_API = `${ServerUrl.BLOGS_API}/admin/list`;
+        static CREATE_BLOG_API          = `${ServerUrl.BLOGS_API}/`;
+        static UPLOAD_BLOG_IMAGE_API    = `${ServerUrl.BLOGS_API}/upload-image`;
+        static GET_ALL_BLOGS_API        = `${ServerUrl.BLOGS_API}/admin/list`;
+        static GET_BLOG_STATS_API       = `${ServerUrl.BLOGS_API}/admin/stats`;
         static GET_BLOG_BY_ID_ADMIN_API = `${ServerUrl.BLOGS_API}/admin/preview/:id`;
-        static GET_BLOG_BY_STATUS_API = `${ServerUrl.BLOGS_API}/admin/status`;
-        static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
-        static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
+        static GET_BLOG_BY_STATUS_API   = `${ServerUrl.BLOGS_API}/admin/status`;
+        static UPDATE_BLOG_API          = `${ServerUrl.BLOGS_API}/:id`;
+        static DELETE_BLOG_API          = `${ServerUrl.BLOGS_API}/:id`;
 
     // ------------------------- Admin - User Management -----------------------
     static ADMIN_USERS_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.ADMIN_USERS}`;
