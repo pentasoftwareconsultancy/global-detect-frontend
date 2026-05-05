@@ -1,11 +1,10 @@
 import React from 'react';
-import DashboardLayout from './DashboardLayout';
+import AdminLayout from './AdminLayout';
 
-const AdminLayout = () => {
+const AuthLayout = () => {
   return (
-    <DashboardLayout role="ADMIN" />
-    
+    <AdminLayout role="ADMIN" />
   );
 };
 
-export default AdminLayout;
+export default AuthLayout;
