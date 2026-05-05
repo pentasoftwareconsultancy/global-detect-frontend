@@ -63,7 +63,7 @@ const AdminProfilePage = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 text-white montserrat bg-[#121F27] min-h-screen">
+    <div className="p-4 sm:p-6 text-white montserrat  min-h-screen">
 
       {/* HEADER */}
       <h2 className="text-xl sm:text-2xl font-semibold mb-1">Profile</h2>

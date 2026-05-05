@@ -124,7 +124,7 @@ const AdminUserDetailsPage = () => {
   const cardCls = "bg-[#1A2832] border border-white/5 rounded-xl p-5";
 
   return (
-    <div className="p-4 sm:p-6 text-white bg-[#121F27] min-h-screen font-[Montserrat]">
+    <div className="p-4 sm:p-6 text-white  min-h-screen font-[Montserrat]">
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-3">
         <div className="flex items-center gap-3 min-w-0">

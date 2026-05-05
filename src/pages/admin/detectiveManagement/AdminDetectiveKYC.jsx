@@ -205,7 +205,7 @@ const AdminDetectiveKYC = () => {
 
   /* ══════════════════════════════════════════════════════════════════════════ */
   return (
-    <div className="font-[Montserrat] text-white bg-[#121F27] min-h-screen p-3 sm:p-6">
+    <div className="font-[Montserrat] text-white  min-h-screen p-3 sm:p-6">
 
       {showRejectModal && (
         <RejectModal
