@@ -154,56 +154,52 @@
 
 import { Menu, Bell, Search, User } from "lucide-react";
 
-
-
 const UserNavbar = ({ setSidebarOpen }) => {
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="flex items-center justify-between px-4 md:px-6 py-3 bg-[#0f1c24] border-b border-white/10">
 
-      {/* LEFT */}
-      <div className="flex items-center gap-5">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="md:hidden p-2 rounded-lg hover:bg-white/10"
-        >
-          <Menu size={28} />   {/* ⬅ increased */}
-        </button>
-
-        <div className="flex items-center gap-5">
-          <div className="bg-white/10 p-2 rounded-full">
-            <User size={20} />   {/* ⬅ increased */}
-          </div>
-          <span className="text-md md:text-base">Universal Detective</span>
+      {/* LEFT: Logo + Name */}
+      <div className="flex items-center gap-3">
+        <div className="bg-white/10 p-2 rounded-full">
+          <User size={20} />
         </div>
+        <span className="font-['Montserrat'] text-sm md:text-base text-white">Universal Detective</span>
       </div>
 
-      {/* RIGHT */}
-      <div className="flex items-center gap-10">
+      {/* RIGHT: Search + Bell + Hamburger */}
+      <div className="flex items-center gap-4">
 
-        {/* Search */}
-        <div className="hidden sm:flex items-center bg-white/10 rounded-full px-4 py-2.5 w-50 md:w-70">
-          <Search size={20} />   {/* ⬅ increased */}
+        {/* Search — hidden on mobile */}
+        <div className="hidden sm:flex items-center bg-white/10 rounded-full px-4 py-2 w-48 md:w-64">
+          <Search size={18} className="text-gray-400 flex-shrink-0" />
           <input
             placeholder="Search"
-            className="bg-transparent px-2 w-full outline-none text-sm"
+            className="bg-transparent px-2 w-full outline-none text-sm font-['Montserrat'] text-white placeholder-gray-400"
           />
         </div>
 
         {/* Bell */}
-        <div
-         onClick={() => navigate(ROUTES.USER_NOTIFICATION)}
-         className="relative bg-white/10 p-2.5 rounded-full cursor-pointer">
-          <Bell size={20} />   {/* ⬅ increased */}
-          <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] px-1 rounded-full">
+        <button
+          onClick={() => navigate(ROUTES.USER_NOTIFICATION)}
+          className="relative bg-white/10 p-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors"
+        >
+          <Bell size={20} />
+          <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] w-4 h-4 rounded-full flex items-center justify-center text-white font-bold">
             2
           </span>
-        </div>
+        </button>
+
+        {/* Hamburger — mobile only, right of Bell */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+        >
+          <Menu size={22} />
+        </button>
 
       </div>
-
     </div>
   );
 };

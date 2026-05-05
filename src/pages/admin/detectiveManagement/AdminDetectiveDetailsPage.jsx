@@ -421,6 +421,7 @@ const AdminDetectiveDetailsPage = () => {
           )}
         </div>
 
+
         {/* ── ASSIGNED CASES ── */}
         <div className="bg-[#1A2832] border border-white/5 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
@@ -459,7 +460,10 @@ const AdminDetectiveDetailsPage = () => {
                       <td className="py-3 text-xs text-[#9CA3AF]">{fmtDate(c.assigned_at)}</td>
                       <td className="py-3 text-xs text-[#9CA3AF]">{fmtDate(c.submitted_at)}</td>
                       <td className="py-3">
-                        <button className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
+                        <button
+                          onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: { id: c.id } } })}
+                          className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition"
+                        >
                           <Eye size={12} /> View
                         </button>
                       </td>
