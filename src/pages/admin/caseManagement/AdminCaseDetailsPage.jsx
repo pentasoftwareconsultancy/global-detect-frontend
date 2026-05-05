@@ -231,16 +231,24 @@ const AdminCaseDetailsPage = () => {
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-[#8FA3B0] hover:text-white transition">
           <ArrowLeft size={15} /> Back
         </button>
-        {/* Show Assign Detective button if case is unassigned */}
-        {!caseData?.detectiveInfo && (
+        <div className="flex items-center gap-3">
+          {/* Show Assign Detective button if case is unassigned */}
+          {!caseData?.detectiveInfo && (
+            <button 
+              onClick={() => setShowAssignModal(true)}
+              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+            >
+              <MdOutlinePersonAddAlt size={16} />
+              Assign Detective
+            </button>
+          )}
           <button 
-            onClick={() => setShowAssignModal(true)}
+            onClick={() => setShowPayment(true)} 
             className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
           >
-            <MdOutlinePersonAddAlt size={16} />
-            Assign Detective
+            Add Payment details
           </button>
-        )}
+        </div>
       </div>
 
       {/* Case header */}

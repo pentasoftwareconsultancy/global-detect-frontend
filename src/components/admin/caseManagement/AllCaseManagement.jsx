@@ -842,17 +842,57 @@ const CaseManagement = () => {
         </div>
       )}
 
-      {/* REPORT MODAL (existing code) */}
+      {/* REPORT MODAL */}
       {showReportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-[90%] max-w-4xl max-h-[85vh] overflow-y-auto bg-[#121F27] border border-white/10 rounded-2xl p-6 relative">
-            <button onClick={() => setShowReportModal(false)} className="absolute top-4 right-4 text-[#8FA3B0] hover:text-white text-lg leading-none">✕</button>
-            <h2 className="text-base font-bold text-white mb-1">Generate Comprehensive Case Report</h2>
-            <p className="text-xs text-[#8FA3B0] mb-6">Create a detailed investigation report with findings, evidence, and supporting documents</p>
-            {/* Report form fields... */}
+          <div className="w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1A2832] border border-[#22313d] rounded-xl p-6 relative">
+            <button 
+              onClick={() => setShowReportModal(false)} 
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg"
+            >
+              ✕
+            </button>
+            <h2 className="font-['Montserrat'] font-semibold text-[18px] text-white mb-1">
+              Generate Comprehensive Case Report
+            </h2>
+            <p className="font-['Montserrat'] font-normal text-[12px] text-[#9CA3AF] mb-6">
+              Create a detailed investigation report with findings, evidence, and supporting documents
+            </p>
+            <div className="space-y-5">
+              {[
+                { label: "Executive Summary *",  placeholder: "Provide a high-level overview..." },
+                { label: "Key Findings *",        placeholder: "• Finding 1..." },
+                { label: "Evidence Collected",    placeholder: "Document all evidence..." },
+                { label: "Recommendations",       placeholder: "" },
+                { label: "Next Steps",            placeholder: "" },
+                { label: "Conclusion *",          placeholder: "" },
+              ].map((field) => (
+                <div key={field.label}>
+                  <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">{field.label}</p>
+                  <textarea
+                    rows={3}
+                    placeholder={field.placeholder}
+                    className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none"
+                  />
+                </div>
+              ))}
+              <div className="bg-[#1f2f3a] border border-[#2a3a44] rounded-lg p-4">
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">Supporting Documents</p>
+                <button className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white hover:bg-[#243643] transition">
+                  Choose Files
+                </button>
+              </div>
+            </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setShowReportModal(false)} className="px-5 py-2 border border-white/20 rounded-lg text-sm text-white hover:bg-white/5 transition">Cancel</button>
-              <button className="px-5 py-2 bg-[#dc3545] hover:bg-[#b82231] rounded-lg text-sm text-white font-semibold transition">Generate & Send Report</button>
+              <button 
+                onClick={() => setShowReportModal(false)} 
+                className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white font-['Montserrat'] font-medium hover:bg-[#243643] transition"
+              >
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-[#D92B3A] hover:bg-[#b0222f] rounded-lg text-sm text-white font-['Montserrat'] font-medium transition">
+                Generate & Send Report
+              </button>
             </div>
           </div>
         </div>
