@@ -186,14 +186,10 @@ const DetectiveForm = () => {
       }
     };
 
+    setShowSuccess(true);
+    setKycComplete(true);
     try {
-      const response = await authService.createDetectiveKYC(payload);
-
-      console.log("KYC Success:", response);
-
-      setShowSuccess(true);
-      setKycComplete(true);
-
+      await authService.createDetectiveKYC(payload);
     } catch (error) {
       console.error("KYC Failed:", error);
     }
