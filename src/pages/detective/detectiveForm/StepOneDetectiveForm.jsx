@@ -81,6 +81,7 @@ const StepOneDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =>
             onChange={onDOBChange}
             max={new Date().toISOString().split('T')[0]}
             className={inputCls(errors.dob)}
+            style={{ colorScheme: 'dark' }}
           />
           {errors.dob && <p className={errCls}>{errors.dob}</p>}
         </div>

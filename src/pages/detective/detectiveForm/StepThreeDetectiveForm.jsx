@@ -90,6 +90,7 @@ const StepThreeDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) 
             onChange={e => onIssueDateChange(e.target.value)}
             max={today}
             className={inputCls(errors.issueDate)}
+            style={{ colorScheme: 'dark' }}
           />
           {errors.issueDate && <p className={errCls}>{errors.issueDate}</p>}
         </div>
@@ -101,6 +102,7 @@ const StepThreeDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) 
             onChange={e => onExpiryDateChange(e.target.value)}
             min={data.professional.issueDate || today}
             className={inputCls(errors.expiryDate)}
+            style={{ colorScheme: 'dark' }}
           />
           {errors.expiryDate && <p className={errCls}>{errors.expiryDate}</p>}
         </div>
