@@ -1,280 +1,143 @@
 import React, { useState } from "react";
-import {
-  LuSettings, LuPalette, LuGlobe, LuBell, LuMail, LuSmartphone,
-  LuRefreshCw, LuChartBar, LuShield, LuKey, LuLock, LuTriangleAlert,
-  LuTrash2, LuSave, LuChevronDown,
-} from "react-icons/lu";
+import { Sun, Bell, Shield, Mail, Smartphone, FileText, BarChart2, Lock, Trash2, Save } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   API-READY STATE
-   Replace with API GET on mount, PATCH on save
-───────────────────────────────────────────── */
-const DEFAULT_SETTINGS = {
-  language: "English",
-  notifications: {
-    email: true,
-    push: false,
-    caseUpdates: true,
-    weeklyReports: false,
-  },
-  twoFactor: false,
-};
-
-/* ── Section card wrapper ── */
-const SectionCard = ({ children, dangerTop }) => (
-  <div
-    className={`bg-[#1A2832] rounded-xl w-full ${
-      dangerTop ? "border-t border-t-red-600" : ""
-    }`}
-    style={{ border: "0.67px solid #FFFFFF1A", ...(dangerTop && { borderTop: "0.67px solid #DC2626" }) }}
+const Toggle = ({ checked, onChange }) => (
+  <button
+    onClick={() => onChange(!checked)}
+    className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${checked ? "bg-[#FF4959]" : "bg-[#2D3E4D]"}`}
   >
+    <span className={`inline-block w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${checked ? "translate-x-6" : "translate-x-1"}`} />
+  </button>
+);
+
+const SectionCard = ({ children }) => (
+  <div className="bg-[#1A2832] border border-white/5 rounded-xl p-5 sm:p-6 mb-4">
     {children}
   </div>
 );
 
-/* ── Section header ── */
-const SectionTitle = ({ icon, title, subtitle }) => (
-  <div className="flex items-center gap-3 px-6 pt-6 pb-5">
-    <span className="text-[#9CA3AF] flex-shrink-0">{icon}</span>
-    <div>
-      <h2 className="font-['Montserrat'] font-medium text-sm leading-none text-white">
-        {title}
-      </h2>
-      {subtitle && (
-        <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mt-1">
-          {subtitle}
-        </p>
-      )}
+const SectionHeader = ({ icon: Icon, title, desc }) => (
+  <div className="mb-4">
+    <div className="flex items-center gap-2">
+      <Icon size={16} className="text-white" />
+      <h2 className="text-sm font-semibold text-white">{title}</h2>
     </div>
+    {desc && <p className="text-xs text-gray-400 mt-1">{desc}</p>}
   </div>
 );
 
-/* ── Divider ── */
-const Divider = () => (
-  <div className="mx-6 h-px bg-white/10" />
-);
-
-/* ── Toggle ── */
-const Toggle = ({ checked, onChange }) => (
-  <button
-    onClick={() => onChange(!checked)}
-    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 cursor-pointer ${
-      checked ? "bg-[#D92B3A]" : "bg-white/10"
-    }`}
-  >
-    <span
-      className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-        checked ? "translate-x-5" : "translate-x-0"
-      }`}
-    />
-  </button>
-);
-
-/* ── Setting row with toggle ── */
-const SettingRow = ({ icon, title, subtitle, right }) => (
-  <div className="flex items-center justify-between gap-4 px-6 py-[18px]">
-    <div className="flex items-center gap-3 min-w-0">
-      <span className="text-[#9CA3AF] flex-shrink-0">{icon}</span>
-      <div className="min-w-0">
-        <p className="font-['Montserrat'] font-medium text-sm leading-none text-white">
-          {title}
-        </p>
-        {subtitle && (
-          <p className="font-['Montserrat'] font-normal text-xs leading-4 text-[#9CA3AF] mt-1">
-            {subtitle}
-          </p>
-        )}
+const SettingRow = ({ icon: Icon, title, desc, right }) => (
+  <div className="flex items-center justify-between py-3.5 border-t border-white/5 gap-3">
+    <div className="min-w-0 flex-1">
+      <div className="flex items-center gap-2">
+        {Icon && <Icon size={14} className="text-white flex-shrink-0" />}
+        <p className="text-sm text-white">{title}</p>
       </div>
+      {desc && <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{desc}</p>}
     </div>
     <div className="flex-shrink-0">{right}</div>
   </div>
 );
 
-/* ─────────────────────────────────────────────
-   MAIN PAGE
-───────────────────────────────────────────── */
 const AdminSettings = () => {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [langOpen, setLangOpen] = useState(false);
-
-  const languages = ["English", "Marathi", "Hindi"];
-
-  const setNotif = (key, val) =>
-    setSettings((s) => ({ ...s, notifications: { ...s.notifications, [key]: val } }));
-
-  // Replace with API PATCH call
-  const handleSave = () => {
-    console.log("Save settings payload:", settings);
-    // await authService.updateAdminSettings(settings);
-  };
+  const [language, setLanguage] = useState("English");
+  const [notifs, setNotifs] = useState({
+    email: true,
+    push: true,
+    caseUpdates: true,
+    weeklyReports: false,
+  });
+  const [twoFA, setTwoFA] = useState(false);
 
   return (
-    <div className="bg-[#0b1120] min-h-screen p-4 sm:p-6 font-['Montserrat'] text-white">
+    <div className="min-h-screen bg-[#121F27] text-white p-4 sm:p-6 font-[Montserrat]">
 
-      {/* ── HEADER ── */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <LuSettings size={22} className="text-white flex-shrink-0" />
-            <h1 className="font-['Montserrat'] font-medium text-2xl leading-9 text-white">
-              Settings
-            </h1>
-          </div>
-          <p className="font-['Montserrat'] font-normal text-base leading-6 text-[#9CA3AF]">
-            Manage your application preferences
-          </p>
-        </div>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Settings</h1>
+        <p className="text-xs sm:text-sm text-gray-400 mt-1">Manage your application preferences</p>
       </div>
 
-      {/* ── SECTIONS ── */}
-      <div className="flex flex-col gap-8">
+      {/* Appearance */}
+      <SectionCard>
+        <SectionHeader icon={Sun} title="Appearance" desc="Customize the look and feel of the application" />
+        <SettingRow
+          title="Language"
+          desc="Select your preferred language"
+          right={
+            <div className="relative">
+              <select
+                value={language}
+                onChange={e => setLanguage(e.target.value)}
+                className="bg-[#1A2832] border border-white/10 text-sm text-white rounded-lg px-3 py-1.5 pr-8 outline-none appearance-none cursor-pointer w-full sm:w-auto"
+              >
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Marathi</option>
+                
+              </select>
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">▾</span>
+            </div>
+          }
+        />
+      </SectionCard>
 
-        {/* ── APPEARANCE ── */}
-        <SectionCard>
-          <SectionTitle
-            icon={<LuPalette size={16} />}
-            title="Appearance"
-            subtitle="Customize the look and feel of your dashboard"
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuGlobe size={16} />}
-            title="Language"
-            subtitle="Select your preferred language"
-            right={
-              <div className="relative">
-                <button
-                  onClick={() => setLangOpen((o) => !o)}
-                  className="flex items-center justify-between gap-2 w-32 h-9 px-3 rounded-md font-['Montserrat'] font-medium text-sm text-white bg-transparent hover:bg-white/5 transition-colors cursor-pointer"
-                  style={{ border: "0.67px solid #FFFFFF1A" }}
-                >
-                  {settings.language}
-                  <LuChevronDown size={14} className="text-[#9CA3AF]" />
-                </button>
-                {langOpen && (
-                  <div
-                    className="absolute right-0 top-10 z-20 w-32 bg-[#1A2832] rounded-lg overflow-hidden"
-                    style={{ border: "0.67px solid #FFFFFF1A" }}
-                  >
-                    {languages.map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => { setSettings((s) => ({ ...s, language: lang })); setLangOpen(false); }}
-                        className={`w-full text-left px-3 py-2 text-xs font-['Montserrat'] hover:bg-white/5 transition-colors cursor-pointer ${
-                          settings.language === lang ? "text-[#D92B3A]" : "text-white"
-                        }`}
-                      >
-                        {lang}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            }
-          />
-        </SectionCard>
+      {/* Notifications */}
+      <SectionCard>
+        <SectionHeader icon={Bell} title="Notifications" desc="Configure how you receive notifications" />
+        <SettingRow
+          icon={Mail}
+          title="Email Notifications"
+          desc="Receive notifications via email"
+          right={<Toggle checked={notifs.email} onChange={v => setNotifs(p => ({ ...p, email: v }))} />}
+        />
+        <SettingRow
+          icon={Smartphone}
+          title="Push Notifications"
+          desc="Receive push notifications on your device"
+          right={<Toggle checked={notifs.push} onChange={v => setNotifs(p => ({ ...p, push: v }))} />}
+        />
+        <SettingRow
+          title="Case Updates"
+          desc="Get notified when case status changes"
+          right={<Toggle checked={notifs.caseUpdates} onChange={v => setNotifs(p => ({ ...p, caseUpdates: v }))} />}
+        />
+        <SettingRow
+          title="Weekly Reports"
+          desc="Receive weekly summary reports"
+          right={<Toggle checked={notifs.weeklyReports} onChange={v => setNotifs(p => ({ ...p, weeklyReports: v }))} />}
+        />
+      </SectionCard>
 
-        {/* ── NOTIFICATIONS ── */}
-        <SectionCard>
-          <SectionTitle
-            icon={<LuBell size={16} />}
-            title="Notifications"
-            subtitle="Manage how and when you receive notifications"
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuMail size={16} />}
-            title="Email Notifications"
-            subtitle="Receive updates and alerts via email"
-            right={<Toggle checked={settings.notifications.email} onChange={(v) => setNotif("email", v)} />}
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuSmartphone size={16} />}
-            title="Push Notifications"
-            subtitle="Receive real-time push notifications"
-            right={<Toggle checked={settings.notifications.push} onChange={(v) => setNotif("push", v)} />}
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuRefreshCw size={16} />}
-            title="Case Updates"
-            subtitle="Get notified when case status changes"
-            right={<Toggle checked={settings.notifications.caseUpdates} onChange={(v) => setNotif("caseUpdates", v)} />}
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuChartBar size={16} />}
-            title="Weekly Reports"
-            subtitle="Receive weekly summary reports"
-            right={<Toggle checked={settings.notifications.weeklyReports} onChange={(v) => setNotif("weeklyReports", v)} />}
-          />
-        </SectionCard>
-
-        {/* ── PRIVACY & SECURITY ── */}
-        <SectionCard>
-          <SectionTitle
-            icon={<LuShield size={16} />}
-            title="Privacy & Security"
-            subtitle="Manage your account security settings"
-          />
-          <Divider />
-          <SettingRow
-            icon={<LuKey size={16} />}
-            title="Two-Factor Authentication"
-            subtitle="Add an extra layer of security to your account"
-            right={
-              <Toggle
-                checked={settings.twoFactor}
-                onChange={(v) => setSettings((s) => ({ ...s, twoFactor: v }))}
-              />
-            }
-          />
-          <Divider />
-          <div className="px-6 py-[18px]">
-            <button
-              className="flex items-center justify-start gap-3 w-full h-9 px-4 rounded-md font-['Montserrat'] font-medium text-sm leading-5 text-white bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-              style={{ border: "0.67px solid #FFFFFF1A" }}
-            >
-              <LuLock size={16} className="text-[#9CA3AF] flex-shrink-0" />
-              Change Password
-            </button>
-          </div>
-        </SectionCard>
-
-        {/* ── DANGER ZONE ── */}
-        <div
-          className="bg-[#1A2832] rounded-xl w-full"
-          style={{ border: "0.67px solid #FFFFFF1A", borderTop: "0.67px solid #DC2626" }}
-        >
-          <SectionTitle
-            icon={<LuTriangleAlert size={16} className="text-red-600" />}
-            title="Danger Zone"
-            subtitle="Irreversible and destructive actions"
-          />
-          <Divider />
-          <div className="px-6 py-[18px]">
-            <button
-              className="flex items-center justify-center gap-2 h-9 px-4 rounded-md font-['Montserrat'] font-medium text-sm leading-5 text-white bg-red-600/10 hover:bg-red-600/20 transition-colors cursor-pointer"
-              style={{ width: "207px", border: "0.67px solid #DC262633" }}
-            >
-              <LuTrash2 size={14} />
-              Delete Account
-            </button>
-          </div>
+      {/* Privacy & Security */}
+      <SectionCard>
+        <SectionHeader icon={Shield} title="Privacy & Security" desc="Manage your privacy and security settings" />
+        <SettingRow
+          icon={Lock}
+          title="Two-Factor Authentication"
+          desc="Add an extra layer of security to your account"
+          right={<Toggle checked={twoFA} onChange={setTwoFA} />}
+        />
+        <div className="border-t border-white/5 pt-3.5">
+          <button className="flex items-center gap-2 text-sm text-white bg-[#121F27] border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg transition w-full sm:w-auto">
+            <Lock size={13} className="text-gray-400" /> Change Password
+          </button>
         </div>
+      </SectionCard>
 
+      {/* Danger Zone */}
+      <div className="bg-[#1A2832] border border-[#FF4959]/40 rounded-xl p-5 sm:p-6 mb-6">
+        <h2 className="text-sm font-semibold text-[#FF4959] mb-1">Danger Zone</h2>
+        <p className="text-xs text-gray-400 mb-4">Irreversible actions</p>
+        <button className="flex items-center gap-2 bg-[#DC262699] hover:bg-[#b82231] text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+          <Trash2 size={13} /> Delete Account
+        </button>
       </div>
 
-      {/* ── SAVE BUTTON ── */}
-      <div className="flex justify-end mt-8">
-        <button
-          onClick={handleSave}
-          className="flex items-center justify-center gap-2 bg-[#D92B3A] hover:bg-[#b0222f] transition-colors text-white font-['Montserrat'] font-medium text-sm leading-5 rounded-md h-10 cursor-pointer"
-          style={{ width: '181px' }}
-        >
-          <LuSave size={14} />
-          Save All Settings
+      {/* Save Button */}
+      <div className="flex justify-end">
+        <button className="flex items-center justify-center gap-2 bg-[#FF4959] hover:bg-[#b82231] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition w-full sm:w-auto">
+          <Save size={14} /> Save All Settings
         </button>
       </div>
 
