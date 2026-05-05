@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../core/contexts/AuthContext'
 import { ROUTES } from '../../core/constants/routes.constant'
@@ -29,7 +29,10 @@ const DetectiveForm = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState({});
   const [data, setData] = useState({
     personal: { firstName: '', lastName: '', dob: '', gender: '', nationality: '', ssn: '' },
     contact: { email: '', phone: '', altPhone: '', address: '', city: '', state: '', zip: '', country: '', emergency: { name: '', relation: '', phone: '' } },
@@ -40,11 +43,39 @@ const DetectiveForm = () => {
     legal: { convicted: false, consentBackground: false, agreeTerms: false }
   });
 
-  const handleFile = (e, key) => {
+  // Prefill from profile on mount
+  useEffect(() => {
+    const prefill = async () => {
+      try {
+        const res = await authService.getProfile();
+        const profile = res?.data?.data ?? res?.data ?? {};
+        const fullName = profile.name || '';
+        const parts = fullName.trim().split(/\s+/);
+        const firstName = parts[0] || '';
+        const lastName  = parts.slice(1).join(' ') || '';
+        setData(prev => ({
+          ...prev,
+          personal: { ...prev.personal, firstName, lastName },
+          contact: {
+            ...prev.contact,
+            email: profile.email || '',
+            phone: profile.phone || '',
+            city:  profile.city  || '',
+          },
+        }));
+      } catch {
+        // non-critical — user can fill manually
+      }
+    };
+    prefill();
+  }, []);
+
+  const handleFile = (e, key, cloudinaryUrl) => {
     const file = e.target.files[0];
     if (!file) return;
-    setData(prev => ({ ...prev, documents: { ...prev.documents, [key]: file.name } }));
-    // clear the error for this doc key immediately
+    // if cloudinaryUrl provided, store that; otherwise store filename for display
+    const value = cloudinaryUrl !== undefined ? cloudinaryUrl : file.name;
+    setData(prev => ({ ...prev, documents: { ...prev.documents, [key]: value } }));
     const errKey = key === 'address' ? 'address_doc' : key;
     setErrors(prev => { const c = { ...prev }; delete c[errKey]; return c; });
   };
@@ -124,78 +155,85 @@ const DetectiveForm = () => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+    setSubmitting(true);
+    setSubmitError('');
 
     const payload = {
       personalInfo: {
-        firstName: data.personal.firstName,
-        lastName: data.personal.lastName,
-        dateOfBirth: data.personal.dob,
-        gender: data.personal.gender.toLowerCase(),
-        nationality: data.personal.nationality,
-        socialSecurityNumber: "123456789"
+        firstName:            data.personal.firstName,
+        lastName:             data.personal.lastName,
+        dateOfBirth:          data.personal.dob,
+        gender:               data.personal.gender.toLowerCase(),
+        nationality:          data.personal.nationality,
+        socialSecurityNumber: data.personal.ssn.replace(/-/g, ''), // strip formatting dashes
       },
 
       contactInfo: {
-        email: data.contact.email,
-        phoneNumber: data.contact.phone,
-        streetAddress: data.contact.address,
-        city: data.contact.city,
-        stateProvince: data.contact.state,
-        zipPostalCode: data.contact.zip,
-        country: data.contact.country
+        email:          data.contact.email,
+        phoneNumber:    data.contact.phone,
+        alternatePhone: data.contact.altPhone || undefined,
+        streetAddress:  data.contact.address,
+        city:           data.contact.city,
+        stateProvince:  data.contact.state,
+        zipPostalCode:  data.contact.zip,
+        country:        data.contact.country,
       },
 
       emergencyContact: {
-        fullName: data.contact.emergency.name,
+        fullName:     data.contact.emergency.name,
         relationship: data.contact.emergency.relation,
-        phoneNumber: data.contact.emergency.phone
+        phoneNumber:  data.contact.emergency.phone,
       },
 
       professionalInfo: {
         detectiveLicenseNumber: data.professional.licenseNumber,
-        specialization: data.professional.specialization,
-        licenseIssueDate: data.professional.issueDate,
-        licenseExpiryDate: data.professional.expiryDate,
-        yearsOfExperience: data.professional.experience
+        specialization:         data.professional.specialization,
+        licenseIssueDate:       data.professional.issueDate,
+        licenseExpiryDate:      data.professional.expiryDate,
+        yearsOfExperience:      data.professional.experience,
+        previousAgency:         data.professional.previousAgency || undefined,
       },
 
       documents: {
-        governmentIdProof: data.documents.govId,
-        detectiveLicenseCertificate: data.documents.licenseCert,
-        professionalResume: data.documents.resume
+        governmentIdProof:           data.documents.govId        || '',
+        detectiveLicenseCertificate: data.documents.licenseCert  || '',
+        professionalResume:          data.documents.resume        || '',
+        professionalCertifications:  data.documents.certs        || undefined,
+        backgroundCheckReport:       data.documents.background   || undefined,
+        proofOfAddress:              data.documents.address      || undefined,
       },
 
       bankingInfo: {
-        bankName: data.banking.bankName,
+        bankName:          data.banking.bankName,
         accountHolderName: data.banking.holderName,
-        accountNumber: data.banking.accountNumber,
-        routingNumber: data.banking.routingNumber
+        accountNumber:     data.banking.accountNumber,
+        routingNumber:     data.banking.routingNumber,
       },
 
       references: data.references.map((ref, i) => ({
         referenceNumber: i + 1,
-        fullName: ref.name,
-        phoneNumber: ref.phone,
-        email: ref.email
+        fullName:        ref.name,
+        phoneNumber:     ref.phone,
+        email:           ref.email,
       })),
 
       legalCompliance: {
-        hasCriminalRecord: data.legal.convicted,
-        consentBackgroundCheck: data.legal.consentBackground,
-        termsAccepted: data.legal.agreeTerms
-      }
+        hasCriminalRecord:       data.legal.convicted,
+        criminalRecordDetails:   data.legal.convicted ? 'Declared by applicant' : null,
+        consentBackgroundCheck:  data.legal.consentBackground,
+        termsAccepted:           data.legal.agreeTerms,
+      },
     };
 
     try {
-      const response = await authService.createDetectiveKYC(payload);
-
-      console.log("KYC Success:", response);
-
-      setShowSuccess(true);
+      await authService.createDetectiveKYC(payload);
       setKycComplete(true);
-
+      setShowSuccess(true);
     } catch (error) {
-      console.error("KYC Failed:", error);
+      const msg = error?.response?.data?.message || 'Submission failed. Please try again.';
+      setSubmitError(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -204,7 +242,7 @@ const DetectiveForm = () => {
       case 0: return <StepOneDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       case 1: return <StepTwoDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       case 2: return <StepThreeDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
-      case 3: return <StepFourDetectiveForm data={data} handleChange={handleChange} handleFile={handleFile} errors={errors} />;
+      case 3: return <StepFourDetectiveForm data={data} handleChange={handleChange} handleFile={handleFile} errors={errors} uploading={uploading} setUploading={setUploading} />;
       case 4: return <StepFiveDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       case 5: return <StepSixDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
       case 6: return <StepSevenDetectiveForm data={data} handleChange={handleChange} errors={errors} setErrors={setErrors} />;
@@ -236,7 +274,12 @@ const DetectiveForm = () => {
         <div className="bg-[#1A2832] border border-white/10 rounded-xl p-6">
           {renderStep()}
 
-          <div className="flex items-center justify-between mt-8 gap-2">
+          {submitError && (
+            <div className="mt-4 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400">
+              {submitError}
+            </div>
+          )}
+          <div className="flex items-center justify-between mt-4 gap-2">
             <button type="button" onClick={prev} disabled={activeStep === 0} className="flex items-center gap-1 sm:gap-2 text-sm text-gray-300 hover:text-white disabled:opacity-30 transition flex-shrink-0">
               <ArrowLeft size={14} />
               <span>Previous</span>
@@ -249,10 +292,8 @@ const DetectiveForm = () => {
                 Next <ArrowRight size={14} />
               </button>
             ) : (
-              <button type="button" onClick={handleSubmit} className="flex items-center gap-1 sm:gap-2 px-4 sm:px-5 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition flex-shrink-0">
-                <span className="sm:hidden">Submit</span>
-                <span className="hidden sm:inline">Submit Application</span>
-                <CheckCircle size={14} />
+              <button type="button" onClick={handleSubmit} disabled={submitting} className="flex items-center gap-1 sm:gap-2 px-4 sm:px-5 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition flex-shrink-0">
+                {submitting ? <><span className="animate-spin">⏳</span> Submitting…</> : <><span className="sm:hidden">Submit</span><span className="hidden sm:inline">Submit Application</span><CheckCircle size={14} /></>}
               </button>
             )}
           </div>

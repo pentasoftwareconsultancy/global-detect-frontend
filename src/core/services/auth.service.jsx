@@ -201,6 +201,15 @@ export const authService = {
       return apiService.apipost(ServerUrl.SUBMIT_KYC_API, kycData);
     },
 
+    uploadKYCDocument: async (file) => {
+      const formData = new FormData();
+      formData.append('document', file);
+      const axiosInstance = ApiInterceptor.init();
+      return axiosInstance.post(ServerUrl.UPLOAD_KYC_DOCUMENT_API, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+
     getMyKYCStatus: async () => {
       return apiService.apiget(ServerUrl.GET_MY_KYC_API);
     },

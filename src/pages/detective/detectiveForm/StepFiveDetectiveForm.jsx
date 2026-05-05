@@ -41,6 +41,7 @@ const StepFiveDetectiveForm = ({ data, handleChange, errors = {}, setErrors }) =
           <input
             placeholder="John Doe"
             value={data.banking.holderName}
+            autoComplete="off"
             onChange={e => {
               const val = restrictToLetters(e.target.value)
               handleChange('banking', 'holderName', val)

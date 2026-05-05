@@ -264,7 +264,7 @@ const AdminDetectiveManagementPage = () => {
           <h2 className="text-sm font-semibold text-white">
             {TABS.find((t) => t.key === activeTab)?.label}
           </h2>
-          <div className="flex items-center gap-2 bg-[#08141B] border border-white/10 rounded-lg px-3 py-1.5 w-full sm:w-auto">
+          <div className="flex items-center gap-2 bg-[#1A2832] border border-white/10 rounded-lg px-3 py-1.5 w-full sm:w-auto">
             <Search size={13} className="text-[#9CA3AF] shrink-0" />
             <input
               value={searchInput}
@@ -339,7 +339,7 @@ const AdminDetectiveManagementPage = () => {
 
                     <td className="py-3.5 pr-3">
                       {d.specialization ? (
-                        <span className="text-xs text-white border border-white/10 rounded-lg px-3 py-1">
+                        <span className="inline-block text-xs text-white border border-white/10 rounded-lg px-3 py-1 max-w-[140px] break-words leading-4">
                           {d.specialization}
                         </span>
                       ) : (

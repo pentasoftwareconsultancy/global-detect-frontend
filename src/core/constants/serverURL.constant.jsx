@@ -16,8 +16,9 @@ class ServerUrl {
     static DETECTIVE_KYC_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.DETECTIVE_KYC}`;
         
         // Detective routes
-        static SUBMIT_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/submit-application`;
-        static GET_MY_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/my-application`; // Assuming the endpoint is /detective-kyc/status
+        static SUBMIT_KYC_API          = `${ServerUrl.DETECTIVE_KYC_API}/submit-application`;
+        static UPLOAD_KYC_DOCUMENT_API = `${ServerUrl.DETECTIVE_KYC_API}/upload-document`;
+        static GET_MY_KYC_API          = `${ServerUrl.DETECTIVE_KYC_API}/my-application`;
         // Admin routes
         static GET_ALL_KYC_API         = `${ServerUrl.DETECTIVE_KYC_API}/`;
         static UPDATE_KYC_STATUS_API   = `${ServerUrl.DETECTIVE_KYC_API}/:id/status`;
