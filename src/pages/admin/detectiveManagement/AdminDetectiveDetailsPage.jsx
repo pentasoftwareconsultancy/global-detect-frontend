@@ -171,7 +171,7 @@ const AdminDetectiveDetailsPage = () => {
 
   /* ══════════════════════════════════════════════════════════════════════════ */
   return (
-    <div className="text-white bg-[#121F27] min-h-screen font-[Montserrat]">
+    <div className="text-white  min-h-screen font-[Montserrat]">
 
       {/* ── MAP ── */}
       <div style={{ height: "clamp(200px, 40vw, 400px)", width: "100%" }}>

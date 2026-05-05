@@ -131,7 +131,7 @@ const AdminUserManagementPage = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 text-white bg-[#121F27] min-h-screen font-[Montserrat]">
+    <div className="p-4 sm:p-6 text-white  min-h-screen font-[Montserrat]">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl font-bold">User Management</h1>

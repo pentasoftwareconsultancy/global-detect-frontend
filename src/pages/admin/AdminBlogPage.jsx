@@ -139,7 +139,7 @@ const AdminBlogPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#121F27] text-white p-4 sm:p-6 font-[Montserrat]">
+    <div className="min-h-screen text-white p-4 sm:p-6 font-[Montserrat]">
 
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-3">
