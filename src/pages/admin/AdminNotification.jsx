@@ -114,7 +114,7 @@ const AdminNotification = () => {
     <div className="min-h-screen bg-[#121F27] text-white p-4 sm:p-6 font-[Montserrat]">
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-6 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-3">
         <div>
           <div className="flex items-center gap-2">
             <Bell size={20} className="text-[#FF4959]" />
@@ -125,13 +125,13 @@ const AdminNotification = () => {
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={markAllRead}
-            className="flex items-center gap-1.5 text-xs border border-white/10 text-white hover:text-white hover:border-white/30 px-3 py-1.5 rounded-lg transition"
+            className="flex items-center gap-1.5 text-xs border border-white/10 text-white hover:text-white hover:border-white/30 px-3 py-1.5 rounded-lg transition whitespace-nowrap"
           >
             <Clock size={12} /> Mark All Read
           </button>
           <button
             onClick={clearAll}
-            className="flex items-center gap-1.5 text-xs border border-white/10 text-white hover:text-white hover:border-white/30 px-3 py-1.5 rounded-lg transition"
+            className="flex items-center gap-1.5 text-xs border border-white/10 text-white hover:text-white hover:border-white/30 px-3 py-1.5 rounded-lg transition whitespace-nowrap"
           >
             <Trash2 size={12} /> Clear All
           </button>
@@ -186,7 +186,7 @@ const AdminNotification = () => {
                   {n.unread && <span className="w-2 h-2 rounded-full bg-[#FF4959] flex-shrink-0" />}
                 </div>
                 <p className="text-xs text-gray-400 mb-3">{n.desc}</p>
-                <div className="flex items-center gap-1 flex-wrap">
+                <div className="flex items-center flex-wrap gap-1.5">
                   {n.actions.map((act, i) => (
                     <ActionBtn
                       key={i}

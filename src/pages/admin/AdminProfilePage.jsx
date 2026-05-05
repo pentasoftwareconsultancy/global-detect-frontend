@@ -63,36 +63,36 @@ const AdminProfilePage = () => {
   }
 
   return (
-    <div className="p-6 text-white montserrat">
+    <div className="p-4 sm:p-6 text-white montserrat bg-[#121F27] min-h-screen">
 
       {/* HEADER */}
-      <h2 className="text-2xl font-semibold mb-1">Profile</h2>
-      <p className="text-lightGray text-sm mb-6">Manage your account information</p>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-1">Profile</h2>
+      <p className="text-lightGray text-xs sm:text-sm mb-6">Manage your account information</p>
 
       {/* PROFILE CARD */}
-      <div className="bg-[#0E1F2B] p-5 rounded-xl mb-5 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-red flex items-center justify-center text-lg font-semibold">
+      <div className="bg-[#1A2832] p-4 sm:p-5 rounded-xl mb-5 flex items-center gap-4 border border-gray/20">
+        <div className="w-12 h-12 rounded-full bg-[#FF4959] flex items-center justify-center text-lg font-semibold flex-shrink-0">
           {getInitial()}
         </div>
-        <div>
-          <p className="text-sm font-medium">{profile.name}</p>
-          <p className="text-xs lightGray">{profile.email}</p>
-          <span className="text-[10px] px-2 py-1 bg-[#132B3A] rounded mt-1 inline-block">
+        <div className="min-w-0">
+          <p className="text-sm font-medium truncate">{profile.name}</p>
+          <p className="text-xs lightGray truncate">{profile.email}</p>
+          <span className="text-[10px] px-2 py-1 bg-[#2D3E4D] rounded mt-1 inline-block">
             {profile.role}
           </span>
         </div>
       </div>
 
       {/* PERSONAL INFO */}
-      <div className="bg-[#0E1F2B] p-5 rounded-xl mb-5">
+      <div className="bg-[#1A2832] p-4 sm:p-5 rounded-xl mb-5 border border-gray/20">
         <h3 className="text-sm mb-1">Personal Information</h3>
         <p className="text-xs lightGray mb-4">Update your personal details</p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs lightGray">Full Name</label>
-            <div className="flex items-center gap-2 bg-[#0B1A24] px-3 py-2 rounded-lg mt-1">
-              <FiUser className="text-lightGray" />
+            <label className="text-xs white">Full Name</label>
+            <div className="flex items-center gap-2 bg-[#1A2832] px-3 py-2 rounded-lg mt-1 border border-gray/30">
+              <FiUser className="text-lightGray flex-shrink-0" />
               <input
                 type="text"
                 name="name"
@@ -104,9 +104,9 @@ const AdminProfilePage = () => {
             </div>
           </div>
           <div>
-            <label className="text-xs lightGray">Email Address</label>
-            <div className="flex items-center gap-2 bg-[#0B1A24] px-3 py-2 rounded-lg mt-1">
-              <FiMail className="text-lightGray" />
+            <label className="text-xs white">Email Address</label>
+            <div className="flex items-center gap-2 bg-[#1A2832] px-3 py-2 rounded-lg mt-1 border border-gray/30">
+              <FiMail className="text-lightGray flex-shrink-0" />
               <input
                 type="email"
                 name="email"
@@ -139,11 +139,11 @@ const AdminProfilePage = () => {
       </div>
 
       {/* ACCOUNT INFO */}
-      <div className="bg-[#0E1F2B] p-5 rounded-xl">
+      <div className="bg-[#1A2832] p-4 sm:p-5 rounded-xl border border-gray/20">
         <h3 className="text-sm mb-4">Account Information</h3>
-        <div className="flex justify-between border-t border-gray/20 py-3 text-sm">
-          <span className="lightGray">Account ID</span>
-          <span>{profile.account_id ?? profile.id}</span>
+        <div className="flex flex-col sm:flex-row sm:justify-between border-t border-gray/20 py-3 text-sm gap-1">
+          <span className="lightGray flex-shrink-0">Account ID</span>
+          <span className="break-all sm:text-right">{profile.account_id ?? profile.id}</span>
         </div>
         <div className="flex justify-between border-t border-gray/20 py-3 text-sm">
           <span className="lightGray">Role</span>
