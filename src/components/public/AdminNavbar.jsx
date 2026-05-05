@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Bell, User, Menu } from 'lucide-react';
+import { FiUser, FiSearch, FiBell, FiMenu } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../core/constants/routes.constant';
+
+// API-ready: replace this with fetched profile name
+const PROFILE_NAME = 'Profile name';
 
 const AdminNavbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
@@ -9,19 +12,19 @@ const AdminNavbar = ({ onMenuClick }) => {
 
   return (
     <header
-      className="w-full flex items-center justify-between px-6 md:px-10 flex-shrink-0"
-      style={{ height: '115px', backgroundColor: '#121F2733', backdropFilter: 'blur(8px)' }}
+      className="w-full flex items-center justify-between flex-shrink-0"
+      style={{ height: '72px', backgroundColor: '#121F2733', backdropFilter: 'blur(8px)', paddingRight: '32px' }}
     >
 
       {/* ── LEFT: Hamburger (mobile) + Profile ── */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 pl-4 sm:pl-10 lg:pl-[73px]">
 
         {/* Hamburger — mobile only */}
         <button
           onClick={onMenuClick}
           className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
         >
-          <Menu size={22} />
+          <FiMenu size={20} />
         </button>
 
         {/* Profile icon + name */}
@@ -30,13 +33,13 @@ const AdminNavbar = ({ onMenuClick }) => {
             className="rounded-full border border-white/20 bg-white/10 flex items-center justify-center flex-shrink-0"
             style={{ width: '43px', height: '43px' }}
           >
-            <User size={20} className="text-[#FFF3EA]" />
+            <FiUser size={20} className="text-[#FFF3EA]" />
           </div>
           <span
             className="font-['Montserrat'] font-medium text-[#FFF3EA] hidden sm:block"
-            style={{ fontSize: '32px', lineHeight: '21px' }}
+            style={{ fontSize: '24px', lineHeight: '21px', verticalAlign: 'middle' }}
           >
-            Admin Director
+            {PROFILE_NAME}
           </span>
         </div>
       </div>
@@ -46,16 +49,10 @@ const AdminNavbar = ({ onMenuClick }) => {
 
         {/* Search bar — hidden on mobile */}
         <div
-          className="hidden md:flex items-center gap-3 px-5"
-          style={{
-            width: '536px',
-            height: '64px',
-            borderRadius: '32px',
-            backgroundColor: '#FFF3EA1A',
-            maxWidth: '40vw',
-          }}
+          className="hidden md:flex items-center gap-3 px-4"
+          style={{ height: '44px', borderRadius: '32px', backgroundColor: '#FFF3EA1A', width: '360px', maxWidth: '35vw' }}
         >
-          <Search size={18} className="text-[#A4A4A4] flex-shrink-0" />
+          <FiSearch size={23} className="text-[#A4A4A4] flex-shrink-0" />
           <input
             type="text"
             value={search}
@@ -65,14 +62,18 @@ const AdminNavbar = ({ onMenuClick }) => {
           />
         </div>
 
+        {/* Search icon — mobile only */}
+        <button className="md:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-[#FFF3EA]">
+          <FiSearch size={18} />
+        </button>
+
         {/* Notification */}
         <button
           onClick={() => navigate(ROUTES.ADMIN_NOTIFICATION)}
-          className="relative flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0 cursor-pointer"
-          style={{ width: '64px', height: '64px' }}
+          className="relative flex items-center justify-center w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0 cursor-pointer"
         >
-          <Bell size={22} className="text-[#FFF3EA]" />
-          <span className="absolute top-2 right-2 w-4 h-4 bg-[#D92B3A] rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+          <FiBell size={18} className="text-[#FFF3EA]" />
+          <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-[#D92B3A] rounded-full text-[9px] text-white flex items-center justify-center font-bold">
             2
           </span>
         </button>

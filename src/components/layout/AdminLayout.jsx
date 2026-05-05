@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Box, CssBaseline } from "@mui/material";
 import AdminNavbar from "../public/AdminNavbar";
-import DashboardSidebar from "../public/DashboardSidbar";
+import AdminSidebar from "../public/AdminSidebar";
 import useResponsive from "../../hooks/useResponsive";
 
 const drawerWidth = 260;
@@ -33,8 +33,7 @@ const AdminLayout = ({ role, title, children }) => {
       {/* SIDEBAR + CONTENT */}
       <Box sx={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-        <DashboardSidebar
-          role={role}
+        <AdminSidebar
           mobileOpen={mobileOpen}
           handleDrawerToggle={handleDrawerToggle}
         />
