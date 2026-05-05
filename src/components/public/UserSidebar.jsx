@@ -1,117 +1,5 @@
-
-// import React, { useState } from 'react';
-// import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-// import { LayoutGrid, Bell, User, Settings, LogOut, Menu, Search, LayoutDashboard, X } from 'lucide-react';
-// import GlobalLogo from '../../assets/Global-logo.png';
-// import { ROUTES } from '../../core/constants/routes.constant';
-// // import Footer from '../public/Footer';
-
-
-
-
-// const SidebarLayout = () => {
-//   const [open, setOpen] = useState(false);
-
-//   // const [sidebarOpen, setSidebarOpen] = useState(false);
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   // Read directly from localStorage to avoid DEV_MODE override in AuthContext
-//   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-//   const isLoggedIn = !!(storedUser && storedUser.token);
-//   const userName = storedUser?.name || storedUser?.fullName || 'Profile name';
-
-//   const menuItems = [
-//     { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid, path: ROUTES.USER_DASHBOARD },
-//     { id: 'profile', label: 'Profile', icon: User, path: ROUTES.USER_PROFILE },
-
-//     { id: 'settings', label: 'Settings', icon: Settings, path: ROUTES.USER_SETTINGS },
-//   ];
-
-//   const isActive = (path) => location.pathname === path;
-//   const isRequestInvestigation = location.pathname === ROUTES.REQUEST_INVESTIGATION;
-//   const isUserDashboard = location.pathname === ROUTES.USER_DASHBOARD;
-
-//   const handleLogout = () => {
-//     navigate(ROUTES.LOGIN);
-//   };
-
-
-//   return (
-//     <div className="flex h-screen bg-[#0b141c]">
-
-//   {/* OVERLAY (Mobile) */}
-//   {open && (
-//     <div
-//       className="fixed inset-0 bg-black/50 z-40 md:hidden"
-//       onClick={() => setOpen(false)}
-//     />
-//   )}
-
-//   {/* SIDEBAR */}
-//   <div
-//     className={`fixed md:static top-4 left-4 bottom-4 w-56 sm:w-60 
-//     bg-[#1c2b33] text-white z-50 
-//     rounded-2xl shadow-xl border border-white/10
-//     transform transition-transform duration-300
-//     ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
-//   >
-
-//     {/* CLOSE (Mobile) */}
-//     <div className="flex justify-end md:hidden p-4">
-//       <X onClick={() => setOpen(false)} className="cursor-pointer" />
-//     </div>
-
-//     {/* CONTENT */}
-//     <div className="flex flex-col h-full p-4">
-
-//       {/* MENU (Scrollable) */}
-//       <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-
-//         <div className="flex items-center gap-3 bg-red-500 px-4 py-2 rounded-lg cursor-pointer">
-//           <LayoutDashboard size={18} />
-//           <span>Dashboard</span>
-//         </div>
-
-//         <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer">
-//           <User size={18} />
-//           <span>Profile</span>
-//         </div>
-
-//         <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 cursor-pointer">
-//           <Settings size={18} />
-//           <span>Settings</span>
-//         </div>
-
-//         <div className="pt-3 border-t border-white/10">
-//         <div
-//           onClick={handleLogout}
-//           className="bg-[#2a3b44] px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-[#344954]"
-//         >
-//           <LogOut size={18} />
-//           <span>Log out</span>  
-//         </div>
-//       </div>
-
-//       </div>
-
-//       {/* LOGOUT (ALWAYS VISIBLE) */}
-
-
-//     </div>
-//   </div>
-
-
-
-// </div>
-//   );
-// };
-
-// export default SidebarLayout;
-
-
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, Settings, LogOut, X } from "lucide-react";
+import { LayoutDashboard, User, Settings, LogOut } from "lucide-react";
 import { ROUTES } from "../../core/constants/routes.constant";
 import { useAuth } from "../../core/contexts/AuthContext";
 
@@ -121,76 +9,82 @@ const UserSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, path: ROUTES.USER_DASHBOARD },
-    { label: "Profile", icon: User, path: ROUTES.USER_PROFILE },
-    { label: "Settings", icon: Settings, path: ROUTES.USER_SETTINGS },
+    { label: "Profile",   icon: User,            path: ROUTES.USER_PROFILE },
+    { label: "Settings",  icon: Settings,         path: ROUTES.USER_SETTINGS },
   ];
 
   const isActive = (path) => location.pathname === path;
   const { logout } = useAuth();
 
-  // ✅ Proper logout function
+  const handleNav = (path) => {
+    navigate(path);
+    setSidebarOpen(false);
+  };
+
   const handleLogout = async () => {
-    await logout(); // clears state + storage + calls backend API
+    await logout();
     navigate(ROUTES.LOGIN, { replace: true });
   };
 
   return (
     <div
-      className={`fixed md:static top-4 left-4 bottom-4 mt-3 ml-2 mb-1
-      w-52 sm:w-56 md:w-60 
-      bg-[#1c2b33] text-white z-50 
-      rounded-2xl shadow-xl border border-white/10
-      transform transition-transform duration-300
-      ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+      onMouseLeave={() => setSidebarOpen(false)}
+      className={`
+        fixed md:static top-4 left-2
+        w-[200px] sm:w-[216px] md:w-[226px] flex-shrink-0
+        bg-[#232E34] text-white z-50
+        rounded-[32px] shadow-xl border border-white/10
+        flex flex-col
+        transform transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-[110%] md:translate-x-0"}
+      `}
+      style={{ margin: '8px 8px 8px 16px', height: 'calc(100vh - 90px)' }}
     >
-      {/* Close (mobile) */}
-      <div className="flex justify-end p-4 md:hidden">
-        <X onClick={() => setSidebarOpen(false)} />
-      </div>
-
-      <div className="flex flex-col h-full p-4">
-
-        {/* Menu */}
-        <div className="flex-1 overflow-y-auto space-y-4">
-
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={index}
-                onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
-                }}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer
-                ${isActive(item.path) ? "bg-red-500" : "hover:bg-white/10"}`}
-              >
-                <Icon size={18} />
-                <span className="text-sm">{item.label}</span>
+      {/* ── MENU ITEMS ── */}
+      <div className="flex-1 flex flex-col gap-1.5 px-5 pt-6 pb-2">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <div
+              key={item.path}
+              onClick={() => handleNav(item.path)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-colors ${
+                active ? "bg-[#D92B3A]" : "hover:bg-white/5"
+              }`}
+            >
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                active ? "bg-white/20" : "bg-white/10"
+              }`}>
+                <Icon size={15} />
               </div>
-            );
-          })}
-
-        </div>
-
-        {/* Logout */}
-        <div className="pt-3 border-t border-white/10">
-          <div
-            onClick={handleLogout}
-            className="bg-[#2a3b44] px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-[#344954]"
-          >
-            <LogOut size={18} />
-            <span className="text-sm">Log out</span>
-          </div>
-        </div>
-
+              <span className={`font-['Montserrat'] text-[17px] leading-[21px] tracking-normal ${
+                active ? "font-semibold" : "font-normal"
+              }`}>
+                {item.label}
+              </span>
+            </div>
+          );
+        })}
       </div>
+
+      {/* ── LOGOUT ── */}
+      <div className="px-5 pb-5">
+        <div
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 w-full h-[50px] rounded-[20px] cursor-pointer bg-[#33444E] hover:bg-[#3d5060] transition-colors"
+        >
+          <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-white/10">
+            <LogOut size={15} />
+          </div>
+          <span className="font-['Montserrat'] font-normal text-[17px] leading-[21px] tracking-normal">
+            Log out
+          </span>
+        </div>
+      </div>
+
     </div>
   );
 };
 
 export default UserSidebar;
-
-
-

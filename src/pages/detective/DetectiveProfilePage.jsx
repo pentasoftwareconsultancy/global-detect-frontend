@@ -138,16 +138,18 @@ useEffect(() => {
       {/* Account Information */}
       <div style={card}>
         <p className="font-semibold text-base mb-4">Account Information</p>
-        {[
-          { label: 'Account ID', value: 'det-1' },
-          { label: 'Role', value: 'Detective' },
-          { label: 'Active Cases', value: '2' },
-        ].map((item, i, arr) => (
-          <div key={i} style={{ ...dividerRow, borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
-            <span style={{ fontSize: '13px', color: '#9ca3af' }}>{item.label}</span>
-            <span style={{ fontSize: '14px', color: '#fff', fontWeight: '500' }}>{item.value}</span>
-          </div>
-        ))}
+        <div style={{ maxWidth: '50%' }}>
+          {[
+            { label: 'Account ID', value: 'det-1' },
+            { label: 'Role', value: 'Detective' },
+            { label: 'Active Cases', value: '2' },
+          ].map((item, i, arr) => (
+            <div key={i} style={{ ...dividerRow, borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
+              <span style={{ fontSize: '13px', color: '#9ca3af' }}>{item.label}</span>
+              <span style={{ fontSize: '14px', color: '#fff', fontWeight: '500' }}>{item.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>
