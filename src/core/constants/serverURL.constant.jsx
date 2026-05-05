@@ -91,6 +91,28 @@ class ServerUrl {
         static GET_DETECTIVE_STATS_API = `${ServerUrl.ADMIN_DETECTIVES_API}/stats`;
         static GET_ALL_DETECTIVES_API = `${ServerUrl.ADMIN_DETECTIVES_API}/`;
         static GET_DETECTIVE_BY_ID_API = `${ServerUrl.ADMIN_DETECTIVES_API}/:id`;
+
+    // ------------------------- Admin - Dashboard ------------------
+    static ADMIN_DASHBOARD_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.ADMIN_DASHBOARD}`;
+
+        static GET_DASHBOARD_STATISTICS_API = `${ServerUrl.ADMIN_DASHBOARD_API}/statistics`;
+        static GET_CASE_STATUS_OVERVIEW_API = `${ServerUrl.ADMIN_DASHBOARD_API}/case-status-overview`;
+        static GET_PRIORITY_CASES_API = `${ServerUrl.ADMIN_DASHBOARD_API}/priority-cases`;
+        static GET_RECENT_ACTIVITY_API = `${ServerUrl.ADMIN_DASHBOARD_API}/recent-activity`;
+
+    // ------------------------- Admin - Case Management ------------------
+    static ADMIN_CASES_API = `${ServerUrl.REACT_APP_API_URL}/admin/cases`;
+
+        static GET_ALL_CASES_API = `${ServerUrl.ADMIN_CASES_API}/`;
+        static GET_PENDING_CASES_API = `${ServerUrl.ADMIN_CASES_API}/pending`;
+        static GET_CASES_WITH_INSIGHTS_API = `${ServerUrl.ADMIN_CASES_API}/insights`;
+        static GET_CASE_BY_ID_API = `${ServerUrl.ADMIN_CASES_API}/:id`;
+        static ASSIGN_DETECTIVE_API = `${ServerUrl.ADMIN_CASES_API}/:id/assign`;
+        static UPDATE_CASE_PRIORITY_API = `${ServerUrl.ADMIN_CASES_API}/:id/priority`;
+        static DELETE_CASE_API = `${ServerUrl.ADMIN_CASES_API}/:id`;
+        static GET_AVAILABLE_DETECTIVES_API = `${ServerUrl.ADMIN_CASES_API}/available-detectives`;
+        static GENERATE_CASE_REPORT_API = `${ServerUrl.ADMIN_CASES_API}/:id/generate-report`;
+        static GET_CASE_STATISTICS_API = `${ServerUrl.ADMIN_CASES_API}/statistics`;
 }
 
 export default ServerUrl;
