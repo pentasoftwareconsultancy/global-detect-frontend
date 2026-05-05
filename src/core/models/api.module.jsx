@@ -8,3 +8,5 @@ export const API_MODULE = {
   ADMIN_USERS: "admin/users",
   ADMIN_DETECTIVES: "admin/detectives",
 };
+ 
+
