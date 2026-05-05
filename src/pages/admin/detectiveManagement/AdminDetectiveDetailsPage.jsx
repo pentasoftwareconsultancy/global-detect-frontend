@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
@@ -6,8 +6,11 @@ import "leaflet/dist/leaflet.css";
 import {
   ArrowLeft, User, Briefcase, Shield, FileText,
   Users, ClipboardList, CheckCircle, Download, Eye,
+  Loader2, AlertCircle, Clock, X,
 } from "lucide-react";
+import { toast } from "react-toastify";
 import { ROUTES } from "../../../core/constants/routes.constant";
+import { authService } from "../../../core/services/auth.service";
 import { FiPhone } from "react-icons/fi";
 import { GrLocation } from "react-icons/gr";
 import { RiGlobalLine } from "react-icons/ri";
@@ -17,199 +20,28 @@ import { MdCastForEducation } from "react-icons/md";
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconUrl:       "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl:     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const ALL_DETECTIVES = [
-  {
-    id: 0,
-    name: "Detective Emma Watson",
-    specialization: "Corporate Fraud",
-    status: "On Case",
-    kyc: "Approved",
-    activeCases: 2,
-    rating: 4.8,
-    lat: 39.5, lng: -98.35,
-    personal: {
-      fullName: "Emma Watson", dob: "Apr 15, 1980",
-      phone: "+1-555-0109", email: "e.watson@detectiveagency.com",
-      address: "123 Wall Street, New York, NY, New York, NY 10001",
-      nationality: "American",
-      emergencyName: "Alice Johnson", emergencyRelation: "Sister", emergencyPhone: "+1-555-0112",
-    },
-    professional: {
-      licenseNumber: "L123456789", licenseState: "NY",
-      licenseExpiry: "Apr 15, 2028", experience: "10 years",
-      previousAgency: "ABC Detective Agency",
-      education: "Bachelor of Science in Criminal Justice",
-      certifications: ["Certified Fraud Examiner"],
-      specializations: ["Corporate Fraud", "Financial Investigations"],
-      languages: ["English", "Spanish"],
-    },
-    background: { status: "Cleared", criminalRecord: "No" },
-    biography: "Emma Watson is a seasoned detective with over 10 years of experience in corporate fraud investigations. She holds a Bachelor of Science in Criminal Justice and is certified as a Fraud Examiner.",
-    documents: [
-      { name: "ID_Card.pdf", type: "PDF", uploaded: "Nov 01, 2025", status: "Verified" },
-      { name: "License.pdf", type: "PDF", uploaded: "Nov 01, 2025", status: "Verified" },
-    ],
-    references: [
-      { name: "John Doe", role: "Manager", agency: "ABC Detective Agency", phone: "+1-555-010", email: "john.doe@abc.com" },
-      { name: "Jane Smith", role: "Supervisor", agency: "XYZ Detective Agency", phone: "+1-555-0111", email: "jane.smith@xyz.com" },
-    ],
-    cases: [
-      { id: "C001", title: "Corporate Embezzlement Investigation", client: "John Smith", status: "insights submitted", priority: "urgent", created: "Jan 15, 2026" },
-      { id: "C003", title: "Asset Recovery Investigation", client: "John Smith", status: "report ready", priority: "high", created: "Jan 10, 2026" },
-    ],
-  },
-  {
-    id: 1,
-    name: "Detective James Bond",
-    specialization: "Personal Investigation",
-    status: "On Case",
-    kyc: "Approved",
-    activeCases: 1,
-    rating: 4.5,
-    lat: 51.5074, lng: -0.1278,
-    personal: {
-      fullName: "James Bond", dob: "Mar 10, 1975",
-      phone: "+1-555-0200", email: "j.bond@detectiveagency.com",
-      address: "007 Spy Lane, London, UK",
-      nationality: "British",
-      emergencyName: "M Director", emergencyRelation: "Colleague", emergencyPhone: "+1-555-0201",
-    },
-    professional: {
-      licenseNumber: "L007007007", licenseState: "CA",
-      licenseExpiry: "Dec 31, 2027", experience: "15 years",
-      previousAgency: "MI6 Agency",
-      education: "Bachelor of Arts in Criminology",
-      certifications: ["Licensed Private Investigator"],
-      specializations: ["Personal Investigation", "Surveillance"],
-      languages: ["English", "French"],
-    },
-    background: { status: "Cleared", criminalRecord: "No" },
-    biography: "James Bond is an elite investigator with 15 years of experience in personal investigations and surveillance operations worldwide.",
-    documents: [
-      { name: "ID_Card.pdf", type: "PDF", uploaded: "Nov 05, 2025", status: "Verified" },
-      { name: "License.pdf", type: "PDF", uploaded: "Nov 05, 2025", status: "Verified" },
-    ],
-    references: [
-      { name: "M Director", role: "Director", agency: "MI6 Agency", phone: "+1-555-0202", email: "m@mi6.com" },
-      { name: "Q Branch", role: "Tech Lead", agency: "MI6 Agency", phone: "+1-555-0203", email: "q@mi6.com" },
-    ],
-    cases: [
-      { id: "C002", title: "Personal Surveillance Operation", client: "Jane Doe", status: "in progress", priority: "high", created: "Jan 20, 2026" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Detective Olivia Martinez",
-    specialization: "Missing Persons",
-    status: "Available",
-    kyc: "Approved",
-    activeCases: 0,
-    rating: 4.7,
-    lat: 41.8781, lng: -87.6298,
-    personal: {
-      fullName: "Olivia Martinez", dob: "Jun 22, 1985",
-      phone: "+1-555-0300", email: "o.martinez@detectiveagency.com",
-      address: "456 Oak Ave, Chicago, IL 60601",
-      nationality: "American",
-      emergencyName: "Carlos Martinez", emergencyRelation: "Brother", emergencyPhone: "+1-555-0301",
-    },
-    professional: {
-      licenseNumber: "L987654321", licenseState: "IL",
-      licenseExpiry: "Jun 22, 2029", experience: "8 years",
-      previousAgency: "Chicago PD",
-      education: "Master of Science in Forensic Science",
-      certifications: ["Certified Missing Persons Investigator"],
-      specializations: ["Missing Persons", "Child Recovery"],
-      languages: ["English", "Spanish", "Portuguese"],
-    },
-    background: { status: "Cleared", criminalRecord: "No" },
-    biography: "Olivia Martinez specializes in missing persons cases with 8 years of experience. She holds an MSc in Forensic Science and has successfully resolved over 50 missing persons cases.",
-    documents: [
-      { name: "ID_Card.pdf", type: "PDF", uploaded: "Nov 10, 2025", status: "Verified" },
-      { name: "License.pdf", type: "PDF", uploaded: "Nov 10, 2025", status: "Verified" },
-    ],
-    references: [
-      { name: "Chief Rodriguez", role: "Chief", agency: "Chicago PD", phone: "+1-555-0302", email: "rodriguez@cpd.com" },
-      { name: "Dr. Lee", role: "Forensic Expert", agency: "Forensic Lab", phone: "+1-555-0303", email: "lee@forensiclab.com" },
-    ],
-    cases: [],
-  },
-  {
-    id: 3,
-    name: "Detective David Lee",
-    specialization: "Cyber Crime",
-    status: "Available",
-    kyc: "Approved",
-    activeCases: 0,
-    rating: 4.6,
-    lat: 37.7749, lng: -122.4194,
-    personal: {
-      fullName: "David Lee", dob: "Sep 14, 1990",
-      phone: "+1-555-0400", email: "d.lee@detectiveagency.com",
-      address: "789 Tech Blvd, San Francisco, CA 94105",
-      nationality: "American",
-      emergencyName: "Susan Lee", emergencyRelation: "Spouse", emergencyPhone: "+1-555-0401",
-    },
-    professional: {
-      licenseNumber: "L555444333", licenseState: "CA",
-      licenseExpiry: "Sep 14, 2028", experience: "6 years",
-      previousAgency: "FBI Cyber Division",
-      education: "Bachelor of Science in Computer Science",
-      certifications: ["Certified Ethical Hacker", "CISSP"],
-      specializations: ["Cyber Crime", "Digital Forensics"],
-      languages: ["English", "Mandarin"],
-    },
-    background: { status: "Cleared", criminalRecord: "No" },
-    biography: "David Lee is a cyber crime specialist with 6 years of experience in digital forensics and cyber investigations. Previously worked with the FBI Cyber Division.",
-    documents: [
-      { name: "ID_Card.pdf", type: "PDF", uploaded: "Nov 15, 2025", status: "Verified" },
-      { name: "License.pdf", type: "PDF", uploaded: "Nov 15, 2025", status: "Verified" },
-    ],
-    references: [
-      { name: "Agent Johnson", role: "Senior Agent", agency: "FBI", phone: "+1-555-0402", email: "johnson@fbi.gov" },
-      { name: "Prof. Chen", role: "Professor", agency: "MIT", phone: "+1-555-0403", email: "chen@mit.edu" },
-    ],
-    cases: [],
-  },
-];
-
-const statusStyle = {
-  "On Case":  "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
-  Available:  "bg-[#00C9501A] text-green-400 border border-[#00C95033]",
-  Offline:    "bg-[#6A72821A] text-gray-400 border border-[#6A728233]",
+/* ─── helpers ─── */
+const dash = (v) => (v !== undefined && v !== null && v !== "") ? v : "—";
+const fmtDate = (iso) => {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 };
 
-const caseStatusStyle = {
-  "insights submitted": "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]",
-  "report ready":       "bg-[#00C9501A] text-green-400 border border-[#00C95033]",
-  "in progress":        "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
-};
-
-const priorityStyle = {
-  urgent: "bg-[#FF49591A] text-[#FF4959] border border-[#FF495933]",
-  high:   "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]",
-  low:    "bg-[#6A72821A] text-gray-400 border border-[#6A728233]",
-};
-
-const CertTag = ({ text }) => (
-  <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#1A2832" }}>{text}</span>
-);
-const SpecTag = ({ text }) => (
-  <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#2D3E4D" }}>{text}</span>
-);
-const LangTag = ({ text }) => (
-  <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#1A2832" }}>{text}</span>
-);
+/* ─── small UI pieces ─── */
+const CertTag  = ({ text }) => <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#1A2832" }}>{text}</span>;
+const SpecTag  = ({ text }) => <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#2D3E4D" }}>{text}</span>;
+const LangTag  = ({ text }) => <span className="px-3 py-1 text-xs rounded-lg border border-white/10 text-white" style={{ backgroundColor: "#1A2832" }}>{text}</span>;
 
 const InfoBlock = ({ label, value, prefix }) => (
   <div>
     <p className="text-[11px] text-[#9CA3AF] mb-0.5">{label}</p>
     <p className="text-sm text-white flex items-center gap-1 leading-snug">
-      {prefix && <span className="flex-shrink-0 flex items-center">{prefix}</span>}{value}
+      {prefix && <span className="shrink-0 flex items-center">{prefix}</span>}
+      {dash(value)}
     </p>
   </div>
 );
@@ -224,29 +56,127 @@ const SectionCard = ({ icon, title, children }) => (
   </div>
 );
 
+const statusStyle = {
+  on_case:   "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
+  available: "bg-[#00C9501A] text-green-400 border border-[#00C95033]",
+  offline:   "bg-[#6A72821A] text-gray-400 border border-[#6A728233]",
+};
+const statusLabel = { on_case: "On Case", available: "Available", offline: "Offline" };
+
+const KYCBadge = ({ kycStatus }) => {
+  if (kycStatus === "approved") return <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]"><CheckCircle size={10} /> Approved</span>;
+  if (kycStatus === "rejected") return <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-red-500/10 text-red-400 border border-red-500/20"><X size={10} /> Rejected</span>;
+  return <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]"><Clock size={10} /> Pending</span>;
+};
+
+const caseStatusStyle = {
+  assigned:    "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
+  in_progress: "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]",
+  completed:   "bg-[#00C9501A] text-green-400 border border-[#00C95033]",
+  cancelled:   "bg-[#6A72821A] text-gray-400 border border-[#6A728233]",
+};
+const priorityStyle = {
+  urgent: "bg-[#FF49591A] text-[#FF4959] border border-[#FF495933]",
+  high:   "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]",
+  medium: "bg-[#2B7FFF1A] text-blue-400 border border-[#2B7FFF33]",
+  low:    "bg-[#6A72821A] text-gray-400 border border-[#6A728233]",
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 const AdminDetectiveDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const detective = ALL_DETECTIVES[Number(id)] ?? ALL_DETECTIVES[0];
 
-  const { lat, lng } = detective;
+  const [detective, setDetective] = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
 
-  
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await authService.getDetectiveById(id);
+        setDetective(res?.data?.data ?? res?.data ?? null);
+      } catch (err) {
+        const msg = err?.response?.data?.message ?? "Failed to load detective";
+        setError(msg);
+        toast.error(msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id]);
+
+  if (loading) return (
+    <div className="min-h-screen bg-[#121F27] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3 text-gray-400">
+        <Loader2 size={32} className="animate-spin text-[#FF4959]" />
+        <p className="text-sm">Loading detective profile…</p>
+      </div>
+    </div>
+  );
+
+  if (error || !detective) return (
+    <div className="min-h-screen bg-[#121F27] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3 text-gray-400">
+        <AlertCircle size={32} className="opacity-40" />
+        <p className="text-sm">{error ?? "Detective not found"}</p>
+        <button onClick={() => navigate(ROUTES.ADMIN_DETECTIVE_MANAGEMENT)} className="text-xs text-[#FF4959] hover:underline mt-1">← Back to list</button>
+      </div>
+    </div>
+  );
+
+  /* ── shorthand refs ── */
+  const kyc     = detective.kycApplication   ?? null;
+  const personal = kyc?.personalInfo         ?? null;
+  const contact  = kyc?.contactInfo          ?? null;
+  const emergency = kyc?.emergencyContact    ?? null;
+  const prof     = kyc?.professionalInfo     ?? null;
+  const docs     = kyc?.documents            ?? null;
+  const refs     = kyc?.references           ?? [];
+  const legal    = kyc?.legalCompliance      ?? null;
+
+  /* ── derived values ── */
+  const fullName       = personal ? `${personal.first_name} ${personal.last_name}` : detective.name;
+  const phone          = contact?.phone_number    ?? detective.phone;
+  const email          = contact?.email           ?? detective.email;
+  const city           = contact?.city            ?? detective.city;
+  const address        = contact?.street_address  ? `${contact.street_address}, ${contact.city}, ${contact.state_province} ${contact.zip_postal_code}, ${contact.country}` : null;
+  const nationality    = personal?.nationality    ?? null;
+  const dob            = personal?.date_of_birth  ?? null;
+  const gender         = personal?.gender         ?? null;
+  const specialization = detective.specialization ?? prof?.specialization ?? null;
+  const licenseNumber  = detective.licenseNumber  ?? prof?.detective_license_number ?? null;
+  const licenseExpiry  = prof?.license_expiry_date  ?? null;
+  const licenseIssue   = prof?.license_issue_date   ?? null;
+  const experience     = prof?.years_of_experience  ? `${prof.years_of_experience} years` : null;
+  const previousAgency = prof?.previous_agency      ?? null;
+
+  const lat = parseFloat(detective.lat) || 20.5937;
+  const lng = parseFloat(detective.lng) || 78.9629;
+
+  const recentCases = detective.recentCases ?? [];
+
+  /* ── document rows ── */
+  const docRows = docs ? [
+    { name: "Government ID Proof",           url: docs.government_id_proof },
+    { name: "Detective License Certificate", url: docs.detective_license_certificate },
+    { name: "Professional Resume",           url: docs.professional_resume },
+    { name: "Professional Certifications",   url: docs.professional_certifications },
+    { name: "Background Check Report",       url: docs.background_check_report },
+    { name: "Proof of Address",              url: docs.proof_of_address },
+  ].filter(d => d.url) : [];
+
+  /* ══════════════════════════════════════════════════════════════════════════ */
   return (
     <div className="text-white bg-[#121F27] min-h-screen font-[Montserrat]">
 
       {/* ── MAP ── */}
-      <div style={{ height: 'clamp(200px, 40vw, 400px)', width: "100%" }}>
-        <MapContainer
-          center={[lat, lng]}
-          zoom={4}
-          style={{ height: "100%", width: "100%" }}
-          scrollWheelZoom={false}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
+      <div style={{ height: "clamp(200px, 40vw, 400px)", width: "100%" }}>
+        <MapContainer center={[lat, lng]} zoom={4} style={{ height: "100%", width: "100%" }} scrollWheelZoom={false}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
           <Marker position={[lat, lng]}>
             <Popup>{detective.name}</Popup>
           </Marker>
@@ -257,95 +187,113 @@ const AdminDetectiveDetailsPage = () => {
       <div className="p-3 sm:p-6">
 
         {/* Back + Name */}
-        <button
-          onClick={() => navigate(ROUTES.ADMIN_DETECTIVE_MANAGEMENT)}
-          className="flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-white transition mb-2"
-        >
+        <button onClick={() => navigate(ROUTES.ADMIN_DETECTIVE_MANAGEMENT)} className="flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-white transition mb-2">
           <ArrowLeft size={13} /> Back
         </button>
-        <h1 className="text-xl font-bold text-white">{detective.name}</h1>
-        <p className="text-sm text-[#9CA3AF] mb-5">{detective.specialization}</p>
+        <h1 className="text-xl font-bold text-white">{fullName}</h1>
+        <p className="text-sm text-[#9CA3AF] mb-5">{dash(specialization)}</p>
 
         {/* ── STATUS CARDS ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
             <p className="text-xs text-[#9CA3AF] mb-3">Current Status</p>
-            <span className={`px-3 py-1 text-xs rounded-lg ${statusStyle[detective.status]}`}>{detective.status}</span>
-          </div>
-          <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
-            <p className="text-xs text-[#9CA3AF] mb-3">KYC Status</p>
-            <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]">
-              <CheckCircle size={10} /> {detective.kyc}
+            <span className={`px-3 py-1 text-xs rounded-lg ${statusStyle[detective.status] ?? statusStyle.offline}`}>
+              {statusLabel[detective.status] ?? detective.status}
             </span>
           </div>
           <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
-            <p className="text-xs text-[#9CA3AF] mb-3">Active Cases</p>
-            <p className="text-2xl font-bold text-white">{detective.activeCases}</p>
+            <p className="text-xs text-[#9CA3AF] mb-3">KYC Status</p>
+            <KYCBadge kycStatus={detective.kycStatus} />
           </div>
           <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
-            <p className="text-xs text-[#9CA3AF] mb-3">Rating</p>
-            <p className="text-xl font-bold text-white flex items-center gap-1">
-              <span className="text-yellow-400">★</span> {detective.rating}
-            </p>
+            <p className="text-xs text-[#9CA3AF] mb-3">Active Cases</p>
+            <p className="text-2xl font-bold text-white">{detective.activeCases ?? 0}</p>
+          </div>
+          <div className="bg-[#1A2832] border border-white/10 rounded-xl p-4">
+            <p className="text-xs text-[#9CA3AF] mb-3">Completed Cases</p>
+            <p className="text-xl font-bold text-white">{detective.completedCases ?? 0}</p>
           </div>
         </div>
 
         {/* ── PERSONAL + PROFESSIONAL ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
 
+          {/* Personal */}
           <SectionCard icon={<User size={14} />} title="Personal Information">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-4">
-              <InfoBlock label="Full Name" value={detective.personal.fullName} />
-              <InfoBlock label="Date of Birth" value={detective.personal.dob} />
-              <InfoBlock label="Phone" value={detective.personal.phone} prefix={<FiPhone />} />
-              <InfoBlock label="Email" value={detective.personal.email} prefix="✉" />
+              <InfoBlock label="Full Name"     value={fullName} />
+              <InfoBlock label="Date of Birth" value={fmtDate(dob)} />
+              <InfoBlock label="Phone"         value={phone}  prefix={<FiPhone />} />
+              <InfoBlock label="Email"         value={email}  prefix="✉" />
             </div>
-            <InfoBlock label="Address" value={detective.personal.address} prefix={<GrLocation />} />
-            <div className="mt-4">
-              <InfoBlock label="Nationality" value={detective.personal.nationality} prefix={<RiGlobalLine />} />
+            <InfoBlock label="Address"     value={address}     prefix={<GrLocation />} />
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+              <InfoBlock label="Nationality" value={nationality} prefix={<RiGlobalLine />} />
+              <InfoBlock label="Gender"      value={gender} />
             </div>
-            <div className="mt-5 pt-4 border-t border-white/10">
-              <p className="text-xs font-semibold text-white mb-3">Emergency Contact</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
-                <InfoBlock label="Name" value={detective.personal.emergencyName} />
-                <InfoBlock label="Relationship" value={detective.personal.emergencyRelation} />
+
+            {/* Emergency Contact */}
+            {emergency && (
+              <div className="mt-5 pt-4 border-t border-white/10">
+                <p className="text-xs font-semibold text-white mb-3">Emergency Contact</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  <InfoBlock label="Name"         value={emergency.full_name} />
+                  <InfoBlock label="Relationship" value={emergency.relationship} />
+                </div>
+                <div className="mt-3">
+                  <InfoBlock label="Phone" value={emergency.phone_number} prefix={<FiPhone />} />
+                </div>
               </div>
-              <div className="mt-3">
-                <InfoBlock label="Phone" value={detective.personal.emergencyPhone} />
+            )}
+
+            {/* KYC dates */}
+            {kyc && (
+              <div className="mt-5 pt-4 border-t border-white/10">
+                <p className="text-xs font-semibold text-white mb-3">KYC Application</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  <InfoBlock label="Submitted" value={fmtDate(kyc.submitted_at)} />
+                  <InfoBlock label="Reviewed"  value={fmtDate(kyc.reviewed_at)} />
+                </div>
+                {kyc.rejection_reason && (
+                  <div className="mt-3">
+                    <InfoBlock label="Rejection Reason" value={kyc.rejection_reason} />
+                  </div>
+                )}
               </div>
-            </div>
+            )}
           </SectionCard>
 
+          {/* Professional */}
           <SectionCard icon={<Briefcase size={14} />} title="Professional Information">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-4">
-              <InfoBlock label="License Number" value={detective.professional.licenseNumber} />
-              <InfoBlock label="License State" value={detective.professional.licenseState} />
-              <InfoBlock label="License Expiry" value={detective.professional.licenseExpiry} />
-              <InfoBlock label="Experience" value={detective.professional.experience} />
+              <InfoBlock label="License Number" value={licenseNumber} />
+              <InfoBlock label="License State"  value={contact?.state_province} />
+              <InfoBlock label="License Expiry" value={fmtDate(licenseExpiry)} />
+              <InfoBlock label="Experience"     value={experience} />
             </div>
             <div className="mb-4">
-              <InfoBlock label="Previous Agency" value={detective.professional.previousAgency} />
+              <InfoBlock label="Previous Agency" value={previousAgency} />
             </div>
             <div className="mb-4">
               <p className="text-[11px] text-[#9CA3AF] mb-0.5 flex items-center gap-1"><MdCastForEducation /> Education</p>
-              <p className="text-sm text-white">{detective.professional.education}</p>
+              <p className="text-sm text-white">—</p>
             </div>
             <div className="mb-4">
               <p className="text-[11px] text-[#9CA3AF] mb-2 flex items-center gap-1"><LiaCertificateSolid /> Certifications</p>
               <div className="flex flex-wrap gap-2">
-                {detective.professional.certifications.map(c => <CertTag key={c} text={c} />)}
+                <span className="text-xs text-gray-500">—</span>
               </div>
             </div>
             <div className="mb-4">
               <p className="text-[11px] text-[#9CA3AF] mb-2">Specializations</p>
               <div className="flex flex-wrap gap-2">
-                {detective.professional.specializations.map(s => <SpecTag key={s} text={s} />)}
+                {specialization ? <SpecTag text={specialization} /> : <span className="text-xs text-gray-500">—</span>}
               </div>
             </div>
             <div>
               <p className="text-[11px] text-[#9CA3AF] mb-2">Languages</p>
               <div className="flex flex-wrap gap-2">
-                {detective.professional.languages.map(l => <LangTag key={l} text={l} />)}
+                <span className="text-xs text-gray-500">—</span>
               </div>
             </div>
           </SectionCard>
@@ -355,17 +303,47 @@ const AdminDetectiveDetailsPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
           <SectionCard icon={<Shield size={14} />} title="Background Check">
             <p className="text-[11px] text-[#9CA3AF] mb-2">Status</p>
-            <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033] mb-4">
-              <CheckCircle size={10} /> {detective.background.status}
-            </span>
-            <div className="mt-4">
-              <p className="text-[11px] text-[#9CA3AF] mb-1">Criminal Record</p>
-              <p className="text-sm text-white">{detective.background.criminalRecord}</p>
-            </div>
+            {legal ? (
+              <>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg mb-4 ${
+                  legal.consent_background_check
+                    ? "bg-[#00C9501A] text-green-400 border border-[#00C95033]"
+                    : "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]"
+                }`}>
+                  <CheckCircle size={10} /> {legal.consent_background_check ? "Consent Given" : "Pending Consent"}
+                </span>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  <div>
+                    <p className="text-[11px] text-[#9CA3AF] mb-1">Criminal Record</p>
+                    <p className="text-sm text-white">{legal.has_criminal_record ? "Yes" : "No"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-[#9CA3AF] mb-1">Terms Accepted</p>
+                    <p className="text-sm text-white">{legal.terms_accepted ? `Yes — ${fmtDate(legal.terms_accepted_at)}` : "No"}</p>
+                  </div>
+                </div>
+                {legal.has_criminal_record && legal.criminal_record_details && (
+                  <div className="mt-3">
+                    <p className="text-[11px] text-[#9CA3AF] mb-1">Details</p>
+                    <p className="text-sm text-white">{legal.criminal_record_details}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <span className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033] mb-4">
+                  <CheckCircle size={10} /> —
+                </span>
+                <div className="mt-4">
+                  <p className="text-[11px] text-[#9CA3AF] mb-1">Criminal Record</p>
+                  <p className="text-sm text-white">—</p>
+                </div>
+              </>
+            )}
           </SectionCard>
 
           <SectionCard icon={<FileText size={14} />} title="Biography">
-            <p className="text-sm text-[#9CA3AF] leading-relaxed">{detective.biography}</p>
+            <p className="text-sm text-[#9CA3AF] leading-relaxed">—</p>
           </SectionCard>
         </div>
 
@@ -375,43 +353,41 @@ const AdminDetectiveDetailsPage = () => {
             <FileText size={14} className="text-[#9CA3AF]" />
             <h3 className="text-sm font-semibold text-white">Submitted Documents</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[580px]">
-              <thead>
-                <tr className="border-b border-white/10 text-[#F9FAFB] text-xs">
-                  <th className="text-left py-2 font-medium">Document Name</th>
-                  <th className="text-left py-2 font-medium">Type</th>
-                  <th className="text-left py-2 font-medium">Uploaded Date</th>
-                  <th className="text-left py-2 font-medium">Status</th>
-                  <th className="text-left py-2 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {detective.documents.map((doc, i) => (
-                  <tr key={i} className="border-b border-white/5">
-                    <td className="py-3 text-sm text-white">{doc.name}</td>
-                    <td className="py-3 text-sm text-[#F9FAFB]">{doc.type}</td>
-                    <td className="py-3 text-sm text-[#F9FAFB]">{doc.uploaded}</td>
-                    <td className="py-3">
-                      <span className="px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]">
-                        {doc.status}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
-                          <Eye size={12} /> View
-                        </button>
-                        <button className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
-                          <Download size={12} /> Download
-                        </button>
-                      </div>
-                    </td>
+          {docRows.length === 0 ? (
+            <p className="text-sm text-[#9CA3AF]">No documents available.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[580px]">
+                <thead>
+                  <tr className="border-b border-white/10 text-[#F9FAFB] text-xs">
+                    <th className="text-left py-2 font-medium">Document Name</th>
+                    <th className="text-left py-2 font-medium">Status</th>
+                    <th className="text-left py-2 font-medium">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {docRows.map((doc, i) => (
+                    <tr key={i} className="border-b border-white/5">
+                      <td className="py-3 text-sm text-white">{doc.name}</td>
+                      <td className="py-3">
+                        <span className="px-3 py-1 text-xs rounded-lg bg-[#00C9501A] text-green-400 border border-[#00C95033]">Uploaded</span>
+                      </td>
+                      <td className="py-3">
+                        <div className="flex items-center gap-4">
+                          <a href={doc.url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
+                            <Eye size={12} /> View
+                          </a>
+                          <a href={doc.url} download className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
+                            <Download size={12} /> Download
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* ── PROFESSIONAL REFERENCES ── */}
@@ -420,28 +396,38 @@ const AdminDetectiveDetailsPage = () => {
             <Users size={14} className="text-[#9CA3AF]" />
             <h3 className="text-sm font-semibold text-white">Professional References</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {detective.references.map((ref, i) => (
-              <div key={i} className="bg-[#1A2832] border border-white/5 rounded-xl p-4">
-                <p className="text-sm font-semibold text-white">{ref.name}</p>
-                <p className="text-xs text-[#9CA3AF] mb-3">{ref.role}</p>
-                <p className="text-xs text-white mb-2">{ref.agency}</p>
-                <p className="text-xs text-[#F9FAFB] mb-1 flex items-center gap-1"><FiPhone size={11} /> {ref.phone}</p>
-                <p className="text-xs text-[#F9FAFB] flex items-center gap-1">✉ {ref.email}</p>
-              </div>
-            ))}
-          </div>
+          {refs.length === 0 ? (
+            <p className="text-sm text-[#9CA3AF]">No references available.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {refs.map((ref, i) => (
+                <div key={i} className="bg-[#1A2832] border border-white/5 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-white">{ref.full_name}</p>
+                  <p className="text-xs text-[#9CA3AF] mb-3">Reference #{ref.reference_number}</p>
+                  <p className="text-xs text-[#F9FAFB] mb-1 flex items-center gap-1"><FiPhone size={11} /> {ref.phone_number}</p>
+                  <p className="text-xs text-[#F9FAFB] mb-2 flex items-center gap-1">✉ {ref.email}</p>
+                  <span className={`px-2 py-0.5 text-xs rounded-lg ${
+                    ref.verification_status === "verified"
+                      ? "bg-[#00C9501A] text-green-400 border border-[#00C95033]"
+                      : ref.verification_status === "failed"
+                      ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                      : "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]"
+                  }`}>
+                    {ref.verification_status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── ASSIGNED CASES ── */}
         <div className="bg-[#1A2832] border border-white/5 rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <ClipboardList size={14} className="text-[#9CA3AF]" />
-            <h3 className="text-sm font-semibold text-white">
-              Assigned Cases ({detective.cases.length})
-            </h3>
+            <h3 className="text-sm font-semibold text-white">Assigned Cases ({recentCases.length})</h3>
           </div>
-          {detective.cases.length === 0 ? (
+          {recentCases.length === 0 ? (
             <p className="text-sm text-[#9CA3AF]">No assigned cases.</p>
           ) : (
             <div className="overflow-x-auto">
@@ -449,31 +435,29 @@ const AdminDetectiveDetailsPage = () => {
                 <thead>
                   <tr className="border-b border-white/10 text-[#F9FAFB] text-xs">
                     <th className="text-left py-2 font-medium">Case Number</th>
-                    <th className="text-left py-2 font-medium">Title</th>
-                    <th className="text-left py-2 font-medium">Client</th>
                     <th className="text-left py-2 font-medium">Status</th>
                     <th className="text-left py-2 font-medium">Priority</th>
-                    <th className="text-left py-2 font-medium">Created</th>
+                    <th className="text-left py-2 font-medium">Assigned</th>
+                    <th className="text-left py-2 font-medium">Submitted</th>
                     <th className="text-left py-2 font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {detective.cases.map((c, i) => (
+                  {recentCases.map((c, i) => (
                     <tr key={i} className="border-b border-white/5 hover:bg-[#132735] transition">
-                      <td className="py-3 text-sm text-white">{c.id}</td>
-                      <td className="py-3 text-sm text-white">{c.title}</td>
-                      <td className="py-3 text-sm text-[#F9FAFB]">{c.client}</td>
+                      <td className="py-3 text-sm text-white font-mono">{c.form_number ?? c.id?.slice(0, 8)}</td>
                       <td className="py-3">
                         <span className={`px-3 py-1 text-xs rounded-lg ${caseStatusStyle[c.status] ?? "bg-gray-500/20 text-gray-400"}`}>
-                          {c.status}
+                          {c.status?.replace(/_/g, " ")}
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className={`px-3 py-1 text-xs rounded-lg ${priorityStyle[c.priority] ?? "bg-gray-500/20 text-gray-400"}`}>
-                          {c.priority}
-                        </span>
+                        {c.priority
+                          ? <span className={`px-3 py-1 text-xs rounded-lg ${priorityStyle[c.priority] ?? "bg-gray-500/20 text-gray-400"}`}>{c.priority}</span>
+                          : <span className="text-gray-500 text-xs">—</span>}
                       </td>
-                      <td className="py-3 text-xs text-[#F9FAFB]">{c.created}</td>
+                      <td className="py-3 text-xs text-[#9CA3AF]">{fmtDate(c.assigned_at)}</td>
+                      <td className="py-3 text-xs text-[#9CA3AF]">{fmtDate(c.submitted_at)}</td>
                       <td className="py-3">
                         <button className="flex items-center gap-1 text-xs text-[#F9FAFB] hover:text-white transition">
                           <Eye size={12} /> View

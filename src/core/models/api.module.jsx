@@ -5,4 +5,5 @@ export const API_MODULE = {
   BLOGS: "blogs",
   PROFILE: "profile",
   CASES: "cases",
+  ADMIN_DETECTIVES: "admin/detectives",
 };

@@ -19,10 +19,11 @@ class ServerUrl {
         static SUBMIT_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/submit-application`;
         static GET_MY_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/my-application`; // Assuming the endpoint is /detective-kyc/status
         // Admin routes
-        static GET_ALL_KYC_API = `${ServerUrl.DETECTIVE_KYC_API}/`;
-        static UPDATE_KYC_STATUS_API = `${ServerUrl.DETECTIVE_KYC_API}/:id/status`; // Assuming the endpoint is /detective-kyc/update-status
+        static GET_ALL_KYC_API         = `${ServerUrl.DETECTIVE_KYC_API}/`;
+        static UPDATE_KYC_STATUS_API   = `${ServerUrl.DETECTIVE_KYC_API}/:id/status`;
         // Get specific application
-        static GET_KYC_APPLICATION_API = `${ServerUrl.DETECTIVE_KYC_API}/:id`; // Assuming the endpoint is /detective-kyc/:id
+        static GET_KYC_APPLICATION_API = `${ServerUrl.DETECTIVE_KYC_API}/:id`;
+        static GET_KYC_BY_USER_API     = `${ServerUrl.DETECTIVE_KYC_API}/user/:userId`;
     
     // ------------------------- all user side related api endpoints -----------------------------------------------  
     // user request form api endpoint
@@ -74,6 +75,12 @@ class ServerUrl {
         static GET_BLOG_BY_STATUS_API = `${ServerUrl.BLOGS_API}/admin/status`;
         static UPDATE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
         static DELETE_BLOG_API = `${ServerUrl.BLOGS_API}/:id`;
-}
 
+    // ------------------------- admin detective management api endpoints ----------------------------------------
+    static ADMIN_DETECTIVES_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.ADMIN_DETECTIVES}`;
+
+        static GET_DETECTIVE_STATS_API    = `${ServerUrl.ADMIN_DETECTIVES_API}/stats`;
+        static GET_ALL_DETECTIVES_API     = `${ServerUrl.ADMIN_DETECTIVES_API}`;
+        static GET_DETECTIVE_BY_ID_API    = `${ServerUrl.ADMIN_DETECTIVES_API}/:id`;
+}
 export default ServerUrl;
