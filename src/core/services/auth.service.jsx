@@ -213,11 +213,16 @@ export const authService = {
 
     updateKYCStatus: async (applicationId, statusData) => {
       const endpoint = ServerUrl.UPDATE_KYC_STATUS_API.replace(':id', applicationId);
-      return apiService.apiput(endpoint, statusData);
+      return apiService.apipatch(endpoint, statusData);
     },
 
     getKYCApplicationById: async (applicationId) => {
       const endpoint = ServerUrl.GET_KYC_APPLICATION_API.replace(':id', applicationId);
+      return apiService.apiget(endpoint);
+    },
+
+    getKYCApplicationByUserId: async (userId) => {
+      const endpoint = ServerUrl.GET_KYC_BY_USER_API.replace(':userId', userId);
       return apiService.apiget(endpoint);
     },
 
@@ -264,6 +269,25 @@ export const authService = {
     deleteBlog: async (blogId) => {
       const endpoint = ServerUrl.DELETE_BLOG_API.replace(':id', blogId);
       return apiService.apidelete(endpoint);
+    },
+
+  // ----------------------- Admin Detective Management -----------------------
+
+    getDetectiveStats: async () => {
+      return apiService.apiget(ServerUrl.GET_DETECTIVE_STATS_API);
+    },
+
+    getAllDetectives: async ({ page = 1, limit = 10, status = '', kycStatus = '', search = '' } = {}) => {
+      const params = new URLSearchParams({ page, limit });
+      if (status)    params.append('status',    status);
+      if (kycStatus) params.append('kycStatus', kycStatus);
+      if (search)    params.append('search',    search);
+      return apiService.apiget(`${ServerUrl.GET_ALL_DETECTIVES_API}?${params.toString()}`);
+    },
+
+    getDetectiveById: async (detectiveId) => {
+      const endpoint = ServerUrl.GET_DETECTIVE_BY_ID_API.replace(':id', detectiveId);
+      return apiService.apiget(endpoint);
     },
 };
 
