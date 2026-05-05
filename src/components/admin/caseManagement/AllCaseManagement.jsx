@@ -79,7 +79,7 @@ const CaseManagement = () => {
       const mappedStatus = statusMap[statusParam] || statusParam;
       setStatus(mappedStatus);
     }
-    
+     
     // Handle priority filter from URL
     const priorityParam = searchParams.get("priority");
     if (priorityParam) {
@@ -345,7 +345,7 @@ const CaseManagement = () => {
   }, [cases, dateSort]);
 
   return (
-    <div className="text-white bg-[#121F27] p-4 font-monserrat ">
+    <div className="text-white  p-4 font-monserrat ">
 
       {/* HEADER */}
       <div className="mb-6">
@@ -359,8 +359,8 @@ const CaseManagement = () => {
       </div>
 
       {/* TABS */}
-      <div className="mb-6">
-        <div className="inline-flex gap-1 p-1 border border-[#2a3a44] rounded-xl">
+      <div className="mb-6 overflow-x-auto">
+        <div className="inline-flex gap-1 p-1 border border-[#2a3a44] rounded-xl min-w-max">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -467,14 +467,13 @@ const CaseManagement = () => {
           </div>
 
           {/* FOOTER */}
-          <div className="flex justify-between items-center mt-5">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-5">
             <p className="text-sm text-[#8FA3B0]">
               Showing {filteredData.length} of {totalCases} cases
             </p>
-
             <button
               onClick={clearFilters}
-              className="text-sm px-4 py-2 border border-white/50 rounded-lg text-white hover:bg-[#22313d]"
+              className="text-sm px-4 py-2 border border-white/50 rounded-lg text-white hover:bg-[#22313d] w-full sm:w-auto"
             >
               Clear Filters
             </button>
@@ -496,28 +495,16 @@ const CaseManagement = () => {
 
           {loading ? (
             <div className="space-y-3">
-              {/* Loading skeleton */}
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="grid grid-cols-[120px_260px_220px_120px_140px_180px_100px] items-center px-4 py-4 bg-[#1A2832] border border-[#243642] rounded-xl animate-pulse">
-                  <div className="h-4 bg-[#2a3a44] rounded w-3/4"></div>
-                  <div className="h-4 bg-[#2a3a44] rounded w-2/3"></div>
-                  <div className="h-4 bg-[#2a3a44] rounded w-1/2"></div>
-                  <div className="h-6 bg-[#2a3a44] rounded w-16"></div>
-                  <div className="h-6 bg-[#2a3a44] rounded w-20"></div>
-                  <div className="h-4 bg-[#2a3a44] rounded w-24"></div>
-                  <div className="flex justify-end gap-2">
-                    <div className="h-8 w-8 bg-[#2a3a44] rounded-lg"></div>
-                    <div className="h-8 w-8 bg-[#2a3a44] rounded-lg"></div>
-                  </div>
-                </div>
+                <div key={i} className="h-16 bg-[#1A2832] border border-[#243642] rounded-xl animate-pulse" />
               ))}
             </div>
           ) : filteredData.length === 0 ? (
             <div className="text-center py-8 text-[#8FA3B0]">No cases found</div>
           ) : (
             <>
-              {/* HEADER */}
-              <div className="bg-[#243643] rounded-lg border border-[#22313d] px-4 py-3 text-xs text-[#8FA3B0] grid grid-cols-[120px_260px_220px_120px_140px_180px_100px]">
+              {/* Desktop Table Header */}
+              <div className="hidden md:grid bg-[#243643] rounded-lg border border-[#22313d] px-4 py-3 text-xs text-[#8FA3B0] grid-cols-[120px_260px_220px_120px_140px_180px_100px]">
                 <div>Case ID</div>
                 <div>Client Name</div>
                 <div>Investigation Type</div>
@@ -527,103 +514,69 @@ const CaseManagement = () => {
                 <div className="text-right">Actions</div>
               </div>
 
-              {/* ROWS */}
-              <div className="mt-3 space-y-3">
+              {/* Desktop Rows */}
+              <div className="hidden md:block mt-3 space-y-3">
                 {filteredData.map((item) => (
                   <div
                     key={item.id}
                     className="grid grid-cols-[120px_260px_220px_120px_140px_180px_100px] items-center px-4 py-4 bg-[#1A2832] border border-[#243642] rounded-xl hover:bg-[#1b2a35] transition"
                   >
-                    {/* CASE ID */}
                     <div>
                       <p className="text-white text-sm">{item.caseId || item.formNumber}</p>
-                      <p className="text-xs text-[#8FA3B0] mt-1">
-                        {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}
-                      </p>
+                      <p className="text-xs text-[#8FA3B0] mt-1">{item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}</p>
                     </div>
-
-                    {/* CLIENT */}
                     <div>
                       <p className="text-white text-sm">{item.clientName || 'N/A'}</p>
-                      <p className="text-xs text-[#8FA3B0]">
-                        {item.caseDescription || item.investigationType || 'Investigation'}
-                      </p>
+                      <p className="text-xs text-[#8FA3B0]">{item.caseDescription || item.investigationType || 'Investigation'}</p>
                     </div>
-
-                    {/* TYPE */}
                     <div className="text-sm">{item.investigationType || 'General'}</div>
-
-                    {/* PRIORITY */}
                     <div>
-                      <select
-                        value={item.priority}
-                        onChange={(e) => handleUpdatePriority(item.id, e.target.value)}
-                        className={`
-                          px-2 py-1 text-xs rounded-md font-medium border-0 cursor-pointer
-                          ${item.priority === "urgent" && "bg-red-500/20 text-red-400"}
-                          ${item.priority === "high" && "bg-orange-500/20 text-orange-400"}
-                          ${item.priority === "medium" && "bg-yellow-400/20 text-yellow-300"}
-                          ${item.priority === "low" && "bg-green-500/20 text-green-300"}
-                        `}
-                      >
+                      <select value={item.priority} onChange={(e) => handleUpdatePriority(item.id, e.target.value)} className={`px-2 py-1 text-xs rounded-md font-medium border-0 cursor-pointer ${item.priority === "urgent" && "bg-red-500/20 text-red-400"} ${item.priority === "high" && "bg-orange-500/20 text-orange-400"} ${item.priority === "medium" && "bg-yellow-400/20 text-yellow-300"} ${item.priority === "low" && "bg-green-500/20 text-green-300"}`}>
                         <option value="urgent">Urgent</option>
                         <option value="high">High</option>
                         <option value="medium">Medium</option>
                         <option value="low">Low</option>
                       </select>
                     </div>
-
-                    {/* STATUS */}
                     <div>
-                      <span className={`
-                        px-3 py-1 text-xs rounded-md font-medium
-                        ${item.statusLabel?.includes("Pending") && "bg-gray-500/20 text-gray-300"}
-                        ${item.statusLabel?.includes("Assigned") && "bg-blue-500/20 text-blue-300"}
-                        ${item.statusLabel?.includes("Progress") && "bg-purple-500/20 text-purple-300"}
-                        ${item.statusLabel?.includes("Insights") && "bg-yellow-400/20 text-yellow-300"}
-                        ${item.statusLabel?.includes("Completed") && "bg-green-500/20 text-green-300"}
-                      `}>
-                        {item.statusLabel || item.status}
-                      </span>
+                      <span className={`px-3 py-1 text-xs rounded-md font-medium ${item.statusLabel?.includes("Pending") && "bg-gray-500/20 text-gray-300"} ${item.statusLabel?.includes("Assigned") && "bg-blue-500/20 text-blue-300"} ${item.statusLabel?.includes("Progress") && "bg-purple-500/20 text-purple-300"} ${item.statusLabel?.includes("Insights") && "bg-yellow-400/20 text-yellow-300"} ${item.statusLabel?.includes("Completed") && "bg-green-500/20 text-green-300"}`}>{item.statusLabel || item.status}</span>
                     </div>
-
-                    {/* DETECTIVE */}
-                    <div className="text-sm text-[#8FA3B0] italic">
-                      {item.detective || "Unassigned"}
-                    </div>
-
-                    {/* ACTIONS */}
+                    <div className="text-sm text-[#8FA3B0] italic">{item.detective || "Unassigned"}</div>
                     <div className="flex justify-end gap-2">
-
-                      {/* SHOW ASSIGN BUTTON IF UNASSIGNED */}
                       {(!item.detectiveId || item.detective === "Unassigned") && (
-                        <button
-                          onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item, openAssignModal: true } })}
-                          className="p-2 bg-red-500 rounded-lg hover:bg-red-600"
-                          title="Assign Detective"
-                        >
-                          <MdOutlinePersonAddAlt />
-                        </button>
+                        <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item, openAssignModal: true } })} className="p-2 bg-red-500 rounded-lg hover:bg-red-600" title="Assign Detective"><MdOutlinePersonAddAlt /></button>
                       )}
+                      <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })} className="p-2 border border-[#243642] rounded-lg hover:bg-[#223544]" title="View Details"><Eye size={16} /></button>
+                      <button onClick={() => { setSelectedCase(item); setShowDeleteModal(true); }} className="p-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10" title="Delete Case"><Trash2 size={16} /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                      <button
-                        onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })}
-                        className="p-2 border border-[#243642] rounded-lg hover:bg-[#223544]"
-                        title="View Details"
-                      >
-                        <Eye size={16} />
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setSelectedCase(item);
-                          setShowDeleteModal(true);
-                        }}
-                        className="p-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10"
-                        title="Delete Case"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+              {/* Mobile Cards */}
+              <div className="md:hidden mt-3 space-y-3">
+                {filteredData.map((item) => (
+                  <div key={item.id} className="bg-[#1A2832] border border-[#243642] rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div>
+                        <p className="text-white text-sm font-medium">{item.caseId || item.formNumber}</p>
+                        <p className="text-xs text-[#8FA3B0]">{item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}</p>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className={`px-2 py-0.5 text-xs rounded-md font-medium ${item.statusLabel?.includes("Pending") && "bg-gray-500/20 text-gray-300"} ${item.statusLabel?.includes("Assigned") && "bg-blue-500/20 text-blue-300"} ${item.statusLabel?.includes("Progress") && "bg-purple-500/20 text-purple-300"} ${item.statusLabel?.includes("Insights") && "bg-yellow-400/20 text-yellow-300"} ${item.statusLabel?.includes("Completed") && "bg-green-500/20 text-green-300"}`}>{item.statusLabel || item.status}</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-white mb-1">{item.clientName || 'N/A'}</p>
+                    <p className="text-xs text-[#8FA3B0] mb-2">{item.investigationType || 'General'}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-[#8FA3B0] italic">{item.detective || "Unassigned"}</p>
+                      <div className="flex items-center gap-2">
+                        {(!item.detectiveId || item.detective === "Unassigned") && (
+                          <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item, openAssignModal: true } })} className="p-1.5 bg-red-500 rounded-lg hover:bg-red-600"><MdOutlinePersonAddAlt size={14} /></button>
+                        )}
+                        <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })} className="p-1.5 border border-[#243642] rounded-lg hover:bg-[#223544]"><Eye size={14} /></button>
+                        <button onClick={() => { setSelectedCase(item); setShowDeleteModal(true); }} className="p-1.5 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10"><Trash2 size={14} /></button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -631,81 +584,14 @@ const CaseManagement = () => {
 
               {/* PAGINATION */}
               {totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-between">
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="text-sm text-[#8FA3B0]">
-                    Page {currentPage} of {totalPages} • Showing {filteredData.length} of {totalCases} cases
+                    Page {currentPage} of {totalPages} • {filteredData.length} of {totalCases} cases
                   </div>
-                  
                   <div className="flex items-center gap-2">
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-
-                    {/* Page Numbers */}
-                    <div className="flex items-center gap-1">
-                      {/* First Page */}
-                      {currentPage > 3 && (
-                        <>
-                          <button
-                            onClick={() => handlePageChange(1)}
-                            className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544]"
-                          >
-                            1
-                          </button>
-                          {currentPage > 4 && <span className="text-[#8FA3B0]">...</span>}
-                        </>
-                      )}
-
-                      {/* Current Page and Neighbors */}
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter(page => {
-                          return page === currentPage || 
-                                 page === currentPage - 1 || 
-                                 page === currentPage + 1 ||
-                                 (currentPage <= 2 && page <= 3) ||
-                                 (currentPage >= totalPages - 1 && page >= totalPages - 2);
-                        })
-                        .map(page => (
-                          <button
-                            key={page}
-                            onClick={() => handlePageChange(page)}
-                            className={`px-3 py-2 border rounded-lg text-sm ${
-                              page === currentPage
-                                ? 'bg-red-500 border-red-500 text-white'
-                                : 'border-[#243642] text-white hover:bg-[#223544]'
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        ))}
-
-                      {/* Last Page */}
-                      {currentPage < totalPages - 2 && (
-                        <>
-                          {currentPage < totalPages - 3 && <span className="text-[#8FA3B0]">...</span>}
-                          <button
-                            onClick={() => handlePageChange(totalPages)}
-                            className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544]"
-                          >
-                            {totalPages}
-                          </button>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Next Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
+                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544] disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                    <span className="text-sm text-white">{currentPage} / {totalPages}</span>
+                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-2 border border-[#243642] rounded-lg text-sm text-white hover:bg-[#223544] disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
                   </div>
                 </div>
               )}
@@ -715,7 +601,7 @@ const CaseManagement = () => {
       )}
 
       {/* REVIEW TAB CONTENT */}
-      <div className="max-w-5xl px-6">
+      <div className="w-full">
         {activeTab === "review" && (
           <div className="max-w-4xl">
             <p className="text-sm text-white mb-4">
