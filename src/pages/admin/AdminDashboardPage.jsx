@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuFileText, LuActivity, LuUserCheck, LuClipboardList, LuClock, LuCircleCheck, LuSend, LuClipboardCheck, LuTriangleAlert, LuChartBar, LuTrendingUp } from "react-icons/lu";
 import { FiArrowUpRight } from "react-icons/fi";
 import AdminDashboardIcon from "../../assets/admindashboard-icon.png";
 import { ROUTES } from "../../core/constants/routes.constant";
+import adminDashboardService from "../../core/services/adminDashboard.service";
 
 /* ─────────────────────────────────────────────
    STAT CARD
@@ -59,24 +60,173 @@ const AdminDashboard = () => {
   const [showReportModal, setShowReportModal] = useState(false);
   const modalRef = useRef(null);
 
-  // ── STATS DATA ── replace values with API response later
+  // State for dashboard data
+  const [statistics, setStatistics] = useState({
+    totalCases: '—',
+    activeInvestigations: '—',
+    pendingDetectiveKYC: '—',
+    pendingReviews: '—',
+    avgCompletionDays: '—',
+    closedCases: '—',
+  });
+
+  const [caseStatusCounts, setCaseStatusCounts] = useState({
+    newRequests: '—',
+    assigned: '—',
+    inProgress: '—',
+    insightsSubmitted: '—',
+    changesRequested: '—',
+    completed: '—',
+  });
+
+  const [priorityAlerts, setPriorityAlerts] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch dashboard data on mount
+  useEffect(() => {
+    fetchDashboardData();
+    
+    // Auto-refresh every 5 minutes
+    const refreshInterval = setInterval(() => {
+      fetchDashboardData();
+    }, 300000); // 5 minutes
+    
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Check cache first (valid for 2 minutes)
+      const cachedData = sessionStorage.getItem('dashboardData');
+      const cacheTimestamp = sessionStorage.getItem('dashboardDataTimestamp');
+      
+      if (cachedData && cacheTimestamp) {
+        const age = Date.now() - parseInt(cacheTimestamp);
+        if (age < 120000) { // 2 minutes
+          const parsed = JSON.parse(cachedData);
+          setStatistics(parsed.statistics);
+          setCaseStatusCounts(parsed.caseStatusCounts);
+          setPriorityAlerts(parsed.priorityAlerts);
+          setRecentActivity(parsed.recentActivity);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fetch all dashboard data in parallel
+      const [statsRes, overviewRes, priorityRes, activityRes] = await Promise.all([
+        adminDashboardService.getDashboardStatistics(),
+        adminDashboardService.getCaseStatusOverview(),
+        adminDashboardService.getPriorityCases(),
+        adminDashboardService.getRecentActivity(),
+      ]);
+
+      // Update statistics
+      if (statsRes.success) {
+        setStatistics(statsRes.data);
+      }
+
+      // Update case status overview
+      if (overviewRes.success) {
+        setCaseStatusCounts(overviewRes.data);
+      }
+
+      // Update priority cases
+      if (priorityRes.success) {
+        setPriorityAlerts(priorityRes.data);
+      }
+
+      // Update recent activity
+      if (activityRes.success) {
+        setRecentActivity(activityRes.data);
+      }
+
+      // Cache the data
+      const dataToCache = {
+        statistics: statsRes.success ? statsRes.data : statistics,
+        caseStatusCounts: overviewRes.success ? overviewRes.data : caseStatusCounts,
+        priorityAlerts: priorityRes.success ? priorityRes.data : priorityAlerts,
+        recentActivity: activityRes.success ? activityRes.data : recentActivity,
+      };
+      sessionStorage.setItem('dashboardData', JSON.stringify(dataToCache));
+      sessionStorage.setItem('dashboardDataTimestamp', Date.now().toString());
+      
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── STATS DATA ── now using real API data
   const stats = [
-    { title: "Total Cases",           value: "5",      subtitle: "All time",  icon: <LuFileText size={18} /> },
-    { title: "Active Investigations", value: "2",      subtitle: "Ongoing",   icon: <LuActivity size={18} /> },
-    { title: "Pending Detective KYC", value: "2",      subtitle: "Approvals", icon: <LuUserCheck size={18} /> },
-    { title: "Pending Reviews",       value: "1",      subtitle: "To review", icon: <LuClipboardList size={18} /> },
-    { title: "Avg Completion",        value: "2 days", subtitle: "Per case",  icon: <LuClock size={18} /> },
-    { title: "Closed Cases",          value: "1",      subtitle: "Completed", icon: <LuCircleCheck size={18} /> },
+    { title: "Total Cases",           value: statistics.totalCases,      subtitle: "All time",  icon: <LuFileText size={18} /> },
+    { title: "Active Investigations", value: statistics.activeInvestigations,      subtitle: "Ongoing",   icon: <LuActivity size={18} /> },
+    { title: "Pending Detective KYC", value: statistics.pendingDetectiveKYC,      subtitle: "Approvals", icon: <LuUserCheck size={18} /> },
+    { title: "Pending Reviews",       value: statistics.pendingReviews,      subtitle: "To review", icon: <LuClipboardList size={18} /> },
+    { title: "Avg Completion",        value: statistics.avgCompletionDays ? `${statistics.avgCompletionDays} days` : '—', subtitle: "Per case",  icon: <LuClock size={18} /> },
+    { title: "Closed Cases",          value: statistics.closedCases,      subtitle: "Completed", icon: <LuCircleCheck size={18} /> },
   ];
 
-  // ── CASE STATUS DATA ── replace count with API response later
+  // ── CASE STATUS DATA ── now using real API data with navigation
   const caseStatuses = [
-    { name: "New Requests",       subtitle: "Awaiting assignment",  count: 1, iconColor: "#6A7282", iconBg: "#6A72821A", icon: <LuClock size={14} /> },
-    { name: "Assigned",           subtitle: "Detective assigned",   count: 1, iconColor: "#2B7FFF", iconBg: "#2B7FFF1A", icon: <LuSend size={14} /> },
-    { name: "In Progress",        subtitle: "Active investigation", count: 1, iconColor: "#A855F7", iconBg: "#A855F71A", icon: <LuActivity size={14} /> },
-    { name: "Insights Submitted", subtitle: "Pending review",       count: 1, iconColor: "#EAB308", iconBg: "#EAB3081A", icon: <LuClipboardCheck size={14} /> },
-    { name: "Changes Requested",  subtitle: "Needs revision",       count: 1, iconColor: "#F97316", iconBg: "#F973161A", icon: <LuTriangleAlert size={14} /> },
-    { name: "Completed",          subtitle: "Report delivered",     count: 1, iconColor: "#22C55E", iconBg: "#22C55E1A", icon: <LuCircleCheck size={14} /> },
+    { 
+      name: "New Requests",       
+      subtitle: "Awaiting assignment",  
+      count: caseStatusCounts.newRequests, 
+      iconColor: "#6A7282", 
+      iconBg: "#6A72821A", 
+      icon: <LuClock size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?tab=pending`)
+    },
+    { 
+      name: "Assigned",           
+      subtitle: "Detective assigned",   
+      count: caseStatusCounts.assigned, 
+      iconColor: "#2B7FFF", 
+      iconBg: "#2B7FFF1A", 
+      icon: <LuSend size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=assigned`)
+    },
+    { 
+      name: "In Progress",        
+      subtitle: "Active investigation", 
+      count: caseStatusCounts.inProgress, 
+      iconColor: "#A855F7", 
+      iconBg: "#A855F71A", 
+      icon: <LuActivity size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=in_progress`)
+    },
+    { 
+      name: "Insights Submitted", 
+      subtitle: "Pending review",       
+      count: caseStatusCounts.insightsSubmitted, 
+      iconColor: "#EAB308", 
+      iconBg: "#EAB3081A", 
+      icon: <LuClipboardCheck size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=insights_submitted`)
+    },
+    { 
+      name: "Changes Requested",  
+      subtitle: "Needs revision",       
+      count: caseStatusCounts.changesRequested, 
+      iconColor: "#F97316", 
+      iconBg: "#F973161A", 
+      icon: <LuTriangleAlert size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=changes_requested`)
+    },
+    { 
+      name: "Completed",          
+      subtitle: "Report delivered",     
+      count: caseStatusCounts.completed, 
+      iconColor: "#22C55E", 
+      iconBg: "#22C55E1A", 
+      icon: <LuCircleCheck size={14} />,
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=completed`)
+    },
   ];
 
   // ── QUICK ACTIONS ── tab query params ready for when pages implement tab switching
@@ -85,22 +235,6 @@ const AdminDashboard = () => {
     { label: "Review Insight",   icon: <LuClipboardList size={16} />, onClick: () => navigate(ROUTES.ADMIN_REVIEW_INSIGHTS) },
     { label: "Approve KYC",      icon: <LuUserCheck size={16} />,     onClick: () => navigate(`${ROUTES.ADMIN_DETECTIVE_MANAGEMENT}?tab=Pending KYC`) },
     { label: "Create Report",    icon: <LuFileText size={16} />,      onClick: () => setShowReportModal(true) },
-  ];
-
-  // ── RECENT ACTIVITY ── replace with API response later
-  const recentActivity = [
-    { title: "User Login",           description: "Admin Director logged into the system",  user: "Admin Director" },
-    { title: "System Maintenance",   description: "Scheduled system backup completed successfully", user: "System" },
-    { title: "Report Generated",     description: "Investigation report exported and delivered to client", user: "Admin Director" },
-    { title: "Location Updated",     description: "Detective updated current field location",  user: "Detective" },
-    { title: "Location Updated",     description: "Detective updated current field location again", user: "Detective" },
-  ];
-
-  // ── PRIORITY ALERTS ── replace with API response later
-  const priorityAlerts = [
-    { title: "Corporate Embezzlement Investigation", meta: "Case ID • Assigned" },
-    { title: "Asset Recovery Investigation",         meta: "Case ID • Assigned" },
-    { title: "Missing Person Investigation",         meta: "Case ID • Assigned" },
   ];
 
   return (
@@ -130,15 +264,51 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      {/* ── STATS GRID ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
-        {stats.map((s, i) => (
-          <StatCard key={i} {...s} />
-        ))}
-      </div>
+      {/* Show loading skeleton on first load */}
+      {loading ? (
+        <>
+          {/* STATS GRID SKELETON */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-[#1A2832] border border-[#1f2f3a] rounded-2xl p-4 min-h-[140px] animate-pulse">
+                <div className="h-4 bg-[#2a3a44] rounded w-3/4 mb-4"></div>
+                <div className="h-8 bg-[#2a3a44] rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-[#2a3a44] rounded w-2/3"></div>
+              </div>
+            ))}
+          </div>
 
-      {/* ── MAIN GRID: 2 cols on desktop, stacked on mobile ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: '24px' }}>
+          {/* MAIN GRID SKELETON */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-[#1A2832] rounded-xl p-5 h-[400px] animate-pulse">
+              <div className="h-4 bg-[#2a3a44] rounded w-1/3 mb-4"></div>
+              <div className="space-y-3">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-16 bg-[#2a3a44] rounded"></div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-[#1A2832] rounded-xl p-5 h-[400px] animate-pulse">
+              <div className="h-4 bg-[#2a3a44] rounded w-1/3 mb-4"></div>
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-16 bg-[#2a3a44] rounded"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* ── STATS GRID ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+            {stats.map((s, i) => (
+              <StatCard key={i} {...s} />
+            ))}
+          </div>
+
+          {/* ── MAIN GRID: 2 cols on desktop, stacked on mobile ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: '24px' }}>
 
         {/* LEFT: Case Status Overview */}
         <div
@@ -152,7 +322,12 @@ const AdminDashboard = () => {
           />
           <div className="flex flex-col flex-1" style={{ gap: '10px' }}>
             {caseStatuses.map((item, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3 lg:py-0 rounded-xl transition-colors lg:flex-1" style={{ border: '0.67px solid #FFFFFF1A', minHeight: '60px' }}>
+              <div 
+                key={i} 
+                className="flex items-center justify-between px-4 py-3 lg:py-0 rounded-xl transition-colors lg:flex-1 cursor-pointer hover:bg-[#1f2f3a]" 
+                style={{ border: '0.67px solid #FFFFFF1A', minHeight: '60px' }}
+                onClick={item.onClick}
+              >
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
@@ -228,29 +403,33 @@ const AdminDashboard = () => {
             </div>
             <div className="flex flex-col px-6 pb-6" style={{ gap: '12px' }}>
               <div className="flex flex-col" style={{ gap: '8px' }}>
-                {priorityAlerts.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col justify-center px-4 hover:opacity-90 transition-opacity"
-                    style={{
-                      minHeight: '66.67px',
-                      borderRadius: '8px',
-                      border: '0.67px solid #FF690033',
-                      backgroundColor: '#FF69000D',
-                      padding: '12px 16px',
-                    }}
-                  >
-                    <p className="font-['Montserrat'] font-medium text-[14px] leading-5 text-white">
-                      {item.title}
-                    </p>
-                    <p className="font-['Montserrat'] font-normal text-[12px] leading-4 text-[#9CA3AF] mt-0.5">
-                      {item.meta}
-                    </p>
-                  </div>
-                ))}
+                {priorityAlerts.length === 0 ? (
+                  <p className="text-[#9CA3AF] text-sm text-center py-4">No high priority cases at this time</p>
+                ) : (
+                  priorityAlerts.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex flex-col justify-center px-4 hover:opacity-90 transition-opacity"
+                      style={{
+                        minHeight: '66.67px',
+                        borderRadius: '8px',
+                        border: '0.67px solid #FF690033',
+                        backgroundColor: '#FF69000D',
+                        padding: '12px 16px',
+                      }}
+                    >
+                      <p className="font-['Montserrat'] font-medium text-[14px] leading-5 text-white">
+                        {item.title}
+                      </p>
+                      <p className="font-['Montserrat'] font-normal text-[12px] leading-4 text-[#9CA3AF] mt-0.5">
+                        {item.form_number} • {item.status}
+                      </p>
+                    </div>
+                  ))
+                )}
               </div>
               <button
-                onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT)}
+                onClick={() => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?priority=high`)}
                 className="w-full bg-transparent hover:bg-white/5 transition-colors font-['Montserrat'] font-medium text-[14px] leading-5 text-white"
                 style={{ height: '36px', borderRadius: '6px', border: '0.67px solid #FFFFFF1A' }}
               >
@@ -261,6 +440,8 @@ const AdminDashboard = () => {
 
         </div>
       </div>
+        </>
+      )}
 
       {/* ── RECENT ACTIVITY ── API-ready: swap recentActivity array with API response */}
       <div
@@ -280,26 +461,30 @@ const AdminDashboard = () => {
           className="flex flex-col"
           style={{ gap: '0', padding: '0 20.67px 20px 20.67px' }}
         >
-          {recentActivity.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 py-4"
-              style={{ borderBottom: '0.67px solid #FFFFFF1A' }}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#D92B3A] flex-shrink-0" />
-              <div className="flex flex-col justify-center gap-0.5">
-                <p className="font-['Montserrat'] font-medium text-[16px] leading-6 text-white">
-                  {item.title}
-                </p>
-                <p className="font-['Montserrat'] font-normal text-[14px] leading-5 text-[#9CA3AF]">
-                  {item.description}
-                </p>
-                <p className="font-['Montserrat'] font-medium text-[12px] leading-4 text-white">
-                  {item.user}
-                </p>
+          {recentActivity.length === 0 ? (
+            <p className="text-[#9CA3AF] text-sm text-center py-4">No recent activity</p>
+          ) : (
+            recentActivity.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 py-4"
+                style={{ borderBottom: '0.67px solid #FFFFFF1A' }}
+              >
+                <span className="w-2 h-2 rounded-full bg-[#D92B3A] flex-shrink-0" />
+                <div className="flex flex-col justify-center gap-0.5">
+                  <p className="font-['Montserrat'] font-medium text-[16px] leading-6 text-white">
+                    {item.title}
+                  </p>
+                  <p className="font-['Montserrat'] font-normal text-[14px] leading-5 text-[#9CA3AF]">
+                    {item.description}
+                  </p>
+                  <p className="font-['Montserrat'] font-medium text-[12px] leading-4 text-white">
+                    {item.user}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

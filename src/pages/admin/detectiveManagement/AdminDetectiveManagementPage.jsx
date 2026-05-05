@@ -113,10 +113,30 @@ const AdminDetectiveManagementPage = () => {
 
   /* ── fetch stats ── */
   const fetchStats = useCallback(async () => {
+    // Check cache first (valid for 5 minutes)
+    const cachedStats = sessionStorage.getItem('detectiveStats');
+    const cacheTimestamp = sessionStorage.getItem('detectiveStats_timestamp');
+    
+    if (cachedStats && cacheTimestamp) {
+      const age = Date.now() - parseInt(cacheTimestamp);
+      if (age < 300000) { // 5 minutes
+        setStats(JSON.parse(cachedStats));
+        setStatsLoading(false);
+        return;
+      }
+    }
+
     setStatsLoading(true);
     try {
       const res = await authService.getDetectiveStats();
-      setStats(res?.data?.data ?? res?.data ?? null);
+      const statsData = res?.data?.data ?? res?.data ?? null;
+      setStats(statsData);
+      
+      // Cache the stats
+      if (statsData) {
+        sessionStorage.setItem('detectiveStats', JSON.stringify(statsData));
+        sessionStorage.setItem('detectiveStats_timestamp', Date.now().toString());
+      }
     } catch {
       // non-critical
     } finally {
@@ -126,6 +146,22 @@ const AdminDetectiveManagementPage = () => {
 
   /* ── fetch list ── */
   const fetchDetectives = useCallback(async (page = 1) => {
+    // Generate cache key based on filters
+    const cacheKey = `detectiveList_${activeTab}_${search}_${page}`;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+    
+    if (cachedData && cacheTimestamp) {
+      const age = Date.now() - parseInt(cacheTimestamp);
+      if (age < 120000) { // 2 minutes
+        const parsed = JSON.parse(cachedData);
+        setDetectives(parsed.detectives);
+        setPagination(parsed.pagination);
+        setListLoading(false);
+        return;
+      }
+    }
+
     setListLoading(true);
     try {
       const res = await authService.getAllDetectives({
@@ -135,13 +171,23 @@ const AdminDetectiveManagementPage = () => {
         ...tabToFilters(activeTab),
       });
       const data = res?.data?.data ?? res?.data ?? {};
-      setDetectives(data.detectives ?? []);
-      setPagination((p) => ({
-        ...p,
+      const detectivesData = data.detectives ?? [];
+      const paginationData = {
         page:       data.pagination?.page       ?? page,
+        limit:      pagination.limit,
         total:      data.pagination?.total      ?? 0,
         totalPages: data.pagination?.totalPages ?? 1,
+      };
+      
+      setDetectives(detectivesData);
+      setPagination(paginationData);
+      
+      // Cache the data
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        detectives: detectivesData,
+        pagination: paginationData,
       }));
+      sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
     } catch (err) {
       toast.error(err?.response?.data?.message ?? "Failed to load detectives");
     } finally {

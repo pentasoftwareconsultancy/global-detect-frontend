@@ -7,6 +7,7 @@ export const API_MODULE = {
   CASES: "cases",
   ADMIN_USERS: "admin/users",
   ADMIN_DETECTIVES: "admin/detectives",
+  ADMIN_DASHBOARD: "admin/dashboard",
 };
  
 

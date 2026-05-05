@@ -32,13 +32,30 @@ export const useUserManagement = () => {
   });
 
   /**
-   * Fetch user statistics
+   * Fetch user statistics with caching
    */
   const fetchStats = useCallback(async () => {
+    // Check cache first (valid for 5 minutes)
+    const cachedStats = sessionStorage.getItem('userManagementStats');
+    const cacheTimestamp = sessionStorage.getItem('userManagementStats_timestamp');
+    
+    if (cachedStats && cacheTimestamp) {
+      const age = Date.now() - parseInt(cacheTimestamp);
+      if (age < 300000) { // 5 minutes
+        setStats(JSON.parse(cachedStats));
+        return;
+      }
+    }
+
     try {
       const response = await userManagementService.getUserStats();
       if (response?.data?.success) {
-        setStats(response.data.data);
+        const statsData = response.data.data;
+        setStats(statsData);
+        
+        // Cache the stats
+        sessionStorage.setItem('userManagementStats', JSON.stringify(statsData));
+        sessionStorage.setItem('userManagementStats_timestamp', Date.now().toString());
       }
     } catch (err) {
       console.error("Error fetching stats:", err);
@@ -47,16 +64,42 @@ export const useUserManagement = () => {
   }, []);
 
   /**
-   * Fetch users with current filters
+   * Fetch users with current filters and caching
    */
   const fetchUsers = useCallback(async () => {
+    // Generate cache key based on filters
+    const cacheKey = `userManagementList_${filters.status}_${filters.search}_${filters.page}`;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+    
+    if (cachedData && cacheTimestamp) {
+      const age = Date.now() - parseInt(cacheTimestamp);
+      if (age < 120000) { // 2 minutes
+        const parsed = JSON.parse(cachedData);
+        setUsers(parsed.users);
+        setPagination(parsed.pagination);
+        setLoading(false);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     try {
       const response = await userManagementService.getAllUsers(filters);
       if (response?.data?.success) {
-        setUsers(response.data.data || []);
-        setPagination(response.data.pagination || pagination);
+        const usersData = response.data.data || [];
+        const paginationData = response.data.pagination || pagination;
+        
+        setUsers(usersData);
+        setPagination(paginationData);
+        
+        // Cache the data
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          users: usersData,
+          pagination: paginationData,
+        }));
+        sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
       }
     } catch (err) {
       console.error("Error fetching users:", err);
@@ -86,7 +129,7 @@ export const useUserManagement = () => {
   }, []);
 
   /**
-   * Block a user
+   * Block a user and clear cache
    */
   const blockUser = useCallback(
     async (userId, reason = null) => {
@@ -94,6 +137,15 @@ export const useUserManagement = () => {
         const response = await userManagementService.blockUser(userId, reason);
         if (response?.data?.success) {
           toast.success(response.data.message || "User blocked successfully");
+          
+          // Clear cache
+          const keys = Object.keys(sessionStorage);
+          keys.forEach(key => {
+            if (key.startsWith('userManagementList_') || key === 'userManagementStats') {
+              sessionStorage.removeItem(key);
+            }
+          });
+          
           // Refresh data
           await Promise.all([fetchUsers(), fetchStats()]);
           return true;
@@ -108,7 +160,7 @@ export const useUserManagement = () => {
   );
 
   /**
-   * Unblock a user
+   * Unblock a user and clear cache
    */
   const unblockUser = useCallback(
     async (userId) => {
@@ -116,6 +168,15 @@ export const useUserManagement = () => {
         const response = await userManagementService.unblockUser(userId);
         if (response?.data?.success) {
           toast.success(response.data.message || "User unblocked successfully");
+          
+          // Clear cache
+          const keys = Object.keys(sessionStorage);
+          keys.forEach(key => {
+            if (key.startsWith('userManagementList_') || key === 'userManagementStats') {
+              sessionStorage.removeItem(key);
+            }
+          });
+          
           // Refresh data
           await Promise.all([fetchUsers(), fetchStats()]);
           return true;
