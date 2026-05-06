@@ -115,6 +115,10 @@ const RequestInvestigationPage = () => {
     evidence_type: formData.evidenceType,
     existing_evidence: formData.existingEvidence,
     agreement_confirmed: formData.legalConsent,
+    digital_signature: formData.signatureFile?.url || null,
+    evidence_files: (formData.uploadedFiles || [])
+      .filter(f => f.url)
+      .map(f => ({ file_name: f.name, file_url: f.url })),
   });
 
   const handleNext = async () => {
