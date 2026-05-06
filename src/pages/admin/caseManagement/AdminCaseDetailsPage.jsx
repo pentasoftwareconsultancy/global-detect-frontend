@@ -86,7 +86,6 @@ const AdminCaseDetailsPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   
   const caseItem = state?.caseItem;
-  const openAssignModal = state?.openAssignModal || false;
 
   // Fetch case details from backend
   useEffect(() => {
@@ -145,16 +144,6 @@ const AdminCaseDetailsPage = () => {
 
     fetchAvailableDetectives();
   }, []);
-
-  // Open assign modal if requested from case list
-  useEffect(() => {
-    if (openAssignModal && !loading && caseData) {
-      // Check if case is unassigned
-      if (!caseData.detectiveInfo) {
-        setShowAssignModal(true);
-      }
-    }
-  }, [openAssignModal, loading, caseData]);
 
   // Handle assign detective
   const handleAssignDetective = async () => {
@@ -241,12 +230,15 @@ const AdminCaseDetailsPage = () => {
               Assign Detective
             </button>
           )}
-          <button
-            onClick={() => setShowPayment(true)}
-            className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
-          >
-            Add Payment details
-          </button>
+          {/* Show Add Payment details button only if detective is assigned */}
+          {caseData?.detectiveInfo && (
+            <button 
+              onClick={() => setShowPayment(true)} 
+              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+            >
+              Add Payment details
+            </button>
+          )}
         </div>
       </div>
 

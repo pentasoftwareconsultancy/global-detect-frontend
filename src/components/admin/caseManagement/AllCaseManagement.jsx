@@ -544,7 +544,13 @@ const CaseManagement = () => {
                     <div className="text-sm text-[#8FA3B0] italic">{item.detective || "Unassigned"}</div>
                     <div className="flex justify-end gap-2">
                       {(!item.detectiveId || item.detective === "Unassigned") && (
-                        <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item, openAssignModal: true } })} className="p-2 bg-red-500 rounded-lg hover:bg-red-600" title="Assign Detective"><MdOutlinePersonAddAlt /></button>
+                        <button
+                          onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })}
+                          className="p-2 bg-red-500 rounded-lg hover:bg-red-600"
+                          title="Assign Detective"
+                        >
+                          <MdOutlinePersonAddAlt />
+                        </button>
                       )}
                       <button onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })} className="p-2 border border-[#243642] rounded-lg hover:bg-[#223544]" title="View Details"><Eye size={16} /></button>
                       <button onClick={() => { setSelectedCase(item); setShowDeleteModal(true); }} className="p-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10" title="Delete Case"><Trash2 size={16} /></button>
