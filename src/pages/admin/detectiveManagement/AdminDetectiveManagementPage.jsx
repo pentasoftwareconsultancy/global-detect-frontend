@@ -3,7 +3,7 @@ import {
   Search, MapPin, Clock, CheckCircle, Users, Eye,
   X, Loader2, AlertCircle, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ROUTES } from "../../../core/constants/routes.constant";
 import { authService } from "../../../core/services/auth.service";
@@ -95,6 +95,7 @@ const tabToFilters = (tab) => {
 const AdminDetectiveManagementPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   const tabFromUrl = searchParams.get("tab") ?? "all";
   const [activeTab, setActiveTab] = useState(
@@ -196,8 +197,9 @@ const AdminDetectiveManagementPage = () => {
   }, [activeTab, search, pagination.limit]); // eslint-disable-line
 
   /* ── effects ── */
-  useEffect(() => { fetchStats(); }, [fetchStats]);
-  useEffect(() => { fetchDetectives(1); }, [activeTab, search]); // eslint-disable-line
+  useEffect(() => { fetchStats(); }, [fetchStats, location.key]);
+  // Re-fetch list whenever tab/search changes OR when navigating back to this page
+  useEffect(() => { fetchDetectives(1); }, [activeTab, search, location.key]); // eslint-disable-line
 
   // debounce search
   useEffect(() => {
