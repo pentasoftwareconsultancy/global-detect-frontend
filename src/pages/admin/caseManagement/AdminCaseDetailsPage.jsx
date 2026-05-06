@@ -30,7 +30,7 @@ const statusStyle = {
 
 const PaymentModal = ({ onClose }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-    <div className="bg-[#1A2832] rounded-2xl w-full max-w-2xl p-6 relative">
+    <div className="bg-[#1A2832] rounded-2xl w-full max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
       <button onClick={onClose} className="absolute top-4 right-4 text-[#8FA3B0] hover:text-white"><X size={16} /></button>
 
       {/* Header */}
@@ -212,18 +212,17 @@ const AdminCaseDetailsPage = () => {
   const data = caseData;
 
   return (
-    <div className="bg-[#121F27] text-white min-h-screen px-4 sm:px-6 py-5 font-[Montserrat]">
+    <div className=" text-white min-h-screen px-4 sm:px-6 py-5 font-[Montserrat]">
       {showPayment && <PaymentModal onClose={() => setShowPayment(false)} />}
 
       {/* Top bar */}
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-[#8FA3B0] hover:text-white transition">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-[#8FA3B0] hover:text-white transition w-fit">
           <ArrowLeft size={15} /> Back
         </button>
-        <div className="flex items-center gap-3">
-          {/* Show Assign Detective button if case is unassigned */}
+        <div className="flex items-center gap-2 flex-wrap">
           {!caseData?.detectiveInfo && (
-            <button 
+            <button
               onClick={() => setShowAssignModal(true)}
               className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
             >
@@ -520,3 +519,4 @@ const AdminCaseDetailsPage = () => {
 };
 
 export default AdminCaseDetailsPage;
+ 
