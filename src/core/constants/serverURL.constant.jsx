@@ -30,6 +30,9 @@ class ServerUrl {
     // user request form api endpoint
     static REQUEST_FORM_API = `${ServerUrl.REACT_APP_API_URL}/${API_MODULE.REQUEST_FORM}`;
 
+        // File upload (evidence / signature)
+        static UPLOAD_CASE_FILE_API = `${ServerUrl.REQUEST_FORM_API}/upload-file`;
+
         // Public routes
         static DRAFT_REQUEST_FORM_API = `${ServerUrl.REQUEST_FORM_API}/draft`;
         static DRAFT_UPDATE_REQUEST_FORM_API = `${ServerUrl.REQUEST_FORM_API}/draft/:formId`;
