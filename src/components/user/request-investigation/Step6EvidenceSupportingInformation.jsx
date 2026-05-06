@@ -1,6 +1,8 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { Upload, X } from 'lucide-react';
+import React, { useState, forwardRef, useImperativeHandle, useRef } from 'react';
+import { Upload, X, Loader2, CheckCircle } from 'lucide-react';
 import { validateRequired, validateSelect } from '../../../hooks/validation';
+import { authService } from '../../../core/services/auth.service';
+import { toast } from 'react-toastify';
 
 const labelStyle = { fontFamily: 'Montserrat', fontWeight: 500, fontSize: '14px', lineHeight: '21px', letterSpacing: '0px', color: '#D1D5DB' };
 const fieldStyle = { borderRadius: '14px', borderWidth: '2px', height: '49px', paddingLeft: '16px', fontFamily: 'Montserrat', fontWeight: 400, fontSize: '14px', color: 'white', backgroundColor: '#0b1120', WebkitTextFillColor: 'white' };
@@ -8,9 +10,10 @@ const fieldClass = "w-full border border-white/20 pr-4 placeholder:text-gray-500
 const errorClass = "text-red-400 text-xs mt-1";
 
 const Step6EvidenceSupportingInformation = forwardRef(({ formData, handleInputChange }, ref) => {
-  const [uploadedFiles1, setUploadedFiles1] = useState(formData.uploadedFiles1 || []);
-  const [uploadedFiles2, setUploadedFiles2] = useState(formData.uploadedFiles2 || []);
+  // uploadedFiles stores { name, url (Cloudinary), uploading }
+  const [uploadedFiles, setUploadedFiles] = useState(formData.uploadedFiles || []);
   const [errors, setErrors] = useState({});
+  const fileInputRef = useRef(null);
 
   const runValidate = (name, value) => {
     if (name === 'existingEvidence') return validateRequired(value, 'Existing Evidence');
@@ -42,23 +45,55 @@ const Step6EvidenceSupportingInformation = forwardRef(({ formData, handleInputCh
     validate(e.target.name, e.target.value);
   };
 
-  const handleFileUpload = (e, setFiles, fieldName) => {
+  /* ── upload files to Cloudinary ── */
+  const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
-    const fileData = files.map(file => ({ name: file.name, url: URL.createObjectURL(file) }));
-    const newFiles = [...(fieldName === 'uploadedFiles1' ? uploadedFiles1 : uploadedFiles2), ...fileData];
-    setFiles(newFiles);
-    handleInputChange({ target: { name: fieldName, value: newFiles } });
+    if (!files.length) return;
+
+    // Add placeholders with uploading state
+    const placeholders = files.map(f => ({ name: f.name, url: null, uploading: true }));
+    const startIdx = uploadedFiles.length;
+    const newList = [...uploadedFiles, ...placeholders];
+    setUploadedFiles(newList);
+
+    // Upload each file
+    const results = await Promise.all(
+      files.map(async (file, i) => {
+        try {
+          const res = await authService.uploadCaseFile(file, 'case-evidence');
+          const url = res?.data?.data?.url || res?.data?.url;
+          if (!url) throw new Error('No URL');
+          return { name: file.name, url, uploading: false };
+        } catch {
+          toast.error(`Failed to upload ${file.name}`);
+          return { name: file.name, url: null, uploading: false, failed: true };
+        }
+      })
+    );
+
+    setUploadedFiles(prev => {
+      const updated = [...prev];
+      results.forEach((r, i) => { updated[startIdx + i] = r; });
+      // filter out failed ones
+      const final = updated.filter(f => !f.failed);
+      handleInputChange({ target: { name: 'uploadedFiles', value: final } });
+      return final;
+    });
+
+    // reset input so same file can be re-selected
+    e.target.value = '';
   };
 
-  const removeFile = (index, files, setFiles, fieldName) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    handleInputChange({ target: { name: fieldName, value: newFiles } });
+  const removeFile = (index) => {
+    const newFiles = uploadedFiles.filter((_, i) => i !== index);
+    setUploadedFiles(newFiles);
+    handleInputChange({ target: { name: 'uploadedFiles', value: newFiles } });
   };
 
   return (
     <div className="space-y-8">
 
+      {/* Dropdowns */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label style={labelStyle}>Existing Evidence Available?</label>
@@ -84,32 +119,58 @@ const Step6EvidenceSupportingInformation = forwardRef(({ formData, handleInputCh
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {[
-          { id: 'upload1', files: uploadedFiles1, setFiles: setUploadedFiles1, fieldName: 'uploadedFiles1' },
-          { id: 'upload2', files: uploadedFiles2, setFiles: setUploadedFiles2, fieldName: 'uploadedFiles2' },
-        ].map(({ id, files, setFiles, fieldName }) => (
-          <div key={id} className="space-y-2">
-            <label style={labelStyle}>Upload Documents</label>
-            <input type="file" id={id} multiple className="hidden" onChange={(e) => handleFileUpload(e, setFiles, fieldName)} />
-            <label htmlFor={id} style={{ borderRadius: '14px', borderWidth: '2px', backgroundColor: '#0b1120' }} className="border-2 border-dashed border-white/20 p-8 flex flex-col items-center justify-center gap-3 hover:border-white/40 transition-colors cursor-pointer min-h-[160px]">
-              <Upload size={32} className="text-gray-400" />
-              <span style={labelStyle}>Upload documents</span>
-            </label>
-            {files.length > 0 && (
-              <div className="space-y-2 mt-2">
-                {files.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between rounded-lg p-2" style={{ backgroundColor: '#0b1120', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <span style={{ fontFamily: 'Montserrat', fontSize: '13px', color: '#D1D5DB' }} className="truncate">{file.name}</span>
-                    <button onClick={() => removeFile(index, files, setFiles, fieldName)} className="text-red-400 hover:text-red-300 ml-2 flex-shrink-0">
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
+      {/* Single centred upload zone */}
+      <div className="space-y-3">
+        <label style={labelStyle}>Upload Documents</label>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/*,.pdf,.doc,.docx,.mp4,.mov"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
+
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          style={{ borderRadius: '14px', backgroundColor: '#0b1120' }}
+          className="border-2 border-dashed border-white/20 p-10 flex flex-col items-center justify-center gap-3 hover:border-white/40 transition-colors cursor-pointer min-h-[180px]"
+        >
+          <Upload size={36} className="text-gray-400" />
+          <span style={labelStyle}>Click to upload documents</span>
+          <span style={{ fontFamily: 'Montserrat', fontSize: '12px', color: '#6B7280' }}>
+            PDF, JPG, PNG, MP4 — single or multiple files
+          </span>
+        </div>
+
+        {/* File list */}
+        {uploadedFiles.length > 0 && (
+          <div className="space-y-2 mt-3">
+            {uploadedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between rounded-lg p-2 gap-2"
+                style={{ backgroundColor: '#0b1120', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  {file.uploading
+                    ? <Loader2 size={14} className="text-gray-400 animate-spin shrink-0" />
+                    : <CheckCircle size={14} className="text-green-400 shrink-0" />
+                  }
+                  <span style={{ fontFamily: 'Montserrat', fontSize: '13px', color: '#D1D5DB' }} className="truncate">
+                    {file.uploading ? `Uploading ${file.name}…` : file.name}
+                  </span>
+                </div>
+                {!file.uploading && (
+                  <button onClick={() => removeFile(index)} className="text-red-400 hover:text-red-300 shrink-0">
+                    <X size={16} />
+                  </button>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
     </div>

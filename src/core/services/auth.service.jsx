@@ -97,6 +97,15 @@ export const authService = {
       });
     },
 
+    uploadCaseFile: async (file, folder = 'case-evidence') => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const axiosInstance = ApiInterceptor.init();
+      return axiosInstance.post(`${ServerUrl.UPLOAD_CASE_FILE_API}?folder=${folder}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+
     // Update Draft
     updateDraftRequestForm: async (formId, formData) => {
       const endpoint = ServerUrl.DRAFT_UPDATE_REQUEST_FORM_API.replace(':formId', formId);
