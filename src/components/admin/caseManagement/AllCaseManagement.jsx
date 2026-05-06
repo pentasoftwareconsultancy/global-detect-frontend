@@ -598,7 +598,7 @@ const CaseManagement = () => {
                       {/* SHOW ASSIGN BUTTON IF UNASSIGNED */}
                       {(!item.detectiveId || item.detective === "Unassigned") && (
                         <button
-                          onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item, openAssignModal: true } })}
+                          onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })}
                           className="p-2 bg-red-500 rounded-lg hover:bg-red-600"
                           title="Assign Detective"
                         >
