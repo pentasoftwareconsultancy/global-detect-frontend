@@ -39,7 +39,7 @@ const InsightFormModal = ({ onClose, caseId, onSuccess }) => {
   const summaryRef = useRef(null);
   const keyFindingsRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
-  const [countdown, setCountdown] = useState(null);
+  //const [countdown, setCountdown] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
   const validate = () => {
