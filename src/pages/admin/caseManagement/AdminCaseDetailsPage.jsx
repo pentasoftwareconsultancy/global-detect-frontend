@@ -10,6 +10,33 @@ const card = 'bg-[#1A2832] border border-white/10 rounded-xl p-5 mb-4';
 const lbl = 'text-xs text-[#8FA3B0] mb-0.5';
 const val = 'text-sm text-white font-medium';
 
+// Helper function to parse detective insights
+const parseDetectiveInsights = (insights) => {
+  if (!insights) return null;
+  
+  try {
+    const parsed = typeof insights === 'string' ? JSON.parse(insights) : insights;
+    
+    if (parsed && typeof parsed === 'object') {
+      // Check if it's the comprehensive report structure
+      if (parsed.detectiveInsights && parsed.adminReport) {
+        return {
+          type: 'detective',
+          detective: parsed.detectiveInsights
+        };
+      }
+      // Just detective insights
+      return {
+        type: 'detective',
+        detective: parsed
+      };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+};
+
 const priorityStyle = {
   'urgent priority': 'bg-red-500/20 text-red-400 border border-red-500/30',
   urgent:            'bg-red-500/20 text-red-400 border border-red-500/30',
@@ -211,6 +238,9 @@ const AdminCaseDetailsPage = () => {
 
   const data = caseData;
 
+  // Parse detective insights
+  const parsedInsights = parseDetectiveInsights(data?.investigationInsights);
+
   return (
     <div className=" text-white min-h-screen px-4 sm:px-6 py-5 font-[Montserrat]">
       {showPayment && <PaymentModal onClose={() => setShowPayment(false)} />}
@@ -366,19 +396,101 @@ const AdminCaseDetailsPage = () => {
             </div>
           )}
 
-          {/* Detective Insights */}
-          {data.investigationInsights && (
+          {/* Detective Insights - Formatted Display */}
+          {parsedInsights && parsedInsights.detective && (
             <div className={card}>
               <p className="text-sm font-semibold text-white mb-1">Detective Insights</p>
               <p className="text-xs text-[#8FA3B0] mb-4">Investigation findings and observations</p>
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="text-sm font-semibold text-white">{data.detectiveInfo?.name || 'Detective'}</p>
-                  <p className="text-xs text-[#8FA3B0]">{data.insightsSubmittedAt ? new Date(data.insightsSubmittedAt).toLocaleString() : 'N/A'}</p>
-                </div>
-                <span className="flex items-center gap-1 text-xs text-[#8FA3B0]"><CheckCircle size={12} /> Submitted</span>
+              
+              <div className="space-y-4">
+                {/* Status */}
+                {parsedInsights.detective.status && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Status</p>
+                    <span className="inline-block text-xs border border-white/20 rounded px-3 py-1 text-white">
+                      {parsedInsights.detective.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
+                  </div>
+                )}
+
+                {/* Summary */}
+                {parsedInsights.detective.summary && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Investigation Summary</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.summary}</p>
+                  </div>
+                )}
+
+                {/* Key Findings */}
+                {parsedInsights.detective.keyFindings && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Key Findings</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.keyFindings}</p>
+                  </div>
+                )}
+
+                {/* Locations */}
+                {parsedInsights.detective.locations && parsedInsights.detective.locations.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">Locations Visited</p>
+                    {parsedInsights.detective.locations.map((loc, i) => (
+                      loc.address && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium">{loc.address}</p>
+                          {loc.findings && <p className="text-xs text-[#8FA3B0] mt-1">{loc.findings}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* People Interviewed */}
+                {parsedInsights.detective.people && parsedInsights.detective.people.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">People Interviewed</p>
+                    {parsedInsights.detective.people.map((person, i) => (
+                      person.name && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium">{person.name}</p>
+                          {person.relationship && <p className="text-xs text-[#8FA3B0]">Relationship: {person.relationship}</p>}
+                          {person.notes && <p className="text-xs text-[#8FA3B0] mt-1">{person.notes}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* Evidence */}
+                {parsedInsights.detective.evidences && parsedInsights.detective.evidences.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">Evidence Collected</p>
+                    {parsedInsights.detective.evidences.map((evidence, i) => (
+                      evidence.type && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium capitalize">{evidence.type}</p>
+                          {evidence.description && <p className="text-xs text-[#8FA3B0] mt-1">{evidence.description}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* Recommendations */}
+                {parsedInsights.detective.recommendations && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Recommendations</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.recommendations}</p>
+                  </div>
+                )}
+
+                {/* Next Steps */}
+                {parsedInsights.detective.nextSteps && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Next Steps</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.nextSteps}</p>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-[#8FA3B0] mb-3">{data.investigationInsights}</p>
             </div>
           )}
         </div>

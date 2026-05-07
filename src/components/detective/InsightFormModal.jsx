@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { FileText, MapPin, User, Camera, Send, Info, Plus, Upload } from 'lucide-react';
 import { validateOnlyCharacters, validateRequired, restrictToLetters } from '../../hooks/validation';
+import * as detectiveDashboardService from '../../core/services/detectiveDashboard.service';
+import { toast } from 'react-toastify';
 
 const inputCls = "w-full bg-[#1C2B35] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-white/30 transition";
 const textareaCls = "w-full bg-[#1C2B35] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-white/30 transition resize-none";
@@ -22,7 +24,7 @@ const SectionLabel = ({ icon, text, required }) => (
 
 const Divider = () => <div className="border-t border-white/5 my-5" />;
 
-const InsightFormModal = ({ onClose }) => {
+const InsightFormModal = ({ onClose, caseId, onSuccess }) => {
   const [status, setStatus] = useState('');
   const [summary, setSummary] = useState('');
   const [keyFindings, setKeyFindings] = useState('');
@@ -48,7 +50,7 @@ const InsightFormModal = ({ onClose }) => {
     return errs;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setFormErrors(errs);
@@ -57,20 +59,47 @@ const InsightFormModal = ({ onClose }) => {
       else if (errs.keyFindings) keyFindingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    
     setFormErrors({});
     setSubmitting(true);
-    let secs = 2;
-    setCountdown(secs);
-    const interval = setInterval(() => {
-      secs -= 1;
-      setCountdown(secs);
-      if (secs === 0) {
-        clearInterval(interval);
-        setSubmitting(false);
-        setCountdown(null);
-        onClose();
+
+    try {
+      // Build insights payload
+      const insightsPayload = {
+        status,
+        summary,
+        keyFindings,
+        locations: locations.filter(loc => loc.address || loc.findings),
+        people: people.filter(p => p.name || p.relationship || p.notes),
+        evidences: evidences.filter(ev => ev.type || ev.description),
+        recommendations,
+        nextSteps
+      };
+
+      // Submit insights to API
+      const response = await detectiveDashboardService.submitInsights(caseId, insightsPayload);
+      
+      if (response.success) {
+        toast.success('Investigation insights submitted successfully!');
+        
+        // Call onSuccess callback to refresh case details
+        if (onSuccess) {
+          onSuccess();
+        }
+        
+        // Close modal after short delay
+        setTimeout(() => {
+          setSubmitting(false);
+          onClose();
+        }, 1000);
+      } else {
+        throw new Error(response.message || 'Failed to submit insights');
       }
-    }, 1000);
+    } catch (error) {
+      console.error('Error submitting insights:', error);
+      toast.error(error.response?.data?.message || 'Failed to submit investigation insights. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -86,7 +115,9 @@ const InsightFormModal = ({ onClose }) => {
         style={{
           background: '#121F27',
           overflowY: 'auto',
+          scrollbarWidth: 'none',
           borderTop: '1px solid rgba(255,255,255,0.08)',
+          borderRadius : '12px',
         }}
       >
         <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6 max-w-[1300px] mx-auto">
@@ -121,7 +152,7 @@ const InsightFormModal = ({ onClose }) => {
           <div className="mb-5" ref={summaryRef}>
             <SectionLabel icon={<FileText size={15} />} text="Investigation Summary" required />
             <textarea
-              rows={3}
+              rows={2}
               value={summary}
               onChange={e => { setSummary(e.target.value); setFormErrors(p => ({ ...p, summary: '' })); }}
               placeholder="Provide a brief overview of your investigation activities and progress..."
@@ -136,7 +167,7 @@ const InsightFormModal = ({ onClose }) => {
           <div className="mb-5" ref={keyFindingsRef}>
             <SectionLabel icon={<FileText size={15} />} text="Key Findings" required />
             <textarea
-              rows={3}
+              rows={2}
               value={keyFindings}
               onChange={e => { setKeyFindings(e.target.value); setFormErrors(p => ({ ...p, keyFindings: '' })); }}
               placeholder="List the most important discoveries, evidence, and observations from your investigation..."
@@ -159,7 +190,7 @@ const InsightFormModal = ({ onClose }) => {
                   className={inputCls}
                 />
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={loc.findings}
                   onChange={e => { const l = [...locations]; l[i].findings = e.target.value; setLocations(l); }}
                   placeholder="Findings at this location..."
@@ -212,7 +243,7 @@ const InsightFormModal = ({ onClose }) => {
                   {peopleErrors[i]?.relationship && <p className="text-xs text-[#dc3545] mt-1">{peopleErrors[i].relationship}</p>}
                 </div>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={p.notes}
                   onChange={e => { const arr = [...people]; arr[i].notes = e.target.value; setPeople(arr); }}
                   placeholder="Interview notes and key information..."
@@ -283,7 +314,7 @@ const InsightFormModal = ({ onClose }) => {
           <div className="mb-5">
             <p className="text-sm font-semibold text-white mb-3">Recommendations</p>
             <textarea
-              rows={3}
+              rows={2}
               value={recommendations}
               onChange={e => setRecommendations(e.target.value)}
               placeholder="Your professional recommendations based on findings..."
@@ -295,7 +326,7 @@ const InsightFormModal = ({ onClose }) => {
           <div className="mb-5">
             <p className="text-sm font-semibold text-white mb-3">Next Steps</p>
             <textarea
-              rows={3}
+              rows={2}
               value={nextSteps}
               onChange={e => setNextSteps(e.target.value)}
               placeholder="Suggested next steps for the investigation..."
@@ -304,7 +335,7 @@ const InsightFormModal = ({ onClose }) => {
           </div>
 
           {/* Info note */}
-          <div className="flex items-start gap-2 bg-[#1C2B35] border border-white/10 rounded-lg px-4 py-3 mb-6">
+          <div className="flex items-start gap-2 bg-[#33444E] border border-white/10 rounded-lg px-4 py-3 mb-6">
             <Info size={14} className="text-gray-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-gray-400 leading-relaxed">
               All submitted insights will be reviewed by the admin before being compiled into the final report for the client. Ensure all information is accurate and professional.
@@ -313,7 +344,7 @@ const InsightFormModal = ({ onClose }) => {
 
           {/* Bottom Cancel + Submit */}
           <div className="flex items-center justify-center gap-3 pb-4">
-            <button onClick={onClose} className="text-sm text-gray-400 hover:text-white transition px-4 py-2">
+            <button onClick={onClose} className="text-sm text-gray-400 hover:text-white transition px-4 py-2 border border-gray-700 rounded-lg">
               Cancel
             </button>
             <button
@@ -321,7 +352,7 @@ const InsightFormModal = ({ onClose }) => {
               disabled={submitting}
               className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition cursor-pointer"
             >
-              <Send size={13} /> {submitting ? `Submitting... (${countdown}s)` : 'Submit Insights'}
+              <Send size={13} /> {submitting ? 'Submitting...' : 'Submit Insights'}
             </button>
           </div>
 

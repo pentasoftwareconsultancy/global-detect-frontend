@@ -125,10 +125,10 @@ class AdminCaseService {
   /**
    * Generate case report
    */
-  async generateCaseReport(caseId) {
+  async generateCaseReport(caseId, reportData) {
     try {
       const url = ServerUrl.GENERATE_CASE_REPORT_API.replace(':id', caseId);
-      const response = await ApiInterceptor.init().post(url);
+      const response = await ApiInterceptor.init().post(url, reportData);
       return response.data;
     } catch (error) {
       console.error('generateCaseReport error:', error);
