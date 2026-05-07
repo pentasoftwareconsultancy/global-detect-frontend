@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { FileText, MapPin, User, Camera, Send, Info, Plus, Upload } from 'lucide-react';
 import { validateOnlyCharacters, validateRequired, restrictToLetters } from '../../hooks/validation';
+import * as detectiveDashboardService from '../../core/services/detectiveDashboard.service';
+import { toast } from 'react-toastify';
 
 const inputCls = "w-full bg-[#1C2B35] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-white/30 transition";
 const textareaCls = "w-full bg-[#1C2B35] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-white/30 transition resize-none";
@@ -22,7 +24,7 @@ const SectionLabel = ({ icon, text, required }) => (
 
 const Divider = () => <div className="border-t border-white/5 my-5" />;
 
-const InsightFormModal = ({ onClose }) => {
+const InsightFormModal = ({ onClose, caseId, onSuccess }) => {
   const [status, setStatus] = useState('');
   const [summary, setSummary] = useState('');
   const [keyFindings, setKeyFindings] = useState('');
@@ -48,7 +50,7 @@ const InsightFormModal = ({ onClose }) => {
     return errs;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setFormErrors(errs);
@@ -57,20 +59,47 @@ const InsightFormModal = ({ onClose }) => {
       else if (errs.keyFindings) keyFindingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    
     setFormErrors({});
     setSubmitting(true);
-    let secs = 2;
-    setCountdown(secs);
-    const interval = setInterval(() => {
-      secs -= 1;
-      setCountdown(secs);
-      if (secs === 0) {
-        clearInterval(interval);
-        setSubmitting(false);
-        setCountdown(null);
-        onClose();
+
+    try {
+      // Build insights payload
+      const insightsPayload = {
+        status,
+        summary,
+        keyFindings,
+        locations: locations.filter(loc => loc.address || loc.findings),
+        people: people.filter(p => p.name || p.relationship || p.notes),
+        evidences: evidences.filter(ev => ev.type || ev.description),
+        recommendations,
+        nextSteps
+      };
+
+      // Submit insights to API
+      const response = await detectiveDashboardService.submitInsights(caseId, insightsPayload);
+      
+      if (response.success) {
+        toast.success('Investigation insights submitted successfully!');
+        
+        // Call onSuccess callback to refresh case details
+        if (onSuccess) {
+          onSuccess();
+        }
+        
+        // Close modal after short delay
+        setTimeout(() => {
+          setSubmitting(false);
+          onClose();
+        }, 1000);
+      } else {
+        throw new Error(response.message || 'Failed to submit insights');
       }
-    }, 1000);
+    } catch (error) {
+      console.error('Error submitting insights:', error);
+      toast.error(error.response?.data?.message || 'Failed to submit investigation insights. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -321,7 +350,7 @@ const InsightFormModal = ({ onClose }) => {
               disabled={submitting}
               className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition cursor-pointer"
             >
-              <Send size={13} /> {submitting ? `Submitting... (${countdown}s)` : 'Submit Insights'}
+              <Send size={13} /> {submitting ? 'Submitting...' : 'Submit Insights'}
             </button>
           </div>
 

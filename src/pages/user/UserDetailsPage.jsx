@@ -9,11 +9,41 @@ import {authService} from '../../core/services/auth.service'; // adjust path
 
 import { ArrowLeft, Download, Mail, Phone, MapPin, Clock, Calendar, FileText, User, Copy, FileSearch, CheckCircle } from "lucide-react";
 
+// Helper function to parse comprehensive report (detective insights + admin report)
+const parseComprehensiveReport = (insights) => {
+  if (!insights) return null;
+  
+  try {
+    const parsed = typeof insights === 'string' ? JSON.parse(insights) : insights;
+    
+    // Check if it's the comprehensive report structure
+    if (parsed && typeof parsed === 'object') {
+      if (parsed.detectiveInsights && parsed.adminReport) {
+        return {
+          type: 'comprehensive',
+          detective: parsed.detectiveInsights,
+          admin: parsed.adminReport
+        };
+      }
+      // Just detective insights
+      return {
+        type: 'detective',
+        detective: parsed
+      };
+    }
+    return null;
+  } catch (e) {
+    console.error('Failed to parse insights:', e);
+    return null;
+  }
+};
+
 const CaseDetails = () => {
   const { id } = useParams();
 
   const [caseData, setCaseData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [comprehensiveReport, setComprehensiveReport] = useState(null);
 
   useEffect(() => {
     const fetchCaseDetails = async () => {
@@ -26,6 +56,12 @@ const CaseDetails = () => {
       try {
         const res = await authService.getCaseDetails(id);
         setCaseData(res.data);
+        
+        // Parse comprehensive report if available
+        if (res.data?.investigationInsights) {
+          const parsed = parseComprehensiveReport(res.data.investigationInsights);
+          setComprehensiveReport(parsed);
+        }
       } catch (err) {
         console.error('Error fetching case details:', err);
         setCaseData(null);
@@ -167,107 +203,92 @@ const CaseDetails = () => {
         </div>
       </div>
 
-      {/* FINAL REPORT */}
-      <div className="mt-6 border border-red-500 rounded-lg p-4 bg-[#14232d] relative">
-
-
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4">
-
-          {/* LEFT SIDE (Icon + Title) */}
-          <div className="flex items-center gap-2">
-            <CheckCircle size={16} className="text-red-500" />
-            <h2 className="text-sm font-semibold text-white">Final Report</h2>
-          </div>
-
-          {/* RIGHT SIDE (Button) */}
-          <button className="flex items-center gap-2 bg-red-500 text-s px-3 py-1 rounded w-fit">
-            <Download size={14} />
-            Download report
-          </button>
-
-        </div>
-
-        <p className="text-xs text-gray-400 mb-2">Generated on 1/30/2026</p>
-        <h3 className="text-sm font-semibold mb-2">Summary</h3>
-        <p className="text-sm mb-4">
-          All assets successfully recovered and documented. Case closed with positive outcome.
-        </p>
-
-        <hr className="border-t border-gray-600 my-4" />
-
-
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold mb-2">Key Findings</h3>
-          <ul className="space-y-2 text-xs text-gray-300">
-            <li className="flex items-start gap-2">
-              <CheckCircle size={14} className="text-red-500 mt-0.5" />
-              Assets located in storage unit 547
-            </li>
-
-            <li className="flex items-start gap-2">
-              <CheckCircle size={14} className="text-red-500 mt-0.5" />
-              All items accounted
-            </li>
-
-            <li className="flex items-start gap-2">
-              <CheckCircle size={14} className="text-red-500 mt-0.5" />
-              Items returned to client
-            </li>
-
-            <li className="flex items-start gap-2">
-              <CheckCircle size={14} className="text-red-500 mt-0.5" />
-              No criminal charges filed
-            </li>
-          </ul>
-        </div>
-
-        <hr className="border-t border-gray-600 my-4" />
-
-
-        {/* Files */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold">Report Documents</h2>
-          <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
-
-            {/* LEFT SIDE */}
-            <div className="flex items-center gap-3">
-              <FileText size={18} className="text-red-500" />
-
-              <div>
-                <p className="text-sm text-white">Final_Report.pdf</p>
-                <p className="text-xs text-gray-400">PDF</p>
-              </div>
+      {/* FINAL REPORT - Display only if comprehensive report exists */}
+      {comprehensiveReport && comprehensiveReport.type === 'comprehensive' && (
+        <div className="mt-6 border border-red-500 rounded-lg p-4 bg-[#14232d] relative">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle size={16} className="text-red-500" />
+              <h2 className="text-sm font-semibold text-white">Final Investigation Report</h2>
             </div>
-
-            {/* RIGHT SIDE */}
-            <button className="bg-red-500 text-s px-2 py-1 rounded flex items-center gap-1">
-              <Download size={12} />
-              Download
-            </button>
-
           </div>
 
-          <div className="flex justify-between items-center bg-[#0f1c24] p-3 rounded-md">
+          <p className="text-xs text-gray-400 mb-4">
+            Generated on {comprehensiveReport.admin.generatedAt ? new Date(comprehensiveReport.admin.generatedAt).toLocaleDateString() : 'N/A'}
+          </p>
 
-            {/* LEFT SIDE */}
-            <div className="flex items-center gap-3">
-              <FileText size={18} className="text-red-500" />
-
-              <div>
-                <p className="text-sm text-white">Evidence_Photos.zip</p>
-                <p className="text-xs text-gray-400">ZIP</p>
-              </div>
+          {/* Executive Summary */}
+          {comprehensiveReport.admin.executiveSummary && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Executive Summary</h3>
+              <p className="text-sm text-gray-300">{comprehensiveReport.admin.executiveSummary}</p>
             </div>
+          )}
 
-            {/* RIGHT SIDE */}
-            <button className="bg-red-500 text-s px-2 py-1 rounded flex items-center gap-1">
-              <Download size={12} />
-              Download
-            </button>
+          <hr className="border-t border-gray-600 my-4" />
 
-          </div>
+          {/* Key Findings */}
+          {comprehensiveReport.admin.keyFindings && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Key Findings</h3>
+              <div className="text-sm text-gray-300 whitespace-pre-wrap">{comprehensiveReport.admin.keyFindings}</div>
+            </div>
+          )}
+
+          <hr className="border-t border-gray-600 my-4" />
+
+          {/* Evidence Collected */}
+          {comprehensiveReport.admin.evidenceCollected && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Evidence Collected</h3>
+              <p className="text-sm text-gray-300">{comprehensiveReport.admin.evidenceCollected}</p>
+            </div>
+          )}
+
+          <hr className="border-t border-gray-600 my-4" />
+
+          {/* Recommendations */}
+          {comprehensiveReport.admin.recommendations && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Recommendations</h3>
+              <p className="text-sm text-gray-300">{comprehensiveReport.admin.recommendations}</p>
+            </div>
+          )}
+
+          <hr className="border-t border-gray-600 my-4" />
+
+          {/* Next Steps */}
+          {comprehensiveReport.admin.nextSteps && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Next Steps</h3>
+              <p className="text-sm text-gray-300">{comprehensiveReport.admin.nextSteps}</p>
+            </div>
+          )}
+
+          <hr className="border-t border-gray-600 my-4" />
+
+          {/* Conclusion */}
+          {comprehensiveReport.admin.conclusion && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Conclusion</h3>
+              <p className="text-sm text-gray-300">{comprehensiveReport.admin.conclusion}</p>
+            </div>
+          )}
         </div>
-      </div>
+      )}
+
+      {/* Show message if no report available yet */}
+      {!comprehensiveReport && caseData && (
+        <div className="mt-6 border border-gray-600 rounded-lg p-4 bg-[#14232d]">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock size={16} className="text-gray-400" />
+            <h2 className="text-sm font-semibold text-white">Investigation In Progress</h2>
+          </div>
+          <p className="text-xs text-gray-400">
+            Your case is currently being investigated. The final report will be available here once the investigation is complete.
+          </p>
+        </div>
+      )}
 
       {/* ================= NEW SECTION ================= */}
 
