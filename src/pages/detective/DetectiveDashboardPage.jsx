@@ -5,7 +5,6 @@ import { ROUTES } from '../../core/constants/routes.constant';
 import { LuSend } from "react-icons/lu";
 
 
-
 const DetectiveDashboardPage = () => {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -80,7 +79,7 @@ const DetectiveDashboardPage = () => {
         {/* Card 3 */}
         <div style={{ borderRadius: '20px', border: '0.67px solid #FF4959', background: '#FF495918', padding: '16px 20px' }}>
           <p className="text-red-400 text-sm font-medium mb-3">Admin Changes requested</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
             <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>01</span>
             </div>
@@ -152,11 +151,11 @@ const DetectiveDashboardPage = () => {
         </div>
 
         {/* CARDS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 ">
           {filteredCases.length === 0 ? (
             <p className="text-sm text-gray-400 col-span-2 text-center py-8">No cases match the selected filters.</p>
           ) : filteredCases.map((caseItem) => (
-            <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px' }}>
+            <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px', border: '0.67px solid rgba(255,255,255,0.12)' }}>
 
               {/* Title + badge */}
               <div className="flex items-start justify-between mb-3 gap-2">

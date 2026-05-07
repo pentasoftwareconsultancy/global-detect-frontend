@@ -14,7 +14,7 @@ const DetectiveSidbar = ({ onClose }) => {
     navigate(route);
     if (onClose) onClose();
   };
-
+ 
   const handleLogout = async () => {
     await logout(); // Call backend API and clear storage
     navigate(ROUTES.LOGIN, { replace: true });
@@ -31,13 +31,14 @@ const DetectiveSidbar = ({ onClose }) => {
   return (
     <div
       style={{
-        width: '235px',
+        width: '215px',
         height: '100vh',
         background: '#121F27',
         display: 'flex',
         flexDirection: 'column',
         padding: '16px 12px 16px 20px',
         paddingTop: '74px',
+        
       }}
     >
       {/* Inner pill container */}

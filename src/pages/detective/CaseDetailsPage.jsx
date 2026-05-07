@@ -4,10 +4,10 @@ import { ArrowLeft, Eye, FileText, Download, Calendar, Clock, MapPin, User, Mail
 import { ROUTES } from '../../core/constants/routes.constant';
 import InsightFormModal from '../../components/detective/InsightFormModal';
 
-const card = { background: '#1C2B35', borderRadius: '14px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' };
+const card = { background: '#1C2B35', borderRadius: '14px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' , border: '1px solid rgba(255,255,255,0.08)' };
 const lbl = { fontSize: '12px', color: '#9ca3af', marginBottom: '2px' };
 const val = { fontSize: '14px', color: '#ffffff', fontWeight: '500' };
-const divider = { borderBottom: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' };
+const divider = { borderBottom: '1px solid rgba(255,255,255,0.08)', margin: '6px 0' };
 
 
 // Extended mock data keyed by case id
@@ -99,7 +99,7 @@ const CaseDetailsPage = () => {
       
 
       {/* Case header */}
-      <div className="mb-5" style={{ background: '#1C2B35', borderRadius: '0px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' }}>
+      <div className="mb-5" style={{ background: '#1C2B35', borderRadius: '0px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' , border: '1px solid rgba(255,255,255,0.08)' }}>
         {/* Top bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
         <button onClick={() => navigate(ROUTES.DETECTIVE_DASHBOARD)} className="flex items-center gap-2 text-sm text-gray-300 hover:text-white mb-2 sm:mb-0">
@@ -128,7 +128,7 @@ const CaseDetailsPage = () => {
           {/* Contact Information */}
           <div style={card}>
             <div className="flex items-center gap-2 mb-1">
-              <User size={16} className="text-gray-400" />
+              <User size={16} className="white" />
               <span className="font-semibold text-base">Contact Information</span>
             </div>
             <p className="text-xs text-gray-400 mb-4">Client details from investigation request</p>
@@ -140,21 +140,21 @@ const CaseDetailsPage = () => {
               <div>
                 <p style={lbl}>Email</p>
                 <div className="flex items-center gap-1">
-                  <Mail size={13} className="text-gray-400" />
+                  <Mail size={13} className="text-white" />
                   <p style={val}>{data.contact.email}</p>
                 </div>
               </div>
               <div>
                 <p style={lbl}>Phone</p>
                 <div className="flex items-center gap-1">
-                  <Phone size={13} className="text-gray-400" />
+                  <Phone size={13} className="text-white" />
                   <p style={val}>{data.contact.phone}</p>
                 </div>
               </div>
               <div>
                 <p style={lbl}>Address</p>
                 <div className="flex items-start gap-1">
-                  <Home size={13} className="text-gray-400 mt-0.5" />
+                  <Home size={13} className="text-white mt-0.5" />
                   <p style={{ ...val, whiteSpace: 'pre-line' }}>{data.contact.address}</p>
                 </div>
               </div>
@@ -164,7 +164,7 @@ const CaseDetailsPage = () => {
           {/* Investigation Details */}
           <div style={card}>
             <div className="flex items-center gap-2 mb-1">
-              <FileText size={16} className="text-gray-400" />
+              <FileText size={16} className="text-white" />
               <span className="font-semibold text-base">Investigation Details</span>
             </div>
             <p className="text-xs text-gray-400 mb-4">Type and specifics of the investigation</p>
@@ -175,17 +175,18 @@ const CaseDetailsPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
               <div>
                 <p style={lbl}>Date</p>
-                <div className="flex items-center gap-1"><Calendar size={13} className="text-gray-400" /><p style={val}>{data.incident.date}</p></div>
+                <div className="flex items-center gap-1"><Calendar size={13} className="text-white" /><p style={val}>{data.incident.date}</p></div>
               </div>
               <div>
                 <p style={lbl}>Time</p>
-                <div className="flex items-center gap-1"><Clock size={13} className="text-gray-400" /><p style={val}>{data.incident.time}</p></div>
+                <div className="flex items-center gap-1"><Clock size={13} className="text-white     " /><p style={val}>{data.incident.time}</p></div>
               </div>
             </div>
             <p style={lbl}>Location</p>
-            <div className="flex items-center gap-1 mb-3"><MapPin size={13} className="text-gray-400" /><p style={val}>{data.incident.location}</p></div>
+            <div className="flex items-center gap-1 mb-3"><MapPin size={13} className="text-white" /><p style={val}>{data.incident.location}</p></div>
             <p style={lbl}>Description</p>
             <p style={{ ...val, marginBottom: '12px' }}>{data.incident.description}</p>
+            <div style={divider} />
             <p style={lbl}>Additional Information</p>
             <p style={val}>{data.incident.additionalInfo}</p>
           </div>
@@ -195,9 +196,9 @@ const CaseDetailsPage = () => {
             <p className="font-semibold text-base mb-1">Case Documents</p>
             <p className="text-xs text-gray-400 mb-4">{data.documents.length} file(s) attached</p>
             {data.documents.map((file, i) => (
-              <div key={i} className="flex items-center justify-between py-3" style={{ borderBottom: i < data.documents.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+              <div key={i} className="flex items-center justify-between px-3 py-2 mb-2" style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
                 <div className="flex items-center gap-3">
-                  <FileText size={16} className="text-gray-400" />
+                  <FileText size={16} className="text-white" />
                   <div>
                     <p className="text-sm text-white">{file.name}</p>
                     <p className="text-xs text-gray-400">Uploaded: {file.date}</p>
@@ -258,7 +259,7 @@ const CaseDetailsPage = () => {
               { icon: <FileText size={14} className="text-gray-400" />, label: 'Investigation Type', value: data.investigationType },
             ].map((item, i, arr) => (
               <div key={i}>
-                <div className="flex items-start gap-2 py-2">
+                <div className="flex items-start gap-2 py-1">
                   {item.icon}
                   <div>
                     <p style={lbl}>{item.label}</p>

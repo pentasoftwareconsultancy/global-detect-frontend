@@ -14,7 +14,7 @@ const DetectiveNavbar = ({ onMenuClick }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+ 
   return (
     <nav
       className="sticky top-0 z-50 text-white flex items-center justify-between transition-all duration-300"
