@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../core/constants/routes.constant";
 import { RiNotificationFill } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
-
+ 
 const DetectiveNavbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
@@ -14,12 +14,12 @@ const DetectiveNavbar = ({ onMenuClick }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+ 
   return (
     <nav
       className="sticky top-0 z-50 text-white flex items-center justify-between transition-all duration-300"
       style={{
-        paddingLeft: '20px',
+        paddingLeft: '63px',
         paddingRight: '24px',
         paddingTop: '12px',
         paddingBottom: '12px',
@@ -50,7 +50,7 @@ const DetectiveNavbar = ({ onMenuClick }) => {
           <input
             type="text"
             placeholder="Search"
-            className="bg-[#232E34] rounded-full py-2 pl-10 pr-6 text-sm w-48 lg:w-72 focus:outline-none text-white placeholder:text-gray-400"
+            className="bg-[#232E34] rounded-full py-2 pl-10 pr-6 text-sm w-48 lg:w-82 h-10 focus:outline-none text-white placeholder:text-gray-400"
           />
         </div>
 

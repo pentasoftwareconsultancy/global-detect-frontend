@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sun, Bell, Shield, Lock, Mail, Smartphone, Save, Trash2, Moon } from 'lucide-react';
 
-const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', marginBottom: '16px' };
+const card = { background: '#1C2B35', borderRadius: '14px', padding: '24px', marginBottom: '16px', border: '1px solid rgba(255,255,255,0.08)' };
 const divider = { borderBottom: '1px solid rgba(255,255,255,0.07)' };
 const rowStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0' };
 
@@ -54,7 +54,7 @@ const DetectiveSettingsPage = () => {
       {/* Appearance */}
       <div style={card}>
         <div className="flex items-center gap-2 mb-1">
-          <Sun size={16} style={{ color: '#9ca3af' }} />
+          <Sun size={16} style={{ color: 'white' }} />
           <span className="font-semibold text-base">Appearance</span>
         </div>
         <p className="text-xs text-gray-400 mb-4">Customize the look and feel of the application</p>
@@ -65,7 +65,7 @@ const DetectiveSettingsPage = () => {
             <p className="text-xs text-gray-400">Choose your preferred color scheme</p>
           </div>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '130px' }}>
-            <Moon size={13} style={{ color: '#9ca3af', position: 'absolute', left: '10px', pointerEvents: 'none', zIndex: 1 }} />
+            <Moon size={13} style={{ color: 'white', position: 'absolute', left: '10px', pointerEvents: 'none', zIndex: 1 }} />
             <select value={theme} onChange={e => setTheme(e.target.value)} style={{ ...selectStyle, paddingLeft: '28px', width: '130px' }}>
               <option>Dark</option>
               <option>Light</option>
@@ -90,14 +90,14 @@ const DetectiveSettingsPage = () => {
       {/* Notifications */}
       <div style={card}>
         <div className="flex items-center gap-2 mb-1">
-          <Bell size={16} style={{ color: '#9ca3af' }} />
+          <Bell size={16} style={{ color: 'white' }} />
           <span className="font-semibold text-base">Notifications</span>
         </div>
         <p className="text-xs text-gray-400 mb-4">Configure how you receive notifications</p>
 
         {[
-          { icon: <Mail size={14} style={{ color: '#9ca3af' }} />, label: 'Email Notifications', desc: 'Receive notifications via email', value: emailNotif, onChange: setEmailNotif },
-          { icon: <Smartphone size={14} style={{ color: '#9ca3af' }} />, label: 'Push Notifications', desc: 'Receive push notifications on your device', value: pushNotif, onChange: setPushNotif },
+          { icon: <Mail size={14} style={{ color: 'white' }} />, label: 'Email Notifications', desc: 'Receive notifications via email', value: emailNotif, onChange: setEmailNotif },
+          { icon: <Smartphone size={14} style={{ color: 'white' }} />, label: 'Push Notifications', desc: 'Receive push notifications on your device', value: pushNotif, onChange: setPushNotif },
           { label: 'Case Updates', desc: 'Get notified when case status changes', value: caseUpdates, onChange: setCaseUpdates },
           { label: 'Weekly Reports', desc: 'Receive weekly summary reports', value: weeklyReports, onChange: setWeeklyReports },
         ].map((item, i, arr) => (
@@ -117,7 +117,7 @@ const DetectiveSettingsPage = () => {
       {/* Privacy & Security */}
       <div style={card}>
         <div className="flex items-center gap-2 mb-1">
-          <Shield size={16} style={{ color: '#9ca3af' }} />
+          <Shield size={16} style={{ color: 'white' }} />
           <span className="font-semibold text-base">Privacy &amp; Security</span>
         </div>
         <p className="text-xs text-gray-400 mb-4">Manage your privacy and security settings</p>
@@ -125,7 +125,7 @@ const DetectiveSettingsPage = () => {
         <div style={{ ...rowStyle, ...divider }}>
           <div>
             <div className="flex items-center gap-2">
-              <Lock size={14} style={{ color: '#9ca3af' }} />
+              <Lock size={14} style={{ color: 'white' }} />
               <p className="text-sm font-medium text-white">Two-Factor Authentication</p>
             </div>
             <p className="text-xs text-gray-400 mt-0.5">Add an extra layer of security to your account</p>
@@ -143,7 +143,7 @@ const DetectiveSettingsPage = () => {
 
         <div style={{ marginTop: '8px' }}>
           <button style={{ width: '100%', background: '#243340', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '12px 16px', color: '#fff', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', textAlign: 'left' }}>
-            <Lock size={15} style={{ color: '#9ca3af' }} />
+            <Lock size={15} style={{ color: 'white' }} />
             Change Password
           </button>
         </div>
@@ -160,7 +160,7 @@ const DetectiveSettingsPage = () => {
 
       {/* Save All Settings */}
       <div className="flex justify-center mt-2 mb-6">
-        <button style={{ background: '#dc3545', border: 'none', borderRadius: '8px', padding: '10px 28px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button style={{ background: '#FF4959', border: 'none', borderRadius: '8px', padding: '10px 28px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Save size={15} /> Save All Settings
         </button>
       </div>

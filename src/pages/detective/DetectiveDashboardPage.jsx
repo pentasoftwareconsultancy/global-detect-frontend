@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Search, Filter, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../core/constants/routes.constant';
 import { LuSend } from "react-icons/lu";
-
+import * as detectiveDashboardService from '../../core/services/detectiveDashboard.service';
+import { toast } from 'react-toastify';
 
 
 const DetectiveDashboardPage = () => {
@@ -11,38 +12,95 @@ const DetectiveDashboardPage = () => {
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [priorityFilter, setPriorityFilter] = useState('All Priority');
   const [search, setSearch] = useState('');
-  const [cases] = useState([
-    {
-      id: 1,
-      title: 'Corporate Embezzlement Investigation',
-      description: 'Suspected financial irregularities in company accounts. Need thorough investigation of transactions from the past 6 months.',
-      client: 'John Smith',
-      status: 'Insights Submitted',
-      adminFeedback: 'Admin Feedback',
-      feedbackStatus: 'Active',
-      progress: 45,
-      type: 'urgent'
-    },
-    {
-      id: 2,
-      title: 'Asset Recovery Investigation',
-      description: 'Locate and recover stolen assets including jewelry and documents. Last known location: downtown warehouse district.',
-      client: 'John Smith',
-      status: 'Report Ready',
-      adminFeedback: '',
-      progress: 85,
-      type: 'new'
-    }
-  ]);
-
-  const filteredCases = cases.filter(c => {
-    const matchSearch = !search ||
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.client.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All Status' || c.status === statusFilter;
-    const matchPriority = priorityFilter === 'All Priority' || c.type === priorityFilter.toLowerCase();
-    return matchSearch && matchStatus && matchPriority;
+  const [cases, setCases] = useState([]);
+  const [stats, setStats] = useState({
+    totalInvestigations: 0,
+    activeInvestigations: 0,
+    adminChangesRequested: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [casesLoading, setCasesLoading] = useState(false);
+  const [adminFeedbackCount, setAdminFeedbackCount] = useState(0);
+
+  // Add pulse animation style
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  // Fetch dashboard stats
+  useEffect(() => {
+    fetchDashboardStats();
+    
+    // Poll for admin feedback every 30 seconds
+    const pollInterval = setInterval(() => {
+      fetchDashboardStats(true); // Silent refresh
+    }, 30000);
+
+    return () => clearInterval(pollInterval);
+  }, []);
+
+  // Fetch assigned cases
+  useEffect(() => {
+    fetchAssignedCases();
+  }, [statusFilter, priorityFilter, search]);
+
+  const fetchDashboardStats = async (silent = false) => {
+    try {
+      if (!silent) setLoading(true);
+      const response = await detectiveDashboardService.getDashboardStats();
+      if (response.success) {
+        const newAdminChangesCount = response.data.adminChangesRequested;
+        
+        // Show notification if admin feedback count increased
+        if (silent && adminFeedbackCount > 0 && newAdminChangesCount > adminFeedbackCount) {
+          toast.info(`You have ${newAdminChangesCount - adminFeedbackCount} new admin feedback(s)!`, {
+            autoClose: 5000,
+            position: 'top-right'
+          });
+        }
+        
+        setStats(response.data);
+        setAdminFeedbackCount(newAdminChangesCount);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      if (!silent) toast.error('Failed to load dashboard statistics');
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
+
+  const fetchAssignedCases = async () => {
+    setCasesLoading(true);
+    try {
+      const filters = {
+        status: statusFilter !== 'All Status' ? statusFilter : undefined,
+        priority: priorityFilter !== 'All Priority' ? priorityFilter : undefined,
+        search: search || undefined,
+        limit: 100 // Get all cases for now
+      };
+
+      const response = await detectiveDashboardService.getAssignedCases(filters);
+      if (response.success) {
+        setCases(response.data.cases || []);
+      }
+    } catch (error) {
+      console.error('Error fetching assigned cases:', error);
+      toast.error('Failed to load assigned cases');
+    } finally {
+      setCasesLoading(false);
+    }
+  };
+
+  const filteredCases = cases;
 
   const selectCls = {
     background: '#1C2B35', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
@@ -67,22 +125,48 @@ const DetectiveDashboardPage = () => {
         <div style={{ borderRadius: '20px', border: '0.67px solid #F3F4F6', background: '#FFFFFF24', padding: '16px 20px' }}>
           <p className="text-gray-300 text-sm mb-3 font-medium">Total Investigations</p>
           <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>05</span>
+            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>
+              {loading ? '...' : String(stats.totalInvestigations).padStart(2, '0')}
+            </span>
           </div>
         </div>
         {/* Card 2 */}
         <div style={{ borderRadius: '20px', border: '0.67px solid #F3F4F6', background: '#FFFFFF24', padding: '16px 20px' }}>
           <p className="text-gray-300 text-sm mb-3 font-medium">Active Investigation</p>
           <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>02</span>
+            <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>
+              {loading ? '...' : String(stats.activeInvestigations).padStart(2, '0')}
+            </span>
           </div>
         </div>
         {/* Card 3 */}
-        <div style={{ borderRadius: '20px', border: '0.67px solid #FF4959', background: '#FF495918', padding: '16px 20px' }}>
+        <div style={{ borderRadius: '20px', border: '0.67px solid #FF4959', background: '#FF495918', padding: '16px 20px', position: 'relative' }}>
+          {stats.adminChangesRequested > 0 && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '12px', 
+              right: '12px', 
+              background: '#dc3545', 
+              borderRadius: '50%', 
+              width: '24px', 
+              height: '24px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              fontSize: '11px',
+              fontWeight: '700',
+              color: '#fff',
+              animation: 'pulse 2s infinite'
+            }}>
+              {stats.adminChangesRequested}
+            </div>
+          )}
           <p className="text-red-400 text-sm font-medium mb-3">Admin Changes requested</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
             <div style={{ background: '#D92B3A7A', borderRadius: '19px', width: '102px', height: '96px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>01</span>
+              <span style={{ fontSize: '42px', fontWeight: '700', color: '#ffffff' }}>
+                {loading ? '...' : String(stats.adminChangesRequested).padStart(2, '0')}
+              </span>
             </div>
             <p className="text-xs text-gray-400 ">Require resubmission</p>
           </div>
@@ -116,7 +200,9 @@ const DetectiveDashboardPage = () => {
         {/* HEADER */}
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-white">Assigned Cases</h2>
-          <p className="text-sm text-gray-400">2 cases assigned</p>
+          <p className="text-sm text-gray-400">
+            {casesLoading ? 'Loading...' : `${filteredCases.length} case${filteredCases.length !== 1 ? 's' : ''} assigned`}
+          </p>
         </div>
 
         {/* SEARCH + FILTERS */}
@@ -146,23 +232,36 @@ const DetectiveDashboardPage = () => {
               <option>All Priority</option>
               <option>Urgent</option>
               <option>High</option>
-              <option>New</option>
+              <option>Medium</option>
+              <option>Low</option>
             </select>
           </div>
         </div>
 
         {/* CARDS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filteredCases.length === 0 ? (
-            <p className="text-sm text-gray-400 col-span-2 text-center py-8">No cases match the selected filters.</p>
+          {casesLoading ? (
+            <p className="text-sm text-gray-400 col-span-2 text-center py-8">Loading cases...</p>
+          ) : filteredCases.length === 0 ? (
+            <p className="text-sm text-gray-400 col-span-2 text-center py-8">No cases assigned yet.</p>
           ) : filteredCases.map((caseItem) => (
-            <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px' }}>
+            <div key={caseItem.id} style={{ background: '#1C2B35', borderRadius: '16px', padding: '20px', border: '0.67px solid rgba(255,255,255,0.12)' }}>
 
               {/* Title + badge */}
               <div className="flex items-start justify-between mb-3 gap-2">
                 <h3 className="text-base font-semibold text-white">{caseItem.title}</h3>
-                <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '12px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap' }}>
-                  {caseItem.type}
+                <span style={{ 
+                  background: caseItem.priority === 'Urgent' ? '#dc3545' : 
+                              caseItem.priority === 'High' ? '#ff6b35' : 
+                              caseItem.priority === 'Medium' ? '#ffa500' : '#6c757d',
+                  borderRadius: '6px', 
+                  padding: '2px 10px', 
+                  fontSize: '12px', 
+                  fontWeight: '600', 
+                  color: '#fff', 
+                  whiteSpace: 'nowrap' 
+                }}>
+                  {caseItem.priority}
                 </span>
               </div>
 
@@ -194,12 +293,14 @@ const DetectiveDashboardPage = () => {
               </div>
 
               {/* Insights Submitted button */}
-              <button className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg mb-3" style={{ background: '#dc3545' }}>
-                <LuSend size={14} /> Insights Submitted
-              </button>
+              {caseItem.insightsSubmittedAt && (
+                <button className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg mb-3" style={{ background: '#dc3545' }}>
+                  <LuSend size={14} /> Insights Submitted
+                </button>
+              )}
 
               {/* View Details */}
-              <button onClick={() => navigate(ROUTES.DETECTIVE_CASE_DETAILS, { state: { caseItem } })} className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg" style={{ background: '#1e2d38', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <button onClick={() => navigate(ROUTES.DETECTIVE_CASE_DETAILS, { state: { caseId: caseItem.id } })} className="w-full flex items-center justify-center gap-2 text-white text-sm font-medium py-2.5 rounded-lg" style={{ background: '#1e2d38', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <FileText size={14} /> View Details
               </button>
 

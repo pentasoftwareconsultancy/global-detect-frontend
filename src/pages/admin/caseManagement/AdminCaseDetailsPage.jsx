@@ -10,6 +10,33 @@ const card = 'bg-[#1A2832] border border-white/10 rounded-xl p-5 mb-4';
 const lbl = 'text-xs text-[#8FA3B0] mb-0.5';
 const val = 'text-sm text-white font-medium';
 
+// Helper function to parse detective insights
+const parseDetectiveInsights = (insights) => {
+  if (!insights) return null;
+  
+  try {
+    const parsed = typeof insights === 'string' ? JSON.parse(insights) : insights;
+    
+    if (parsed && typeof parsed === 'object') {
+      // Check if it's the comprehensive report structure
+      if (parsed.detectiveInsights && parsed.adminReport) {
+        return {
+          type: 'detective',
+          detective: parsed.detectiveInsights
+        };
+      }
+      // Just detective insights
+      return {
+        type: 'detective',
+        detective: parsed
+      };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+};
+
 const priorityStyle = {
   'urgent priority': 'bg-red-500/20 text-red-400 border border-red-500/30',
   urgent:            'bg-red-500/20 text-red-400 border border-red-500/30',
@@ -30,7 +57,7 @@ const statusStyle = {
 
 const PaymentModal = ({ onClose }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-    <div className="bg-[#1A2832] rounded-2xl w-full max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+    <div className="bg-[#121F27] rounded-2xl w-full max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
       <button onClick={onClose} className="absolute top-4 right-4 text-[#8FA3B0] hover:text-white"><X size={16} /></button>
 
       {/* Header */}
@@ -49,8 +76,8 @@ const PaymentModal = ({ onClose }) => (
           { label: 'Platform Charge', amount: '30,000/-', bold: false },
         ].map(({ label, amount, bold }) => (
           <div key={label} className="flex items-center justify-between gap-4">
-            <div className={`flex-1 border border-white/20 rounded-lg px-4 py-3 text-sm ${bold ? 'font-bold text-white' : 'text-white'}`}>{label}</div>
-            <div className={`w-36 border border-white/20 rounded-lg px-4 py-3 text-sm text-right ${bold ? 'font-bold text-white' : 'text-white'}`}>{amount}</div>
+            <div className={`w-[55%] border border-#9CA3AF rounded-lg px-4 py-3 text-sm ${bold ? 'font-bold text-white' : 'text-white'}`}>{label}</div>
+            <div className={`w-[20%] border border-#9CA3AF rounded-lg px-4 py-3 text-sm text-right ${bold ? 'font-bold text-white' : 'text-white'}`}>{amount}</div>
           </div>
         ))}
       </div>
@@ -58,15 +85,15 @@ const PaymentModal = ({ onClose }) => (
       <div className="border-t border-white/10 my-4" />
 
       {/* Total to pay now */}
-      <div className="flex items-center justify-between gap-4 bg-[#FF495917]">
-        <div className="flex-1 border border-white/20 rounded-lg px-4 py-3 text-sm font-bold text-white">Total payment to pay now (50%)</div>
-        <div className="w-36 border border-white/20 rounded-lg px-4 py-3 text-sm font-bold text-white text-right">50,000/-</div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-[55%] border border-#9CA3AF bg-[#FF495917] rounded-lg px-4 py-3 text-sm font-bold text-white">Total payment to pay now (50%)</div>
+        <div className="w-[20%] border border-#9CA3AF bg-[#FF495917] rounded-lg px-4 py-3 text-sm font-bold text-white text-right">50,000/-</div>
       </div>
       <p className="text-xs text-[#8FA3B0] mt-2 mb-6">50% payment should be paid now to start your Case</p>
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <button onClick={onClose} className="border border-white/20 text-white text-sm px-5 py-2 rounded-lg hover:bg-white/5 transition">Cancel</button>
+        <button onClick={onClose} className="bg-[#FFFFFF08] border border-white/20 text-white text-sm px-5 py-2 rounded-lg hover:bg-white/5 transition">Cancel</button>
         <button onClick={onClose} className="bg-[#dc3545] hover:bg-[#b82231] text-white text-sm font-semibold px-6 py-2 rounded-lg transition">Send</button>
       </div>
     </div>
@@ -211,46 +238,52 @@ const AdminCaseDetailsPage = () => {
 
   const data = caseData;
 
+  // Parse detective insights
+  const parsedInsights = parseDetectiveInsights(data?.investigationInsights);
+
   return (
     <div className=" text-white min-h-screen px-4 sm:px-6 py-5 font-[Montserrat]">
       {showPayment && <PaymentModal onClose={() => setShowPayment(false)} />}
 
-      {/* Top bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-[#8FA3B0] hover:text-white transition w-fit">
-          <ArrowLeft size={15} /> Back
-        </button>
-        <div className="flex items-center gap-2 flex-wrap">
-          {!caseData?.detectiveInfo && (
-            <button
-              onClick={() => setShowAssignModal(true)}
-              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
-            >
-              <MdOutlinePersonAddAlt size={16} />
-              Assign Detective
-            </button>
-          )}
-          {/* Show Add Payment details button only if detective is assigned */}
-          {caseData?.detectiveInfo && (
-            <button 
-              onClick={() => setShowPayment(true)} 
-              className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
-            >
-              Add Payment details
-            </button>
-          )}
+      {/* Top bar + Case header combined in one card */}
+      <div className="bg-[#1A2832] border border-white/10  p-4 sm:p-5 mb-4">
+        {/* Top bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-white hover:text-white transition w-fit">
+            <ArrowLeft size={15} /> Back
+          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {!caseData?.detectiveInfo && (
+              <button
+                onClick={() => setShowAssignModal(true)}
+                className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+              >
+                <MdOutlinePersonAddAlt size={16} />
+                Assign Detective
+              </button>
+            )}
+            {/* Show Add Payment details button only if detective is assigned */}
+            {caseData?.detectiveInfo && (
+              <button 
+                onClick={() => setShowPayment(true)} 
+                className="flex items-center gap-2 bg-[#dc3545] hover:bg-[#b82231] text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+              >
+                Add Payment details
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Case header */}
-      <div className="mb-5">
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <span className="text-xs text-[#8FA3B0] border border-white/20 rounded px-2 py-1">Case {data.caseId}</span>
-          <span className={`text-xs px-2 py-1 rounded font-semibold ${priorityStyle[data.priority] || 'bg-gray-500/20 text-gray-300'}`}>{data.priority}</span>
-          <span className={`text-xs px-2 py-1 rounded ${statusStyle[data.statusLabel] || 'bg-gray-500/20 text-gray-300'}`}>{data.statusLabel}</span>
+        {/* Case header */}
+        <div>
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="text-xs text-white border border-white/20 rounded px-2 py-1">Case {data.caseId}</span>
+            <span className={`text-xs px-2 py-1 rounded font-semibold ${priorityStyle[data.priority] || 'bg-gray-500/20 text-gray-300'}`}>{data.priority}</span>
+            <span className={`text-xs px-2 py-1 rounded ${statusStyle[data.statusLabel] || 'bg-gray-500/20 text-gray-300'}`}>{data.statusLabel}</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">{data.investigationDetails?.purpose || 'Investigation Case'}</h1>
+          <p className="text-sm text-[#8FA3B0]">{data.investigationDetails?.caseDescription || 'Case investigation in progress'}</p>
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">{data.investigationDetails?.purpose || 'Investigation Case'}</h1>
-        <p className="text-sm text-[#8FA3B0]">{data.investigationDetails?.caseDescription || 'Case investigation in progress'}</p>
       </div>
 
       {/* Main grid */}
@@ -334,7 +367,7 @@ const AdminCaseDetailsPage = () => {
             <p className="text-xs text-[#8FA3B0] mb-4">{data.documentCount || 0} file(s) attached</p>
             {data.caseDocuments && data.caseDocuments.length > 0 ? (
               data.caseDocuments.map((doc, i) => (
-                <div key={i} className="flex items-center justify-between py-3" style={{ borderBottom: i < data.caseDocuments.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                <div key={i} className="flex items-center justify-between px-3 py-2 mb-2" style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
                   <div className="flex items-center gap-3">
                     <FileText size={15} className="text-[#8FA3B0]" />
                     <div>
@@ -356,7 +389,7 @@ const AdminCaseDetailsPage = () => {
           {data.legalConsent?.agreementConfirmed && (
             <div className={card}>
               <div className="flex items-center gap-2 mb-3">
-                <AlertCircle size={15} className="text-red-400" />
+                <CheckCircle size={15} className="text-red-400" />
                 <p className="text-sm font-semibold text-white">Legal Consent</p>
               </div>
               <div className="flex items-center gap-3">
@@ -366,19 +399,101 @@ const AdminCaseDetailsPage = () => {
             </div>
           )}
 
-          {/* Detective Insights */}
-          {data.investigationInsights && (
+          {/* Detective Insights - Formatted Display */}
+          {parsedInsights && parsedInsights.detective && (
             <div className={card}>
               <p className="text-sm font-semibold text-white mb-1">Detective Insights</p>
               <p className="text-xs text-[#8FA3B0] mb-4">Investigation findings and observations</p>
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="text-sm font-semibold text-white">{data.detectiveInfo?.name || 'Detective'}</p>
-                  <p className="text-xs text-[#8FA3B0]">{data.insightsSubmittedAt ? new Date(data.insightsSubmittedAt).toLocaleString() : 'N/A'}</p>
-                </div>
-                <span className="flex items-center gap-1 text-xs text-[#8FA3B0]"><CheckCircle size={12} /> Submitted</span>
+              
+              <div className="space-y-4">
+                {/* Status */}
+                {parsedInsights.detective.status && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Status</p>
+                    <span className="inline-block text-xs border border-white/20 rounded px-3 py-1 text-white">
+                      {parsedInsights.detective.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
+                  </div>
+                )}
+
+                {/* Summary */}
+                {parsedInsights.detective.summary && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Investigation Summary</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.summary}</p>
+                  </div>
+                )}
+
+                {/* Key Findings */}
+                {parsedInsights.detective.keyFindings && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Key Findings</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.keyFindings}</p>
+                  </div>
+                )}
+
+                {/* Locations */}
+                {parsedInsights.detective.locations && parsedInsights.detective.locations.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">Locations Visited</p>
+                    {parsedInsights.detective.locations.map((loc, i) => (
+                      loc.address && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium">{loc.address}</p>
+                          {loc.findings && <p className="text-xs text-[#8FA3B0] mt-1">{loc.findings}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* People Interviewed */}
+                {parsedInsights.detective.people && parsedInsights.detective.people.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">People Interviewed</p>
+                    {parsedInsights.detective.people.map((person, i) => (
+                      person.name && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium">{person.name}</p>
+                          {person.relationship && <p className="text-xs text-[#8FA3B0]">Relationship: {person.relationship}</p>}
+                          {person.notes && <p className="text-xs text-[#8FA3B0] mt-1">{person.notes}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* Evidence */}
+                {parsedInsights.detective.evidences && parsedInsights.detective.evidences.length > 0 && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-2">Evidence Collected</p>
+                    {parsedInsights.detective.evidences.map((evidence, i) => (
+                      evidence.type && (
+                        <div key={i} className="mb-2 pl-3 border-l-2 border-white/20">
+                          <p className="text-sm text-white font-medium capitalize">{evidence.type}</p>
+                          {evidence.description && <p className="text-xs text-[#8FA3B0] mt-1">{evidence.description}</p>}
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
+
+                {/* Recommendations */}
+                {parsedInsights.detective.recommendations && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Recommendations</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.recommendations}</p>
+                  </div>
+                )}
+
+                {/* Next Steps */}
+                {parsedInsights.detective.nextSteps && (
+                  <div>
+                    <p className="text-xs text-[#8FA3B0] mb-1">Next Steps</p>
+                    <p className="text-sm text-white">{parsedInsights.detective.nextSteps}</p>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-[#8FA3B0] mb-3">{data.investigationInsights}</p>
             </div>
           )}
         </div>

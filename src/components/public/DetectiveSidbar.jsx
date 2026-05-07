@@ -14,7 +14,7 @@ const DetectiveSidbar = ({ onClose }) => {
     navigate(route);
     if (onClose) onClose();
   };
-
+  
   const handleLogout = async () => {
     await logout(); // Call backend API and clear storage
     navigate(ROUTES.LOGIN, { replace: true });
@@ -31,13 +31,15 @@ const DetectiveSidbar = ({ onClose }) => {
   return (
     <div
       style={{
-        width: '235px',
+        width: '200px',
         height: '100vh',
         background: '#121F27',
         display: 'flex',
         flexDirection: 'column',
         padding: '16px 12px 16px 20px',
         paddingTop: '74px',
+        paddingBottom: '26px',
+        
       }}
     >
       {/* Inner pill container */}
@@ -71,7 +73,7 @@ const DetectiveSidbar = ({ onClose }) => {
                 fontSize: '14.5px',
                 fontWeight: isActive(item.route) ? '600' : '400',
                 background: isActive(item.route) ? '#e63946' : 'transparent',
-                color: isActive(item.route) ? '#ffffff' : '#cbd5e1',
+                color: isActive(item.route) ? '#ffffff' : '#ffffff',
                 transition: 'background 0.2s, color 0.2s',
               }}
               onMouseEnter={e => { if (!isActive(item.route)) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
@@ -91,7 +93,7 @@ const DetectiveSidbar = ({ onClose }) => {
             alignItems: 'center',
             gap: '10px',
             padding: '10px 14px',
-            borderRadius: '999px',
+            borderRadius: '15px',
             border: 'none',
             cursor: 'pointer',
             width: '100%',

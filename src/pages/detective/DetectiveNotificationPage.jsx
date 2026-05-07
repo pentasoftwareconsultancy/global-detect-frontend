@@ -2,29 +2,29 @@ import React, { useState } from 'react';
 import { Bell, FileText, UserPlus, CheckCircle, MapPin, AlertTriangle, Users, Upload, CheckSquare, Settings, Trash2, Eye, Download } from 'lucide-react';
 
 const NOTIFICATIONS = [
-  { id: 1, icon: <FileText size={16} style={{ color: '#dc3545' }} />, title: 'Case Updated', unread: true, tag: 'case', time: '5 min ago', desc: 'Detective Watson submitted new insights for Case #1234', actions: ['View Case', 'Mark as Read', 'Delete'] },
-  { id: 2, icon: <UserPlus size={16} style={{ color: '#dc3545' }} />, title: 'New Case Assigned', unread: true, tag: 'case', time: '1 hour ago', desc: 'You have been assigned to Case #1235 - Insurance Fraud Investigation', actions: ['View Details', 'Mark as Read', 'Delete'] },
+  { id: 1, icon: <FileText size={16} style={{ color: '#FF4959' }} />, title: 'Case Updated', unread: true, tag: 'case', time: '5 min ago', desc: 'Detective Watson submitted new insights for Case #1234', actions: ['View Case', 'Mark as Read', 'Delete'] },
+  { id: 2, icon: <UserPlus size={16} style={{ color: '#FF4959' }} />, title: 'New Case Assigned', unread: true, tag: 'case', time: '1 hour ago', desc: 'You have been assigned to Case #1235 - Insurance Fraud Investigation', actions: ['View Details', 'Mark as Read', 'Delete'] },
   { id: 3, icon: <CheckCircle size={16} style={{ color: '#22c55e' }} />, title: 'Report Ready', unread: false, tag: 'case', time: '2 hours ago', desc: 'Final investigation report for Case #1232 is ready for download', actions: ['Download Report', 'Delete'] },
   { id: 4, icon: <MapPin size={16} style={{ color: '#3b82f6' }} />, title: 'Location Update Required', unread: true, tag: 'system', time: '3 hours ago', desc: 'Please update your location for active investigation Case #1234', actions: ['Mark as Read', 'Delete'] },
   { id: 5, icon: <FileText size={16} style={{ color: '#3b82f6' }} />, title: 'Case Priority Changed', unread: false, tag: 'case', time: '5 hours ago', desc: 'Case #1236 priority has been upgraded to Urgent', actions: ['View Case', 'Delete'] },
   { id: 6, icon: <AlertTriangle size={16} style={{ color: '#f59e0b' }} />, title: 'Deadline Approaching', unread: true, tag: 'case', time: '6 hours ago', desc: 'Case #1237 deadline is in 24 hours', actions: ['View Case', 'Mark as Read', 'Delete'] },
   { id: 7, icon: <Users size={16} style={{ color: '#3b82f6' }} />, title: 'New Team Member', unread: false, tag: 'user', time: '1 day ago', desc: 'Detective Johnson has joined the agency', actions: ['Delete'] },
   { id: 8, icon: <CheckCircle size={16} style={{ color: '#22c55e' }} />, title: 'Evidence Uploaded', unread: false, tag: 'case', time: '1 day ago', desc: 'New evidence has been uploaded to Case #1234', actions: ['View Evidence', 'Delete'] },
-  { id: 9, icon: <FileText size={16} style={{ color: '#dc3545' }} />, title: 'Case Status Changed', unread: false, tag: 'case', time: '2 days ago', desc: 'Case #1238 status updated to Report Ready', actions: ['View Case', 'Delete'] },
+  { id: 9, icon: <FileText size={16} style={{ color: '#FF4959' }} />, title: 'Case Status Changed', unread: false, tag: 'case', time: '2 days ago', desc: 'Case #1238 status updated to Report Ready', actions: ['View Case', 'Delete'] },
   { id: 10, icon: <Settings size={16} style={{ color: '#3b82f6' }} />, title: 'System Maintenance', unread: false, tag: 'system', time: '3 days ago', desc: 'Scheduled maintenance on Saturday 10 PM - 2 AM', actions: ['Delete'] },
 ];
 
 
 const actionBtn = (label) => {
   if (label === 'Delete') return { background: 'transparent', border: 'none', color: '#F9FAFB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 0' };
-  if (label === 'Mark as Read') return { background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: '#F9FAFB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 10px' };
-  return { background: '#dc3545', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer', fontSize: '13px', fontWeight: '600', padding: '5px 14px' };
+  if (label === 'Mark as Read') return { background: '#FFFFFF08', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: '#F9FAFB', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', padding: '4px 10px' };
+  return { background: '#FF4959', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer', fontSize: '13px', fontWeight: '600', padding: '5px 14px' };
 };
 
 const ActionIcon = ({ label }) => {
   if (label === 'Delete') return <Trash2 size={13} />;
   if (label === 'Mark as Read') return <Eye size={13} />;
-  if (label === 'Download Report') return ;
+  if (label === 'Download Report') ;
   return null;
 };
 
@@ -57,16 +57,16 @@ const DetectiveNotificationPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Bell size={20} style={{ color: '#dc3545' }} />
+            <Bell size={20} style={{ color: '#FF4959' }} />
             <h1 className="text-xl font-bold text-white">Notifications</h1>
           </div>
           <p className="text-sm text-gray-400">{unreadCount} unread notifications</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={markAllRead} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
+          <button onClick={markAllRead} style={{ background: '#FFFFFF08', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
             <Eye size={14} /> Mark All Read
           </button>
-          <button onClick={clearAll} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
+          <button onClick={clearAll} style={{ background: '#FFFFFF08', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#F9FAFB', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}>
             <Trash2 size={14} /> Clear All
           </button>
         </div>
@@ -82,18 +82,18 @@ const DetectiveNotificationPage = () => {
           <div className="flex items-center gap-2 flex-wrap">
             {filters.map(f => (
               <button key={f} onClick={() => setFilter(f)} style={{
-                background: filter === f ? '#dc3545' : '#243340',
-                border: 'none', borderRadius: '6px', padding: '5px 12px',
+                background: filter === f ? '#FF4959' : '#243340',
+                border: '0.67px solid rgba(255,255,255,0.2)', borderRadius: '6px', padding: '5px 12px',
                 color: '#fff', fontSize: '13px', cursor: 'pointer', fontWeight: filter === f ? '600' : '400',
                 display: 'flex', alignItems: 'center', gap: '6px',
               }}>
                 {f}
-                {f === 'All' && <span style={{ background: filter === 'All' ? '#2D3E4D' : '#3a4651', borderRadius: '999px', padding: '0 6px', fontSize: '11px' }}>{notifications.length}</span>}
+                {f === 'All' && <span style={{ background: filter === 'All' ? '#2D3E4D' : '#3a4651', borderRadius: '4px', padding: '0 6px', fontSize: '11px' }}>{notifications.length}</span>}
               </button>
             ))}
           </div>
           <button onClick={() => setUnreadOnly(!unreadOnly)} style={{
-            background: unreadOnly ? '#dc3545' : '#243340', border: 'none', borderRadius: '6px',
+            background: unreadOnly ? '#FF4959' : '#243340', border: '0.67px solid rgba(255,255,255,0.2)', borderRadius: '6px',
             padding: '5px 12px', color: '#fff', fontSize: '13px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '6px', alignSelf: 'flex-start',
           }}>
@@ -114,7 +114,7 @@ const DetectiveNotificationPage = () => {
               <div className="flex items-center gap-2">
                 {n.icon}
                 <span className="text-sm font-semibold text-white">{n.title}</span>
-                {n.unread && <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#dc3545', display: 'inline-block' }} />}
+                {n.unread && <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#FF4959', display: 'inline-block' }} />}
               </div>
               <div className="flex items-center gap-2 ml-6 sm:ml-0">
                 <span style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '2px 8px', fontSize: '11px', color: '#F9FAFB' }}>{n.tag}</span>
