@@ -22,6 +22,17 @@ const CaseManagement = () => {
   const [selectedCase, setSelectedCase] = useState(null);
   const [selectedDetective, setSelectedDetective] = useState("");
   
+  // Report form state
+  const [reportForm, setReportForm] = useState({
+    executiveSummary: '',
+    keyFindings: '',
+    evidenceCollected: '',
+    recommendations: '',
+    nextSteps: '',
+    conclusion: ''
+  });
+  const [reportLoading, setReportLoading] = useState(false);
+  
   // Real data from backend
   const [cases, setCases] = useState([]);
   const [availableDetectives, setAvailableDetectives] = useState([]);
@@ -37,17 +48,99 @@ const CaseManagement = () => {
   // Store previous tab to detect changes
   const prevTabRef = useRef(activeTab);
   
+  // Abort controller to cancel pending requests
+  const abortControllerRef = useRef(null);
+  
   // Debounce timer for search
   const searchDebounceRef = useRef(null);
 
+  // Helper function to parse and format detective insights
+  const parseInsightsPreview = (insights) => {
+    if (!insights) return null;
+    
+    // If it's already a string and not JSON, return preview
+    if (typeof insights === 'string') {
+      try {
+        const parsed = JSON.parse(insights);
+        if (parsed && typeof parsed === 'object') {
+          // Create a formatted preview from JSON
+          let preview = '';
+          if (parsed.status) {
+            const statusFormatted = parsed.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            preview += `Status: ${statusFormatted}. `;
+          }
+          if (parsed.summary) {
+            const summaryPreview = parsed.summary.length > 150 
+              ? parsed.summary.substring(0, 150) + '...' 
+              : parsed.summary;
+            preview += summaryPreview;
+          } else if (parsed.keyFindings) {
+            const findingsPreview = parsed.keyFindings.length > 150 
+              ? parsed.keyFindings.substring(0, 150) + '...' 
+              : parsed.keyFindings;
+            preview += findingsPreview;
+          }
+          return preview || 'Detective has submitted investigation insights.';
+        }
+      } catch (e) {
+        // Not valid JSON, treat as plain text
+        return insights.length > 200 ? insights.substring(0, 200) + '...' : insights;
+      }
+    }
+    
+    // If it's an object, format it
+    if (typeof insights === 'object') {
+      let preview = '';
+      if (insights.status) {
+        const statusFormatted = insights.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        preview += `Status: ${statusFormatted}. `;
+      }
+      if (insights.summary) {
+        const summaryPreview = insights.summary.length > 150 
+          ? insights.summary.substring(0, 150) + '...' 
+          : insights.summary;
+        preview += summaryPreview;
+      }
+      return preview || 'Detective has submitted investigation insights.';
+    }
+    
+    return 'Detective has submitted investigation insights.';
+  };
+
   // Fetch cases from backend with caching
   useEffect(() => {
+    // Cancel any pending requests
+    if (abortControllerRef.current) {
+      console.log('[useEffect] Aborting previous request');
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null; // Clear the reference
+    }
+    
     // Reset to page 1 when tab changes
     if (activeTab !== prevTabRef.current) {
       setCurrentPage(1);
       prevTabRef.current = activeTab;
+      
+      // Clear cache and reset cases when switching to review tab to ensure fresh data
+      if (activeTab === 'review') {
+        clearCaseCache();
+        setCases([]); // Clear existing cases immediately
+        setLoading(true); // Show loading state
+      }
     }
+    
+    // Only fetch if this is the current active tab
+    console.log(`[useEffect] Fetching for activeTab=${activeTab}`);
     fetchCases();
+    
+    // Cleanup function to abort request on unmount or tab change
+    return () => {
+      if (abortControllerRef.current) {
+        console.log('[useEffect cleanup] Aborting request on cleanup');
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
   }, [activeTab, status, type, priority, search, currentPage]);
 
   // Fetch available detectives with caching
@@ -102,22 +195,43 @@ const CaseManagement = () => {
   }, [activeTab, status, type, priority, search, currentPage]);
 
   const fetchCases = async () => {
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+    
+    // Store the current active tab to prevent race conditions
+    const currentActiveTab = activeTab;
+    
     try {
-      // Check cache first (valid for 2 minutes)
-      const cacheKey = getCacheKey();
-      const cachedData = sessionStorage.getItem(cacheKey);
-      const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+      // Skip cache for review tab to always get fresh data
+      const skipCache = currentActiveTab === 'review';
       
-      if (cachedData && cacheTimestamp) {
-        const age = Date.now() - parseInt(cacheTimestamp);
-        if (age < 120000) { // 2 minutes
-          const parsed = JSON.parse(cachedData);
-          setCases(parsed.cases || []);
-          setTotalCases(parsed.totalCases || 0);
-          setTotalPages(parsed.totalPages || 1);
-          setLoading(false);
-          return;
+      console.log(`[fetchCases] activeTab=${currentActiveTab}, skipCache=${skipCache}`);
+      
+      // Check cache first (valid for 2 minutes) - but not for review tab
+      if (!skipCache) {
+        const cacheKey = getCacheKey();
+        const cachedData = sessionStorage.getItem(cacheKey);
+        const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+        
+        if (cachedData && cacheTimestamp) {
+          const age = Date.now() - parseInt(cacheTimestamp);
+          if (age < 120000) { // 2 minutes
+            console.log(`[fetchCases] Using cached data for ${currentActiveTab} tab`);
+            const parsed = JSON.parse(cachedData);
+            
+            // Only set state if we're still on the same tab and not aborted
+            if (activeTab === currentActiveTab && !signal.aborted) {
+              setCases(parsed.cases || []);
+              setTotalCases(parsed.totalCases || 0);
+              setTotalPages(parsed.totalPages || 1);
+              setLoading(false);
+            }
+            return;
+          }
         }
+      } else {
+        console.log(`[fetchCases] Skipping cache for review tab`);
       }
 
       setLoading(true);
@@ -153,12 +267,29 @@ const CaseManagement = () => {
       }
 
       let response;
-      if (activeTab === "pending") {
+      if (currentActiveTab === "pending") {
+        console.log(`[fetchCases] Calling getPendingCases`);
         response = await adminCaseService.getPendingCases(currentPage, itemsPerPage);
-      } else if (activeTab === "review") {
+      } else if (currentActiveTab === "review") {
+        console.log(`[fetchCases] Calling getCasesWithInsights`);
         response = await adminCaseService.getCasesWithInsights(currentPage, itemsPerPage);
       } else {
+        console.log(`[fetchCases] Calling getAllCases with filters:`, filters);
         response = await adminCaseService.getAllCases(filters);
+      }
+
+      // Check if request was aborted
+      if (signal.aborted) {
+        console.log(`[fetchCases] Request aborted for ${currentActiveTab}`);
+        return;
+      }
+
+      console.log(`[fetchCases] API Response for ${currentActiveTab}:`, response);
+
+      // Only update state if we're still on the same tab (prevent race condition)
+      if (activeTab !== currentActiveTab) {
+        console.log(`[fetchCases] Tab changed from ${currentActiveTab} to ${activeTab}, ignoring response`);
+        return;
       }
 
       if (response.success) {
@@ -166,24 +297,42 @@ const CaseManagement = () => {
         const totalItems = response.data.pagination?.totalItems || casesData.length || 0;
         const pages = response.data.pagination?.totalPages || 1;
         
+        console.log(`[fetchCases] Setting ${casesData.length} cases for ${currentActiveTab} tab`);
+        
         setCases(casesData);
         setTotalCases(totalItems);
         setTotalPages(pages);
 
-        // Cache the data
-        const dataToCache = {
-          cases: casesData,
-          totalCases: totalItems,
-          totalPages: pages,
-        };
-        sessionStorage.setItem(cacheKey, JSON.stringify(dataToCache));
-        sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+        // Cache the data (but not for review tab)
+        if (!skipCache) {
+          const cacheKey = getCacheKey();
+          const dataToCache = {
+            cases: casesData,
+            totalCases: totalItems,
+            totalPages: pages,
+          };
+          sessionStorage.setItem(cacheKey, JSON.stringify(dataToCache));
+          sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+        }
       }
     } catch (error) {
-      console.error('Failed to fetch cases:', error);
-      setCases([]);
+      // Ignore abort errors
+      if (error.name === 'AbortError' || signal.aborted) {
+        console.log(`[fetchCases] Request aborted`);
+        return;
+      }
+      
+      console.error('[fetchCases] Failed to fetch cases:', error);
+      
+      // Only update state if we're still on the same tab
+      if (activeTab === currentActiveTab) {
+        setCases([]);
+      }
     } finally {
-      setLoading(false);
+      // Only update loading state if we're still on the same tab and not aborted
+      if (activeTab === currentActiveTab && !signal.aborted) {
+        setLoading(false);
+      }
     }
   };
 
@@ -277,6 +426,54 @@ const CaseManagement = () => {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleGenerateReport = async () => {
+    if (!selectedCase) return;
+
+    // Validate required fields
+    if (!reportForm.executiveSummary || !reportForm.keyFindings || !reportForm.conclusion) {
+      toast.error('Please fill in all required fields (Executive Summary, Key Findings, and Conclusion)');
+      return;
+    }
+
+    try {
+      setReportLoading(true);
+      const response = await adminCaseService.generateCaseReport(selectedCase.id, reportForm);
+      
+      if (response.success) {
+        toast.success('Report generated successfully! Case marked as completed.');
+        
+        // Clear caches and refresh
+        clearCaseCache();
+        clearDashboardCache();
+        await fetchCases();
+        
+        // Reset form and close modal
+        setReportForm({
+          executiveSummary: '',
+          keyFindings: '',
+          evidenceCollected: '',
+          recommendations: '',
+          nextSteps: '',
+          conclusion: ''
+        });
+        setShowReportModal(false);
+        setSelectedCase(null);
+      }
+    } catch (error) {
+      console.error('Failed to generate report:', error);
+      toast.error(error.response?.data?.message || 'Failed to generate report. Please try again.');
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
+  const handleReportFormChange = (field, value) => {
+    setReportForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleUpdatePriority = async (caseId, newPriority) => {
@@ -657,7 +854,7 @@ const CaseManagement = () => {
                     <div className="bg-[#243643] border border-[#2a3a44] rounded-lg p-4 mb-4">
                       <p className="text-xs text-[#8FA3B0] mb-1">Insights:</p>
                       <p className="text-sm text-white leading-relaxed">
-                        {item.insightsPreview}
+                        {parseInsightsPreview(item.insightsPreview)}
                       </p>
                     </div>
                   )}
@@ -672,7 +869,10 @@ const CaseManagement = () => {
                     </button>
 
                     <button
-                      onClick={() => setShowReportModal(true)}
+                      onClick={() => {
+                        setSelectedCase(item);
+                        setShowReportModal(true);
+                      }}
                       className="px-6 py-2 rounded-lg bg-red text-white text-sm hover:bg-red-600"
                     >
                       Generate Report
@@ -739,51 +939,144 @@ const CaseManagement = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1A2832] border border-[#22313d] rounded-xl p-6 relative">
             <button 
-              onClick={() => setShowReportModal(false)} 
+              onClick={() => {
+                setShowReportModal(false);
+                setSelectedCase(null);
+                setReportForm({
+                  executiveSummary: '',
+                  keyFindings: '',
+                  evidenceCollected: '',
+                  recommendations: '',
+                  nextSteps: '',
+                  conclusion: ''
+                });
+              }} 
               className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg"
+              disabled={reportLoading}
             >
               ✕
             </button>
             <h2 className="font-['Montserrat'] font-semibold text-[18px] text-white mb-1">
               Generate Comprehensive Case Report
             </h2>
-            <p className="font-['Montserrat'] font-normal text-[12px] text-[#9CA3AF] mb-6">
+            <p className="font-['Montserrat'] font-normal text-[12px] text-[#9CA3AF] mb-2">
               Create a detailed investigation report with findings, evidence, and supporting documents
             </p>
+            {selectedCase && (
+              <p className="font-['Montserrat'] font-normal text-[12px] text-[#8FA3B0] mb-6">
+                Case: {selectedCase.caseId || selectedCase.formNumber} - {selectedCase.clientName}
+              </p>
+            )}
             <div className="space-y-5">
-              {[
-                { label: "Executive Summary *",  placeholder: "Provide a high-level overview..." },
-                { label: "Key Findings *",        placeholder: "• Finding 1..." },
-                { label: "Evidence Collected",    placeholder: "Document all evidence..." },
-                { label: "Recommendations",       placeholder: "" },
-                { label: "Next Steps",            placeholder: "" },
-                { label: "Conclusion *",          placeholder: "" },
-              ].map((field) => (
-                <div key={field.label}>
-                  <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">{field.label}</p>
-                  <textarea
-                    rows={3}
-                    placeholder={field.placeholder}
-                    className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none"
-                  />
-                </div>
-              ))}
-              <div className="bg-[#1f2f3a] border border-[#2a3a44] rounded-lg p-4">
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">Supporting Documents</p>
-                <button className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white hover:bg-[#243643] transition">
-                  Choose Files
-                </button>
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Executive Summary <span className="text-red-400">*</span>
+                </p>
+                <textarea
+                  value={reportForm.executiveSummary}
+                  onChange={(e) => handleReportFormChange('executiveSummary', e.target.value)}
+                  rows={3}
+                  placeholder="Provide a high-level overview..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
+              </div>
+
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Key Findings <span className="text-red-400">*</span>
+                </p>
+                <textarea
+                  value={reportForm.keyFindings}
+                  onChange={(e) => handleReportFormChange('keyFindings', e.target.value)}
+                  rows={3}
+                  placeholder="• Finding 1...&#10;• Finding 2..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
+              </div>
+
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Evidence Collected
+                </p>
+                <textarea
+                  value={reportForm.evidenceCollected}
+                  onChange={(e) => handleReportFormChange('evidenceCollected', e.target.value)}
+                  rows={3}
+                  placeholder="Document all evidence..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
+              </div>
+
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Recommendations
+                </p>
+                <textarea
+                  value={reportForm.recommendations}
+                  onChange={(e) => handleReportFormChange('recommendations', e.target.value)}
+                  rows={3}
+                  placeholder="Provide recommendations..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
+              </div>
+
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Next Steps
+                </p>
+                <textarea
+                  value={reportForm.nextSteps}
+                  onChange={(e) => handleReportFormChange('nextSteps', e.target.value)}
+                  rows={3}
+                  placeholder="Outline next steps..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
+              </div>
+
+              <div>
+                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
+                  Conclusion <span className="text-red-400">*</span>
+                </p>
+                <textarea
+                  value={reportForm.conclusion}
+                  onChange={(e) => handleReportFormChange('conclusion', e.target.value)}
+                  rows={3}
+                  placeholder="Provide conclusion..."
+                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
+                  disabled={reportLoading}
+                />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button 
-                onClick={() => setShowReportModal(false)} 
-                className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white font-['Montserrat'] font-medium hover:bg-[#243643] transition"
+                onClick={() => {
+                  setShowReportModal(false);
+                  setSelectedCase(null);
+                  setReportForm({
+                    executiveSummary: '',
+                    keyFindings: '',
+                    evidenceCollected: '',
+                    recommendations: '',
+                    nextSteps: '',
+                    conclusion: ''
+                  });
+                }} 
+                className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white font-['Montserrat'] font-medium hover:bg-[#243643] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={reportLoading}
               >
                 Cancel
               </button>
-              <button className="px-4 py-2 bg-[#D92B3A] hover:bg-[#b0222f] rounded-lg text-sm text-white font-['Montserrat'] font-medium transition">
-                Generate & Send Report
+              <button 
+                onClick={handleGenerateReport}
+                className="px-4 py-2 bg-[#D92B3A] hover:bg-[#b0222f] rounded-lg text-sm text-white font-['Montserrat'] font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={reportLoading}
+              >
+                {reportLoading ? 'Generating...' : 'Generate & Send Report'}
               </button>
             </div>
           </div>

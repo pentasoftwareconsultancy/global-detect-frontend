@@ -207,7 +207,7 @@ const AdminDashboard = () => {
       iconColor: "#EAB308", 
       iconBg: "#EAB3081A", 
       icon: <LuClipboardCheck size={14} />,
-      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?status=insights_submitted`)
+      onClick: () => navigate(`${ROUTES.ADMIN_ALL_CASE_MANAGEMENT}?tab=review`)
     },
     { 
       name: "Changes Requested",  
