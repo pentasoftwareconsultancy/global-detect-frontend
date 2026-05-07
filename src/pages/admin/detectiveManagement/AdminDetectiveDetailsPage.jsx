@@ -407,13 +407,15 @@ const AdminDetectiveDetailsPage = () => {
                   <p className="text-xs text-[#F9FAFB] mb-1 flex items-center gap-1"><FiPhone size={11} /> {ref.phone_number}</p>
                   <p className="text-xs text-[#F9FAFB] mb-2 flex items-center gap-1">✉ {ref.email}</p>
                   <span className={`px-2 py-0.5 text-xs rounded-lg ${
-                    ref.verification_status === "verified"
+                    detective.kycStatus === "approved" || ref.verification_status === "verified"
                       ? "bg-[#00C9501A] text-green-400 border border-[#00C95033]"
-                      : ref.verification_status === "failed"
+                      : detective.kycStatus === "rejected" || ref.verification_status === "failed"
                       ? "bg-red-500/10 text-red-400 border border-red-500/20"
                       : "bg-[#F0B1001A] text-yellow-400 border border-[#F0B10033]"
                   }`}>
-                    {ref.verification_status}
+                    {detective.kycStatus === "approved" ? "verified"
+                      : detective.kycStatus === "rejected" ? "rejected"
+                      : ref.verification_status}
                   </span>
                 </div>
               ))}
