@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Eye, FileText, Download, Calendar, Clock, MapPin, User, Mail, Phone, Home, AlertCircle, CheckCircle } from 'lucide-react';
 import { ROUTES } from '../../core/constants/routes.constant';
 import InsightFormModal from '../../components/detective/InsightFormModal';
+import { FaRegCheckCircle } from "react-icons/fa";
+import { RxCrossCircled } from "react-icons/rx";
 
 const card = { background: '#1C2B35', borderRadius: '14px', padding: 'clamp(14px, 4vw, 24px)', marginBottom: '16px' , border: '1px solid rgba(255,255,255,0.08)' };
 const lbl = { fontSize: '12px', color: '#9ca3af', marginBottom: '2px' };
@@ -220,7 +222,7 @@ const CaseDetailsPage = () => {
               </div>
               <div className="flex flex-col items-end gap-1">
                 {data.insight.submitted && (
-                  <span className="flex items-center gap-1 text-xs text-gray-300"><CheckCircle size={13} /> Submitted</span>
+                  <span className="flex items-center gap-1 text-xs text-white border border-gray-500 rounded-md px-2 py-1"><CheckCircle size={13} /> Submitted</span>
                 )}
               </div>
             </div>
@@ -236,7 +238,7 @@ const CaseDetailsPage = () => {
           {data.legalConsent && (
             <div style={card}>
               <div className="flex items-center gap-2 mb-3">
-                <AlertCircle size={16} className="text-red-400" />
+                <FaRegCheckCircle  className="text-red-400" />
                 <span className="font-semibold text-base">Legal Consent</span>
               </div>
               <div className="flex items-center gap-3">
@@ -301,10 +303,10 @@ const CaseDetailsPage = () => {
               {data.insight.submitted && (
                 <span className="flex items-center gap-1 text-xs text-gray-300"><CheckCircle size={13} /> Submitted</span>
               )}
-              <span style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '11px', color: '#fff' }}>Changes Requested</span>
+              <span className="flex items-center gap-1" style={{ background: '#dc3545', borderRadius: '6px', padding: '2px 10px', fontSize: '11px', color: '#fff' }}><AlertCircle size={12} />Changes Requested</span>
             </div>
           </div>
-          <div style={{ background: 'rgba(220,53,69,0.1)', border: '1px solid rgba(220,53,69,0.3)', borderRadius: '10px', padding: '14px', marginBottom: '14px' }}>
+          <div style={{ background: '#DC26261A', border: '1px solid rgba(220,53,69,0.3)', borderRadius: '10px', padding: '14px', marginBottom: '14px' }}>
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle size={15} className="text-red-400" />
               <span className="text-sm font-semibold text-red-400">Admin Feedback</span>
@@ -314,7 +316,7 @@ const CaseDetailsPage = () => {
             {data.insight.adminFeedback.changes.map((item, i) => (
               <div key={i} style={{ background: '#121F27', borderRadius: '8px', padding: '10px 12px', marginBottom: '8px' }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <AlertCircle size={13} className="text-red-400" />
+                  <RxCrossCircled  size={13} className="text-red-400" />
                   <span className="text-sm font-medium text-white">{item.title}</span>
                 </div>
                 <p className="text-xs text-gray-300">{item.desc}</p>
