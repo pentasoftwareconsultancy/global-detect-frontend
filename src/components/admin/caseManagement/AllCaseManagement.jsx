@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { Eye, Search, Trash2 } from "lucide-react";
+import { Eye, Search, Trash2, CheckCircle, AlertCircle } from "lucide-react";
 import { FiFileText, FiClock, FiClipboard } from "react-icons/fi";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -564,7 +564,7 @@ const CaseManagement = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-5 py-2 text-sm rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === tab.key
-                  ? "bg-red text-white"
+                  ? "bg-[#FF4959] text-white"
                   : "text-[#8FA3B0] hover:text-white"
               }`}
             >
@@ -701,7 +701,7 @@ const CaseManagement = () => {
           ) : (
             <>
               {/* Desktop Table Header */}
-              <div className="hidden md:grid bg-[#243643] rounded-lg border border-[#22313d] px-4 py-3 text-xs text-[#8FA3B0] grid-cols-[120px_260px_220px_120px_140px_180px_100px]">
+              <div className="hidden md:grid bg-[#243643] rounded-lg border border-[#22313d] px-4 py-3 text-xs text-white grid-cols-[120px_260px_180px_150px_140px_180px_100px]">
                 <div>Case ID</div>
                 <div>Client Name</div>
                 <div>Investigation Type</div>
@@ -716,7 +716,7 @@ const CaseManagement = () => {
                 {filteredData.map((item) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-[120px_260px_220px_120px_140px_180px_100px] items-center px-4 py-4 bg-[#1A2832] border border-[#243642] rounded-xl hover:bg-[#1b2a35] transition"
+                    className="grid grid-cols-[120px_260px_180px_150px_140px_180px_100px] items-center px-4 py-4 bg-[#1A2832] border border-[#243642] rounded-xl hover:bg-[#1b2a35] transition"
                   >
                     <div>
                       <p className="text-white text-sm">{item.caseId || item.formNumber}</p>
@@ -724,11 +724,11 @@ const CaseManagement = () => {
                     </div>
                     <div>
                       <p className="text-white text-sm">{item.clientName || 'N/A'}</p>
-                      <p className="text-xs text-[#8FA3B0]">{item.caseDescription || item.investigationType || 'Investigation'}</p>
+                      <p className="text-xs text-[#8FA3B0] truncate max-w-[220px]">{item.caseDescription || item.investigationType || 'Investigation'}</p>
                     </div>
                     <div className="text-sm">{item.investigationType || 'General'}</div>
                     <div>
-                      <select value={item.priority} onChange={(e) => handleUpdatePriority(item.id, e.target.value)} className={`px-2 py-1 text-xs rounded-md font-medium border-0 cursor-pointer ${item.priority === "urgent" && "bg-red-500/20 text-red-400"} ${item.priority === "high" && "bg-orange-500/20 text-orange-400"} ${item.priority === "medium" && "bg-yellow-400/20 text-yellow-300"} ${item.priority === "low" && "bg-green-500/20 text-green-300"}`}>
+                      <select value={item.priority} onChange={(e) => handleUpdatePriority(item.id, e.target.value)} className={`px-3 py-1 text-xs rounded-lg font-medium border cursor-pointer outline-none ${item.priority === "urgent" ? "bg-red-500/10 text-red-400 border-red-500/25" : item.priority === "high" ? "bg-orange-500/10 text-orange-400 border-orange-500/25" : item.priority === "medium" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" : "bg-green-500/10 text-green-400 border-green-500/25"}`}>
                         <option value="urgent">Urgent</option>
                         <option value="high">High</option>
                         <option value="medium">Medium</option>
@@ -736,9 +736,9 @@ const CaseManagement = () => {
                       </select>
                     </div>
                     <div>
-                      <span className={`px-3 py-1 text-xs rounded-md font-medium ${item.statusLabel?.includes("Pending") && "bg-gray-500/20 text-gray-300"} ${item.statusLabel?.includes("Assigned") && "bg-blue-500/20 text-blue-300"} ${item.statusLabel?.includes("Progress") && "bg-purple-500/20 text-purple-300"} ${item.statusLabel?.includes("Insights") && "bg-yellow-400/20 text-yellow-300"} ${item.statusLabel?.includes("Completed") && "bg-green-500/20 text-green-300"}`}>{item.statusLabel || item.status}</span>
+                      <span className={`px-3 py-1 text-xs rounded-md font-medium border ${item.statusLabel?.includes("Pending") ? "bg-gray-500/20 text-gray-300 border-gray-500/25" : item.statusLabel?.includes("Assigned") ? "bg-blue-500/20 text-blue-300 border-blue-500/25" : item.statusLabel?.includes("Progress") ? "bg-purple-500/20 text-purple-300 border-purple-500/25" : item.statusLabel?.includes("Insights") ? "bg-yellow-400/20 text-yellow-300 border-yellow-400/25" : item.statusLabel?.includes("Completed") ? "bg-green-500/20 text-green-300 border-green-500/25" : item.statusLabel?.includes("Draft") || item.status?.includes("draft") ? "bg-slate-500/20 text-slate-300 border-slate-500/25" : item.statusLabel?.includes("Submitted") || item.status?.includes("submitted") ? "bg-yellow-400/20 text-yellow-300 border-yellow-400/25" : "bg-gray-500/20 text-gray-300 border-gray-500/25"}`}>{item.statusLabel || item.status}</span>
                     </div>
-                    <div className="text-sm text-[#8FA3B0] italic">{item.detective || "Unassigned"}</div>
+                    <div className="text-sm italic">{item.detective && item.detective !== "Unassigned" ? <span className="text-white">{item.detective}</span> : <span className="text-[#8FA3B0]">Unassigned</span>}</div>
                     <div className="flex justify-end gap-2">
                       {(!item.detectiveId || item.detective === "Unassigned") && (
                         <button
@@ -806,14 +806,11 @@ const CaseManagement = () => {
       {/* REVIEW TAB CONTENT */}
       <div className="w-full">
         {activeTab === "review" && (
-          <div className="max-w-4xl">
-            <p className="text-sm text-white mb-4">
-              Cases with Submitted Insights
-            </p>
+          <div className="max-w-3xl">
+            <p className="text-sm text-white mb-4">Cases with Submitted Insights</p>
 
             {loading ? (
               <div className="space-y-4">
-                {/* Loading skeleton */}
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="bg-[#1A2832] border border-[#22313d] rounded-xl p-5 animate-pulse">
                     <div className="h-4 bg-[#2a3a44] rounded w-3/4 mb-2"></div>
@@ -836,22 +833,18 @@ const CaseManagement = () => {
             ) : (
               filteredData.map((item) => (
                 <div key={item.id} className="bg-[#1A2832] border border-[#22313d] rounded-xl p-5 mb-4">
-                  <p className="text-white font-medium mb-2">
+                  <p className="text-white font-semibold text-base mb-1">
                     {item.caseDescription || item.investigationType}
                   </p>
-
-                  <p className="text-xs text-[#8FA3B0] mb-3">
-                    Client: {item.clientName}
+                  <p className="text-sm text-[#8FA3B0] mb-4">
+                    Client: <span className="text-[#8FA3B0]">{item.clientName}</span>
                   </p>
-
-                  <p className="text-xs text-[#8FA3B0]">Detective:</p>
-                  <p className="text-sm text-white mb-4">
-                    {item.detective}
-                  </p>
+                  <p className="text-xs text-[#8FA3B0] mb-1">Detective:</p>
+                  <p className="text-sm font-semibold text-white mb-4">{item.detective}</p>
 
                   {/* INSIGHT BOX */}
                   {item.insightsPreview && (
-                    <div className="bg-[#243643] border border-[#2a3a44] rounded-lg p-4 mb-4">
+                    <div className="bg-[#2D3E4D] border border-[#2a3a44] rounded-lg p-4 mb-5">
                       <p className="text-xs text-[#8FA3B0] mb-1">Insights:</p>
                       <p className="text-sm text-white leading-relaxed">
                         {parseInsightsPreview(item.insightsPreview)}
@@ -861,21 +854,17 @@ const CaseManagement = () => {
 
                   {/* BUTTONS */}
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={() => navigate(ROUTES.ADMIN_CASE_MANAGEMENT_DETAIL, { state: { caseItem: item } })}
-                      className="px-6 py-2 rounded-lg border border-[#2a3a44] text-sm text-white hover:bg-[#243643]"
+                      className="flex-1 py-2 rounded-lg border border-[#2a3a44] text-sm text-white bg-[#FFFFFF08] hover:bg-[#243643] transition"
                     >
                       View Full Details
                     </button>
-
                     <button
-                      onClick={() => {
-                        setSelectedCase(item);
-                        setShowReportModal(true);
-                      }}
-                      className="px-6 py-2 rounded-lg bg-red text-white text-sm hover:bg-red-600"
+                      onClick={() => { setSelectedCase(item); setShowReportModal(true); }}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-[#FF4959] hover:bg-[#b0222f] text-white text-sm transition"
                     >
-                      Generate Report
+                      <FiClipboard size={14} /> Generate Report
                     </button>
                   </div>
                 </div>
@@ -937,146 +926,121 @@ const CaseManagement = () => {
       {/* REPORT MODAL */}
       {showReportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1A2832] border border-[#22313d] rounded-xl p-6 relative">
-            <button 
-              onClick={() => {
-                setShowReportModal(false);
-                setSelectedCase(null);
-                setReportForm({
-                  executiveSummary: '',
-                  keyFindings: '',
-                  evidenceCollected: '',
-                  recommendations: '',
-                  nextSteps: '',
-                  conclusion: ''
-                });
-              }} 
-              className="absolute top-4 right-4 text-gray-400 hover:text-white text-lg"
-              disabled={reportLoading}
-            >
-              ✕
-            </button>
-            <h2 className="font-['Montserrat'] font-semibold text-[18px] text-white mb-1">
-              Generate Comprehensive Case Report
-            </h2>
-            <p className="font-['Montserrat'] font-normal text-[12px] text-[#9CA3AF] mb-2">
-              Create a detailed investigation report with findings, evidence, and supporting documents
-            </p>
-            {selectedCase && (
-              <p className="font-['Montserrat'] font-normal text-[12px] text-[#8FA3B0] mb-6">
-                Case: {selectedCase.caseId || selectedCase.formNumber} - {selectedCase.clientName}
-              </p>
-            )}
-            <div className="space-y-5">
+          <div className="w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto bg-[#1A2832] border border-[#22313d] rounded-xl p-6 relative" style={{ scrollbarWidth: 'none' }}>
+            {/* Close */}
+            <button onClick={() => { setShowReportModal(false); setSelectedCase(null); setReportForm({ executiveSummary: '', keyFindings: '', evidenceCollected: '', recommendations: '', nextSteps: '', conclusion: '' }); }} className="absolute top-4 right-4 text-gray-400 hover:text-white" disabled={reportLoading}>✕</button>
+
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-1">
+              <FiClipboard className="text-red-500" size={18} />
+              <h2 className="text-base font-semibold text-white">Generate Comprehensive Case Report</h2>
+            </div>
+            <p className="text-xs text-[#9CA3AF] mb-6">Create a detailed investigation report with findings, evidence, and supporting documents</p>
+
+            <div className="space-y-6">
+              {/* Executive Summary */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Executive Summary <span className="text-red-400">*</span>
-                </p>
-                <textarea
-                  value={reportForm.executiveSummary}
-                  onChange={(e) => handleReportFormChange('executiveSummary', e.target.value)}
-                  rows={3}
-                  placeholder="Provide a high-level overview..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle size={14} className="text-orange-400" />
+                  <p className="text-sm font-medium text-white">Executive Summary <span className="text-red-400">*</span></p>
+                </div>
+                <textarea value={reportForm.executiveSummary} onChange={(e) => handleReportFormChange('executiveSummary', e.target.value)} rows={3} placeholder="Provide a high-level overview of the investigation, including case context, scope, and timeline..." className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">Brief overview of the entire investigation</p>
               </div>
 
+              {/* Key Findings */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Key Findings <span className="text-red-400">*</span>
-                </p>
-                <textarea
-                  value={reportForm.keyFindings}
-                  onChange={(e) => handleReportFormChange('keyFindings', e.target.value)}
-                  rows={3}
-                  placeholder="• Finding 1...&#10;• Finding 2..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle size={14} className="text-green-400" />
+                  <p className="text-sm font-medium text-white">Key Findings <span className="text-red-400">*</span></p>
+                </div>
+                <textarea value={reportForm.keyFindings} onChange={(e) => handleReportFormChange('keyFindings', e.target.value)} rows={4} placeholder={`• Finding 1: Description and significance
+• Finding 2: Description and significance
+• Finding 3: Description and significance`} className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">List all critical discoveries and observations (one per line)</p>
               </div>
 
+              {/* Evidence Collected */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Evidence Collected
-                </p>
-                <textarea
-                  value={reportForm.evidenceCollected}
-                  onChange={(e) => handleReportFormChange('evidenceCollected', e.target.value)}
-                  rows={3}
-                  placeholder="Document all evidence..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <FiClipboard size={14} className="text-blue-400" />
+                  <p className="text-sm font-medium text-white">Evidence Collected</p>
+                </div>
+                <textarea value={reportForm.evidenceCollected} onChange={(e) => handleReportFormChange('evidenceCollected', e.target.value)} rows={5} placeholder={`Document all evidence gathered during the investigation:
+• Photos/Videos: Description and relevance
+• Witness Statements: Key testimonies
+• Physical Evidence: Items collected and their significance
+• Digital Evidence: Logs, emails, records, etc.`} className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">Detail all evidence types and their relevance to the case</p>
               </div>
 
+              {/* Recommendations */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Recommendations
-                </p>
-                <textarea
-                  value={reportForm.recommendations}
-                  onChange={(e) => handleReportFormChange('recommendations', e.target.value)}
-                  rows={3}
-                  placeholder="Provide recommendations..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle size={14} className="text-yellow-400" />
+                  <p className="text-sm font-medium text-white">Recommendations</p>
+                </div>
+                <textarea value={reportForm.recommendations} onChange={(e) => handleReportFormChange('recommendations', e.target.value)} rows={5} placeholder={`Based on the findings, provide actionable recommendations:
+1. Immediate actions required
+2. Long-term preventive measures
+3. Legal considerations
+4. Follow-up suggestions`} className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">Suggest next steps and preventive measures</p>
               </div>
 
+              {/* Next Steps */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Next Steps
-                </p>
-                <textarea
-                  value={reportForm.nextSteps}
-                  onChange={(e) => handleReportFormChange('nextSteps', e.target.value)}
-                  rows={3}
-                  placeholder="Outline next steps..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-purple-400" style={{fontSize:'15px'}}>&#9992;</span>
+                  <p className="text-sm font-medium text-white">Next Steps</p>
+                </div>
+                <textarea value={reportForm.nextSteps} onChange={(e) => handleReportFormChange('nextSteps', e.target.value)} rows={5} placeholder={`Outline the recommended course of action:
+• Client actions required
+• Timeline for implementation
+• Additional investigation if needed
+• Resources or contacts provided`} className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">Define clear action items for the client</p>
               </div>
 
+              {/* Conclusion */}
               <div>
-                <p className="font-['Montserrat'] font-medium text-[14px] text-white mb-2">
-                  Conclusion <span className="text-red-400">*</span>
-                </p>
-                <textarea
-                  value={reportForm.conclusion}
-                  onChange={(e) => handleReportFormChange('conclusion', e.target.value)}
-                  rows={3}
-                  placeholder="Provide conclusion..."
-                  className="w-full bg-[#0f1a1f] border border-[#22313d] rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-red-500"
-                  disabled={reportLoading}
-                />
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle size={14} className="text-green-400" />
+                  <p className="text-sm font-medium text-white">Conclusion <span className="text-red-400">*</span></p>
+                </div>
+                <textarea value={reportForm.conclusion} onChange={(e) => handleReportFormChange('conclusion', e.target.value)} rows={3} placeholder="Summarize the investigation outcome, final determination, and case resolution status..." className="w-full bg-[#FFFFFF08] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-[#9CA3AF] outline-none resize-none focus:border-white/30" disabled={reportLoading} />
+                <p className="text-xs text-[#8FA3B0] mt-1">Final summary and case resolution</p>
+              </div>
+
+              {/* Supporting Documents */}
+              <div className="bg-[#2D3E4D4D] border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-red-400" style={{fontSize:'15px'}}>&#11014;</span>
+                  <p className="text-sm font-semibold text-white">Supporting Documents</p>
+                </div>
+                <p className="text-xs text-[#8FA3B0] mb-3">Upload photos, videos, PDFs, or other evidence files to include with the report</p>
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 bg-[#1A2832] border border-white/10 rounded-lg px-4 py-2 cursor-pointer hover:border-white/30 transition">
+                    <span className="text-white" style={{fontSize:'14px'}}>&#11014;</span>
+                    <span className="text-sm text-white">Choose Files</span>
+                    <input type="file" multiple className="hidden" />
+                  </label>
+                  <span className="text-xs text-[#8FA3B0]">0 file(s) selected</span>
+                </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <button 
-                onClick={() => {
-                  setShowReportModal(false);
-                  setSelectedCase(null);
-                  setReportForm({
-                    executiveSummary: '',
-                    keyFindings: '',
-                    evidenceCollected: '',
-                    recommendations: '',
-                    nextSteps: '',
-                    conclusion: ''
-                  });
-                }} 
-                className="px-4 py-2 border border-[#2a3a44] rounded-lg text-sm text-white font-['Montserrat'] font-medium hover:bg-[#243643] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={reportLoading}
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleGenerateReport}
-                className="px-4 py-2 bg-[#D92B3A] hover:bg-[#b0222f] rounded-lg text-sm text-white font-['Montserrat'] font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={reportLoading}
-              >
-                {reportLoading ? 'Generating...' : 'Generate & Send Report'}
+
+            {/* Required note */}
+            <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-3 mt-6 mb-4">
+              <AlertCircle size={14} className="text-yellow-400 flex-shrink-0" />
+              <p className="text-xs text-[#9CA3AF]">*Required fields must be completed before generating the report</p>
+            </div>
+
+            {/* Footer buttons */}
+            <div className="flex justify-end gap-3">
+              <button onClick={() => { setShowReportModal(false); setSelectedCase(null); setReportForm({ executiveSummary: '', keyFindings: '', evidenceCollected: '', recommendations: '', nextSteps: '', conclusion: '' }); }} className="px-5 py-2 border border-[#2a3a44] rounded-lg text-sm text-white hover:bg-[#243643] transition disabled:opacity-50" disabled={reportLoading}>Cancel</button>
+              <button onClick={handleGenerateReport} className="flex items-center gap-2 px-5 py-2 bg-[#FF4959] hover:bg-[#b0222f] rounded-lg text-sm text-white font-medium transition disabled:opacity-50" disabled={reportLoading}>
+                <FiClipboard size={14} /> {reportLoading ? 'Generating...' : 'Generate & Send Report'}
               </button>
             </div>
           </div>
